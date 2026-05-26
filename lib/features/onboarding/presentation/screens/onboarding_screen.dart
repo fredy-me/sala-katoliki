@@ -53,10 +53,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     'SW · ENGLISH',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppColors.primary,
-                          letterSpacing: 0.6,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: AppColors.primary,
+                      letterSpacing: 0.6,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const Spacer(),
                   TextButton(
@@ -70,9 +70,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   controller: _controller,
                   itemCount: _slides.length,
                   onPageChanged: (value) => setState(() => _page = value),
-                  itemBuilder: (context, index) => _OnboardingPage(
-                    slide: _slides[index],
-                  ),
+                  itemBuilder: (context, index) =>
+                      _OnboardingPage(slide: _slides[index]),
                 ),
               ),
               _PageDots(count: _slides.length, activeIndex: _page),
@@ -165,7 +164,9 @@ class _PageDots extends StatelessWidget {
             height: 6,
             margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              color: activeIndex == index ? AppColors.primary : AppColors.border,
+              color: activeIndex == index
+                  ? AppColors.primary
+                  : AppColors.border,
               borderRadius: BorderRadius.circular(3),
             ),
           ),
