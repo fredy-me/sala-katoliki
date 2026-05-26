@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/prayer_library/presentation/screens/prayer_library_screen.dart';
-import '../../features/readings/presentation/screens/readings_screen.dart';
+import '../../features/daily_readings/presentation/screens/readings_screen.dart';
 import '../../features/rosary/presentation/screens/rosary_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/shared/presentation/widgets/app_shell.dart';
