@@ -38,7 +38,10 @@ class PrayerDetailScreen extends ConsumerWidget {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
                       IconButton(
@@ -74,7 +77,8 @@ class PrayerDetailScreen extends ConsumerWidget {
                     children: [
                       Text(
                         prayer.categoryLabel().toUpperCase(),
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
                               color: AppColors.mutedText,
                               letterSpacing: 1.6,
                               fontWeight: FontWeight.w700,
@@ -97,10 +101,10 @@ class PrayerDetailScreen extends ConsumerWidget {
                       Text(
                         prayer.text(),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.text,
-                              fontSize: 20,
-                              height: 1.45,
-                            ),
+                          color: AppColors.text,
+                          fontSize: 20,
+                          height: 1.45,
+                        ),
                       ),
                     ],
                   ),
@@ -114,15 +118,7 @@ class PrayerDetailScreen extends ConsumerWidget {
   }
 
   void _toggleFavorite(WidgetRef ref, String prayerId) {
-    final notifier = ref.read(favoritePrayerIdsProvider.notifier);
-    final current = notifier.state;
-
-    if (current.contains(prayerId)) {
-      notifier.state = {...current}..remove(prayerId);
-      return;
-    }
-
-    notifier.state = {...current, prayerId};
+    ref.read(favoritePrayerIdsProvider.notifier).toggle(prayerId);
   }
 }
 
@@ -146,8 +142,8 @@ class _TextSizeChip extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: selected ? AppColors.text : AppColors.primary,
-            ),
+          color: selected ? AppColors.text : AppColors.primary,
+        ),
       ),
     );
   }
