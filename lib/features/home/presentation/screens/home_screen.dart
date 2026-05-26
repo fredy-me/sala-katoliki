@@ -76,18 +76,18 @@ class _VerseCard extends StatelessWidget {
           Text(
             'AYA YA LEO',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.nightPanel,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: AppColors.nightPanel,
+              letterSpacing: 1.3,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             'Mtumaini Bwana kwa moyo wako wote. — Mithali 3:5',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: AppColors.night,
-                  height: 1.35,
-                ),
+              color: AppColors.night,
+              height: 1.35,
+            ),
           ),
         ],
       ),
@@ -149,10 +149,10 @@ class _SectionHeader extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.mutedText,
-            letterSpacing: 1.6,
-            fontWeight: FontWeight.w700,
-          ),
+        color: AppColors.mutedText,
+        letterSpacing: 1.6,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 }
@@ -171,10 +171,9 @@ class _SaintPreview extends StatelessWidget {
             const Spacer(),
             Text(
               '→',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(color: AppColors.primary),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: AppColors.primary),
             ),
           ],
         ),
@@ -197,9 +196,9 @@ class _SaintPreview extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 'Sikukuu: 2/8',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.primary),
               ),
               const SizedBox(height: 8),
               Text(
