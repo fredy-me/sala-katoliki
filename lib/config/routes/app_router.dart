@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/prayer_library/presentation/screens/prayer_detail_screen.dart';
 import '../../features/prayer_library/presentation/screens/prayer_library_screen.dart';
 import '../../features/daily_readings/presentation/screens/readings_screen.dart';
 import '../../features/rosary/presentation/screens/rosary_screen.dart';
@@ -43,6 +44,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SettingsScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/prayers/:prayerId',
+        builder: (context, state) {
+          return PrayerDetailScreen(
+            prayerId: state.pathParameters['prayerId']!,
+          );
+        },
       ),
     ],
   );
