@@ -8,7 +8,7 @@ import '../../domain/usecases/get_all_prayers_usecase.dart';
 import '../../domain/usecases/get_prayer_by_id_usecase.dart';
 
 final prayerLocalDataSourceProvider = Provider<PrayerLocalDataSource>((ref) {
-  return const PrayerLocalDataSource();
+  return PrayerLocalDataSource();
 });
 
 final prayerRepositoryProvider = Provider<PrayerRepository>((ref) {
@@ -27,11 +27,30 @@ final prayersProvider = FutureProvider<List<PrayerEntity>>((ref) {
   return ref.watch(getAllPrayersUseCaseProvider).call();
 });
 
-final prayerByIdProvider =
-    FutureProvider.family<PrayerEntity?, String>((ref, id) {
+final prayerByIdProvider = FutureProvider.family<PrayerEntity?, String>((
+  ref,
+  id,
+) {
   return ref.watch(getPrayerByIdUseCaseProvider).call(id);
 });
 
-final favoritePrayerIdsProvider = StateProvider<Set<String>>((ref) {
-  return {'hail-mary'};
-});
+final favoritePrayerIdsProvider =
+    NotifierProvider<FavoritePrayerIdsNotifier, Set<String>>(
+      FavoritePrayerIdsNotifier.new,
+    );
+
+class FavoritePrayerIdsNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() {
+    return {'hail-mary'};
+  }
+
+  void toggle(String prayerId) {
+    if (state.contains(prayerId)) {
+      state = Set<String>.from(state)..remove(prayerId);
+      return;
+    }
+
+    state = {...state, prayerId};
+  }
+}
