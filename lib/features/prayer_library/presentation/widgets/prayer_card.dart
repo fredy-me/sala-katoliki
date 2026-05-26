@@ -33,14 +33,17 @@ class PrayerCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(prayer.title(), style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    prayer.title(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 6),
                   Text(
                     prayer.categoryLabel(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.mutedText,
-                          fontSize: 12,
-                        ),
+                      color: AppColors.mutedText,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
