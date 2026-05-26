@@ -150,6 +150,8 @@ Acceptance checks:
 
 ## Phase 2: Local Offline Content MVP
 
+Status: Implemented for the Prayer Library MVP with bundled JSON content. Saints and readings placeholder data remain for later phases.
+
 Tasks:
 
 - Create bundled JSON files:
