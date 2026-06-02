@@ -1,0 +1,58 @@
+[
+  {
+    "id": "joyful_mysteries",
+    "language": "sw",
+    "title": "Mafumbo ya Furaha",
+    "description": "Matukio ya furaha katika maisha ya awali ya Kristo.",
+    "days": ["monday", "saturday"],
+    "mysteries": [
+      "Kupashwa Habari",
+      "Kutembelea Elisabeti",
+      "Kuzaliwa kwa Yesu",
+      "Kutolewa Hekaluni",
+      "Kupatikana Hekaluni"
+    ]
+  },
+  {
+    "id": "sorrowful_mysteries",
+    "language": "sw",
+    "title": "Mafumbo ya Uchungu",
+    "description": "Mateso ya Bwana wetu.",
+    "days": ["tuesday", "friday"],
+    "mysteries": [
+      "Yesu Bustanini",
+      "Kupigwa Mijeledi",
+      "Kuvikwa Taji ya Miiba",
+      "Kubeba Msalaba",
+      "Kusulubiwa"
+    ]
+  },
+  {
+    "id": "glorious_mysteries",
+    "language": "sw",
+    "title": "Mafumbo ya Utukufu",
+    "description": "Ufufuko na utukufu wa Kristo.",
+    "days": ["wednesday", "sunday"],
+    "mysteries": [
+      "Ufufuko",
+      "Kupaa Mbinguni",
+      "Kushuka kwa Roho Mtakatifu",
+      "Kupazwa kwa Maria",
+      "Kutawazwa kwa Maria"
+    ]
+  },
+  {
+    "id": "luminous_mysteries",
+    "language": "sw",
+    "title": "Mafumbo ya Mwanga",
+    "description": "Huduma ya hadharani ya Yesu.",
+    "days": ["thursday"],
+    "mysteries": [
+      "Ubatizo wa Yesu",
+      "Harusi ya Kana",
+      "Kutangazwa kwa Ufalme",
+      "Kugeuka Sura",
+      "Kuanzishwa kwa Ekaristi"
+    ]
+  }
+]
