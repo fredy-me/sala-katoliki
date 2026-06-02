@@ -1,0 +1,16 @@
+[
+  {
+    "id": "divine_mercy_prayer",
+    "type": "prayer",
+    "category": "divine_mercy",
+    "language": "en",
+    "title": "Divine Mercy Prayer",
+    "description": "A short prayer to Divine Mercy.",
+    "body": "Eternal Father, I offer you the Body and Blood, Soul and Divinity of your dearly beloved Son, our Lord Jesus Christ, in atonement for our sins and those of the whole world.",
+    "tags": ["divine mercy", "chaplet", "mercy"],
+    "source": "Traditional Catholic devotion",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
