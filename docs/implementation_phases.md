@@ -49,6 +49,8 @@ Done when:
 
 ## Phase 2: Design System From UI Reference
 
+Status: Completed.
+
 Goal: Implement the shared visual system before rebuilding screens.
 
 Tasks:
