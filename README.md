@@ -37,7 +37,13 @@ Explicitly out of scope for the MVP:
 
 - [SRS Alignment](docs/SRS_ALIGNMENT.md) defines how this repository follows the PDF.
 - [Architecture](docs/ARCHITECTURE.md) documents the required clean, offline-first architecture.
+- [Folder Structure](docs/architecture/folder_structure.md) is the canonical target structure for the Flutter app, assets, tests, tools, and docs.
+- [Content Architecture](docs/architecture/content_architecture.md) explains how bundled prayer, Rosary, novena, and metadata content is organized.
+- [Data Models](docs/architecture/data_models.md) documents the MVP JSON models.
 - [Content Guide](docs/CONTENT_GUIDE.md) documents the bundled JSON content model and contribution rules.
+- [Adding New Prayers](docs/content_guidelines/adding_new_prayers.md) documents the no-hard-coded-prayer workflow.
+- [Translation Guidelines](docs/content_guidelines/translation_guidelines.md) documents English/Kiswahili content rules.
+- [Content Rights](docs/content_guidelines/content_rights.md) documents source and licensing requirements.
 - [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) maps MVP requirements to implementation and tests.
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) is the active development sequence.
 
@@ -85,22 +91,37 @@ Recommended content structure from the SRS:
 ```text
 assets/
   content/
-    categories.json
+    categories/
+      categories.json
     prayers/
       en/
         common_prayers.json
         marian_prayers.json
+        confession_prayers.json
         mass_prayers.json
+        divine_mercy.json
       sw/
         common_prayers.json
         marian_prayers.json
+        confession_prayers.json
         mass_prayers.json
-    rosary/
-      en/rosary.json
-      sw/rosary.json
+        divine_mercy.json
     novenas/
-      en/divine_mercy.json
-      sw/divine_mercy.json
+      en/
+        divine_mercy_novena.json
+      sw/
+        divine_mercy_novena.json
+    rosary/
+      en/
+        rosary_prayers.json
+        mysteries.json
+      sw/
+        rosary_prayers.json
+        mysteries.json
+    metadata/
+      languages.json
+      content_manifest.json
+      app_info.json
 ```
 
 Required prayer fields:
