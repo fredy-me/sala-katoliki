@@ -14,7 +14,8 @@ class SalaKatolikiApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Sala Katoliki',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
       routerConfig: router,
     );
   }
