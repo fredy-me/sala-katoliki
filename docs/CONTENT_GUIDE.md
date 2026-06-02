@@ -9,25 +9,52 @@ Adding a new prayer must require content changes only, not a new screen.
 ```text
 assets/
   content/
-    categories.json
+    categories/
+      categories.json
     prayers/
       en/
         common_prayers.json
         marian_prayers.json
+        confession_prayers.json
         mass_prayers.json
+        divine_mercy.json
       sw/
         common_prayers.json
         marian_prayers.json
+        confession_prayers.json
         mass_prayers.json
-    rosary/
-      en/rosary.json
-      sw/rosary.json
+        divine_mercy.json
     novenas/
-      en/divine_mercy.json
-      sw/divine_mercy.json
+      en/
+        divine_mercy_novena.json
+        holy_spirit_novena.json
+        st_joseph_novena.json
+        st_jude_novena.json
+      sw/
+        divine_mercy_novena.json
+        holy_spirit_novena.json
+        st_joseph_novena.json
+        st_jude_novena.json
+    rosary/
+      en/
+        rosary_prayers.json
+        mysteries.json
+      sw/
+        rosary_prayers.json
+        mysteries.json
+    metadata/
+      languages.json
+      content_manifest.json
+      app_info.json
 ```
 
 The current project may still contain older content under `assets/data/`. During restructuring, move MVP content to `assets/content/` and register it in `pubspec.yaml`.
+
+Detailed content workflows are documented in:
+
+- [Adding New Prayers](content_guidelines/adding_new_prayers.md)
+- [Translation Guidelines](content_guidelines/translation_guidelines.md)
+- [Content Rights](content_guidelines/content_rights.md)
 
 ## Prayer Schema
 
