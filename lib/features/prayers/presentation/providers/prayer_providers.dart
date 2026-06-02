@@ -1,15 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../data/datasources/prayer_local_datasource.dart';
+import '../../../../data/datasources/local_content_datasource.dart';
+import '../../../../data/models/category_model.dart';
+import '../../../../data/repositories/category_repository.dart';
 import '../../../../data/repositories/prayer_repository.dart';
 import '../../../../data/repositories/prayer_repository_impl.dart';
 import '../../../../core/localization/localization_providers.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../../domain/usecases/get_all_prayers_usecase.dart';
 import '../../domain/usecases/get_prayer_by_id_usecase.dart';
 
+final localContentDataSourceProvider = Provider<LocalContentDataSource>((ref) {
+  return LocalContentDataSource();
+});
+
 final prayerLocalDataSourceProvider = Provider<PrayerLocalDataSource>((ref) {
-  return PrayerLocalDataSource();
+  return PrayerLocalDataSource(
+    contentDataSource: ref.watch(localContentDataSourceProvider),
+  );
+});
+
+final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
+  return CategoryRepository(ref.watch(localContentDataSourceProvider));
+});
+
+final categoriesProvider = FutureProvider<List<CategoryModel>>((ref) {
+  return ref.watch(categoryRepositoryProvider).getCategories();
 });
 
 final prayerRepositoryProvider = Provider<PrayerRepository>((ref) {
@@ -46,6 +66,11 @@ final favoritePrayerIdsProvider =
       FavoritePrayerIdsNotifier.new,
     );
 
+final recentPrayerIdsProvider =
+    AsyncNotifierProvider<RecentPrayerIdsNotifier, List<String>>(
+      RecentPrayerIdsNotifier.new,
+    );
+
 class FavoritePrayerIdsNotifier extends Notifier<Set<String>> {
   @override
   Set<String> build() {
@@ -59,5 +84,25 @@ class FavoritePrayerIdsNotifier extends Notifier<Set<String>> {
     }
 
     state = {...state, prayerId};
+  }
+}
+
+class RecentPrayerIdsNotifier extends AsyncNotifier<List<String>> {
+  @override
+  Future<List<String>> build() async {
+    final preferences = await SharedPreferences.getInstance();
+    return preferences.getStringList(StorageKeys.recentPrayerIds) ?? const [];
+  }
+
+  Future<void> record(String prayerId) async {
+    final current = state.asData?.value ?? const <String>[];
+    final updated = [
+      prayerId,
+      ...current.where((id) => id != prayerId),
+    ].take(10).toList(growable: false);
+
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setStringList(StorageKeys.recentPrayerIds, updated);
+    state = AsyncData(updated);
   }
 }
