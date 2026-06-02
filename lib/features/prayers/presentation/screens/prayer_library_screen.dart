@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/app_error_state.dart';
+import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/app_search_bar.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
@@ -34,7 +39,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
     final favoriteIds = ref.watch(favoritePrayerIdsProvider);
 
     return prayersState.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const AppLoading(label: 'Inapakia sala...'),
       error: (error, stackTrace) => _PrayerLoadError(
         onRetry: () {
           ref.invalidate(prayersProvider);
@@ -50,8 +55,9 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
           children: [
             Text('Sala', style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 18),
-            _SearchField(
+            AppSearchBar(
               controller: _searchController,
+              hintText: 'Tafuta sala...',
               onChanged: (value) => setState(() => _query = value),
             ),
             const SizedBox(height: 18),
@@ -74,47 +80,6 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
           ],
         );
       },
-    );
-  }
-}
-
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller, required this.onChanged});
-
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(color: AppColors.text),
-      decoration: InputDecoration(
-        hintText: 'Tafuta sala...',
-        hintStyle: Theme.of(context).textTheme.bodyLarge,
-        prefixIcon: const Icon(Icons.search, color: AppColors.mutedText),
-        filled: true,
-        fillColor: AppColors.nightPanel,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: AppColors.primary),
-        ),
-      ),
     );
   }
 }
@@ -178,7 +143,7 @@ class _TabButton extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.night : Colors.transparent,
+            color: selected ? AppColors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(18),
           ),
           child: Text(
@@ -269,9 +234,9 @@ class _CategoryList extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.nightPanel,
+              color: AppColors.surface,
               border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,14 +277,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 64),
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
+    return AppEmptyState(message: message, icon: Icons.menu_book_outlined);
   }
 }
 
@@ -330,27 +288,11 @@ class _PrayerLoadError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Sala hazijapakia',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Kuna tatizo kusoma maudhui ya ndani.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 20),
-            FilledButton(onPressed: onRetry, child: const Text('Jaribu tena')),
-          ],
-        ),
-      ),
+    return AppErrorState(
+      title: 'Sala hazijapakia',
+      message: 'Kuna tatizo kusoma maudhui ya ndani.',
+      actionLabel: 'Jaribu tena',
+      onAction: onRetry,
     );
   }
 }
