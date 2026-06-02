@@ -78,6 +78,8 @@ Done when:
 
 ## Phase 3: Content Architecture
 
+Status: Completed.
+
 Goal: Replace older content shape with SRS-compliant bundled JSON.
 
 Tasks:
