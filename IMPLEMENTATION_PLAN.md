@@ -140,6 +140,18 @@ The screenshots define these MVP UI targets:
 - Library, Favorites, About, Settings entry points.
 - Cream background, dark navy primary surfaces, gold accent actions, serif headings, rounded white cards, and four-tab bottom navigation.
 
+## Phase 2: Design System From UI Reference
+
+Status: Completed.
+
+Implemented:
+
+- Light-first cream/navy/gold theme tokens.
+- Dark theme support through the same token structure.
+- Shared spacing and text-style constants.
+- Reusable bottom navigation, cards, empty/error/loading states, search bar, prayer text view, and section header widgets.
+- Existing shell and prayer flow now use the shared design-system widgets where practical.
+
 ## Phase 2: SRS-Aligned App Skeleton
 
 Status: Completed as the Phase 1 architecture restructure baseline.
