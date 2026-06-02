@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../config/theme/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -28,7 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingSlide(
       icon: Icons.translate_outlined,
       title: 'Kiingereza & Kiswahili',
-      body: 'Sala na masomo katika lugha unayoipenda.',
+      body: 'Sala, rozari, na novenas katika lugha unayoipenda.',
     ),
   ];
 
@@ -60,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: () => context.go('/home'),
+                    onPressed: () => context.go('/today'),
                     child: const Text('Ruka'),
                   ),
                 ],
@@ -79,7 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               FilledButton(
                 onPressed: () {
                   if (isLastPage) {
-                    context.go('/home');
+                    context.go('/today');
                     return;
                   }
 
@@ -88,20 +88,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     curve: Curves.easeOutCubic,
                   );
                 },
-                child: Text(isLastPage ? 'Endelea kama Mgeni' : 'Endelea'),
+                child: Text(isLastPage ? 'Endelea' : 'Endelea'),
               ),
-              if (isLastPage) ...[
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => context.go('/home'),
-                  child: const Text('Fungua Akaunti'),
-                ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: () => context.go('/home'),
-                  child: const Text('Ingia'),
-                ),
-              ],
             ],
           ),
         ),
