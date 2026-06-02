@@ -31,12 +31,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
-    expect(find.text('Baba Yetu'), findsOneWidget);
+    expect(find.text('Sala za Kawaida'), findsOneWidget);
+
+    await tester.tap(find.text('Sala za Kawaida').first);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Baba Yetu').first);
     await tester.pumpAndSettle();
 
     expect(find.text('SALA ZA KAWAIDA'), findsOneWidget);
     expect(find.textContaining('Baba yetu uliye mbinguni'), findsOneWidget);
+    expect(find.text('Source'), findsOneWidget);
   });
 }
