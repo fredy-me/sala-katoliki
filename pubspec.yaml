@@ -63,7 +63,14 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/data/
+    - assets/content/categories/
+    - assets/content/prayers/en/
+    - assets/content/prayers/sw/
+    - assets/content/novenas/en/
+    - assets/content/novenas/sw/
+    - assets/content/rosary/en/
+    - assets/content/rosary/sw/
+    - assets/content/metadata/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
