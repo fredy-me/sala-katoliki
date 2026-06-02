@@ -124,6 +124,8 @@ Done when:
 
 ## Phase 5: Today Screen
 
+Status: Completed.
+
 Goal: Build the daily entry point from the UI reference.
 
 Tasks:
@@ -143,6 +145,8 @@ Done when:
 - Reminder row reflects local reminder preference.
 
 ## Phase 6: Prayer Library And Search
+
+Status: Completed.
 
 Goal: Implement Pray and Library flows from bundled content.
 
