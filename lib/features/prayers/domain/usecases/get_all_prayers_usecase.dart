@@ -6,7 +6,7 @@ class GetAllPrayersUseCase {
 
   final PrayerRepository _repository;
 
-  Future<List<PrayerEntity>> call() {
-    return _repository.getPrayers();
+  Future<List<PrayerEntity>> call({String languageCode = 'sw'}) {
+    return _repository.getPrayers(languageCode: languageCode);
   }
 }
