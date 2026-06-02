@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../shared/presentation/widgets/feature_placeholder_screen.dart';
+import '../../../../shared/widgets/feature_placeholder_screen.dart';
 
 class RosaryScreen extends StatelessWidget {
   const RosaryScreen({super.key});
