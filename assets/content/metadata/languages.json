@@ -1,0 +1,14 @@
+[
+  {
+    "code": "en",
+    "name": "English",
+    "native_name": "English",
+    "is_default": true
+  },
+  {
+    "code": "sw",
+    "name": "Kiswahili",
+    "native_name": "Kiswahili",
+    "is_default": false
+  }
+]
