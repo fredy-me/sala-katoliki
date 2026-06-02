@@ -171,6 +171,8 @@ Acceptance checks:
 
 ## Phase 3: Bundled Content System
 
+Status: Completed.
+
 Tasks:
 
 - Move content to the SRS structure under `assets/content/`.
