@@ -1,0 +1,30 @@
+[
+  {
+    "id": "our_father",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Baba Yetu",
+    "description": "Sala aliyofundisha Yesu.",
+    "body": "Baba yetu uliye mbinguni, jina lako litukuzwe; ufalme wako ufike, mapenzi yako yatimizwe duniani kama mbinguni. Utupe leo riziki yetu, utusamehe makosa yetu kama nasi tunavyowasamehe waliotukosea; usitutie majaribuni, lakini utuokoe maovuni. Amina.",
+    "tags": ["kila siku", "rozari", "bwana"],
+    "source": "Sala ya kimapokeo ya Kikatoliki",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  },
+  {
+    "id": "glory_be",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Atukuzwe Baba",
+    "description": "Sala ya kumtukuza Mungu.",
+    "body": "Atukuzwe Baba, na Mwana, na Roho Mtakatifu, kama mwanzo, na sasa, na siku zote, hata milele. Amina.",
+    "tags": ["kila siku", "rozari"],
+    "source": "Sala ya kimapokeo ya Kikatoliki",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
