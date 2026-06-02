@@ -1,0 +1,16 @@
+[
+  {
+    "id": "act_of_contrition",
+    "type": "prayer",
+    "category": "confession_prayers",
+    "language": "en",
+    "title": "Act of Contrition",
+    "description": "Prayer of sorrow for sin.",
+    "body": "My God, I am sorry for my sins with all my heart. In choosing to do wrong and failing to do good, I have sinned against you whom I should love above all things.",
+    "tags": ["confession", "contrition", "mercy"],
+    "source": "Traditional Catholic prayer",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
