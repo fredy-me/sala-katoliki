@@ -6,6 +6,7 @@ import '../features/novenas/presentation/screens/novenas_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/prayers/presentation/screens/prayer_detail_screen.dart';
 import '../features/prayers/presentation/screens/prayer_library_screen.dart';
+import '../features/prayers/presentation/screens/prayer_list_screen.dart';
 import '../features/rosary/presentation/screens/rosary_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/today/presentation/screens/today_screen.dart';
@@ -45,6 +46,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SettingsScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/prayers/category/:categoryId',
+        builder: (context, state) {
+          return PrayerListScreen(
+            categoryId: state.pathParameters['categoryId']!,
+          );
+        },
       ),
       GoRoute(
         path: '/prayers/:prayerId',
