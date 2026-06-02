@@ -1,0 +1,58 @@
+[
+  {
+    "id": "joyful_mysteries",
+    "language": "en",
+    "title": "Joyful Mysteries",
+    "description": "The joyful events of Christ's early life.",
+    "days": ["monday", "saturday"],
+    "mysteries": [
+      "The Annunciation",
+      "The Visitation",
+      "The Nativity",
+      "The Presentation",
+      "The Finding in the Temple"
+    ]
+  },
+  {
+    "id": "sorrowful_mysteries",
+    "language": "en",
+    "title": "Sorrowful Mysteries",
+    "description": "The Passion of Our Lord.",
+    "days": ["tuesday", "friday"],
+    "mysteries": [
+      "The Agony in the Garden",
+      "The Scourging at the Pillar",
+      "The Crowning with Thorns",
+      "The Carrying of the Cross",
+      "The Crucifixion"
+    ]
+  },
+  {
+    "id": "glorious_mysteries",
+    "language": "en",
+    "title": "Glorious Mysteries",
+    "description": "The Resurrection and glory of Christ.",
+    "days": ["wednesday", "sunday"],
+    "mysteries": [
+      "The Resurrection",
+      "The Ascension",
+      "The Descent of the Holy Spirit",
+      "The Assumption",
+      "The Coronation of Mary"
+    ]
+  },
+  {
+    "id": "luminous_mysteries",
+    "language": "en",
+    "title": "Luminous Mysteries",
+    "description": "The public ministry of Jesus.",
+    "days": ["thursday"],
+    "mysteries": [
+      "The Baptism of Jesus",
+      "The Wedding at Cana",
+      "The Proclamation of the Kingdom",
+      "The Transfiguration",
+      "The Institution of the Eucharist"
+    ]
+  }
+]
