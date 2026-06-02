@@ -26,6 +26,8 @@ Done when:
 
 ## Phase 1: Architecture Restructure
 
+Status: Completed.
+
 Goal: Move the app toward the documented folder structure without breaking behavior.
 
 Tasks:
