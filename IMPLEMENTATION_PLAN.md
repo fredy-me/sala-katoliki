@@ -142,6 +142,8 @@ The screenshots define these MVP UI targets:
 
 ## Phase 2: SRS-Aligned App Skeleton
 
+Status: Completed as the Phase 1 architecture restructure baseline.
+
 Tasks:
 
 - Rename or align navigation tabs to Today, Pray, Novenas, Library.
