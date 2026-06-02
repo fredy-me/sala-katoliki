@@ -1,0 +1,22 @@
+[
+  {
+    "id": "apostles_creed",
+    "prayer_id": "apostles_creed",
+    "repeat_count": 1
+  },
+  {
+    "id": "our_father",
+    "prayer_id": "our_father",
+    "repeat_count": 1
+  },
+  {
+    "id": "hail_mary",
+    "prayer_id": "hail_mary",
+    "repeat_count": 10
+  },
+  {
+    "id": "glory_be",
+    "prayer_id": "glory_be",
+    "repeat_count": 1
+  }
+]
