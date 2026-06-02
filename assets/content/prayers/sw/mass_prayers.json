@@ -1,0 +1,16 @@
+[
+  {
+    "id": "apostles_creed",
+    "type": "prayer",
+    "category": "mass_prayers",
+    "language": "sw",
+    "title": "Kanuni ya Imani",
+    "description": "Ungamo la imani ya Kikristo.",
+    "body": "Nasadiki kwa Mungu, Baba mwenyezi, Muumba mbingu na nchi; na kwa Yesu Kristo, Mwana wake wa pekee, Bwana wetu. Alitungwa kwa uwezo wa Roho Mtakatifu, akazaliwa na Bikira Maria.",
+    "tags": ["imani", "misa", "kanuni"],
+    "source": "Sala ya kimapokeo ya Kikatoliki",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
