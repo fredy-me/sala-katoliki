@@ -1,0 +1,16 @@
+[
+  {
+    "id": "divine_mercy_prayer",
+    "type": "prayer",
+    "category": "divine_mercy",
+    "language": "sw",
+    "title": "Sala ya Huruma ya Mungu",
+    "description": "Sala fupi ya Huruma ya Mungu.",
+    "body": "Baba wa milele, ninakutolea Mwili na Damu, Roho na Umungu wa Mwanao mpendwa sana, Bwana wetu Yesu Kristo, kwa ajili ya malipizi ya dhambi zetu na za ulimwengu wote.",
+    "tags": ["huruma ya mungu", "rozari", "huruma"],
+    "source": "Ibada ya kimapokeo ya Kikatoliki",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
