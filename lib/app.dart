@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'config/routes/app_router.dart';
-import 'config/theme/app_theme.dart';
+import 'core/theme/app_theme.dart';
+import 'routes/app_router.dart';
 
 class SalaKatolikiApp extends ConsumerWidget {
   const SalaKatolikiApp({super.key});
