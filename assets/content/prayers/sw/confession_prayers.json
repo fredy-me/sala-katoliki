@@ -1,0 +1,16 @@
+[
+  {
+    "id": "act_of_contrition",
+    "type": "prayer",
+    "category": "confession_prayers",
+    "language": "sw",
+    "title": "Toba",
+    "description": "Sala ya majuto kwa dhambi.",
+    "body": "Mungu wangu, ninajuta dhambi zangu kwa moyo wangu wote. Kwa kuchagua mabaya na kushindwa kutenda mema, nimekukosea wewe ninayepaswa kukupenda kuliko yote.",
+    "tags": ["kitubio", "toba", "huruma"],
+    "source": "Sala ya kimapokeo ya Kikatoliki",
+    "version": 1,
+    "last_updated": "2026-06-02",
+    "is_offline_available": true
+  }
+]
