@@ -102,6 +102,8 @@ Done when:
 
 ## Phase 4: Onboarding And Localization
 
+Status: Completed.
+
 Goal: Build first-launch language selection from the reference UI.
 
 Tasks:
