@@ -8,13 +8,16 @@ class PrayerRepositoryImpl implements PrayerRepository {
   final PrayerLocalDataSource _localDataSource;
 
   @override
-  Future<List<PrayerEntity>> getPrayers() {
-    return _localDataSource.getPrayers();
+  Future<List<PrayerEntity>> getPrayers({String languageCode = 'sw'}) {
+    return _localDataSource.getPrayers(languageCode: languageCode);
   }
 
   @override
-  Future<PrayerEntity?> getPrayerById(String id) async {
-    final prayers = await getPrayers();
+  Future<PrayerEntity?> getPrayerById(
+    String id, {
+    String languageCode = 'sw',
+  }) async {
+    final prayers = await getPrayers(languageCode: languageCode);
 
     for (final prayer in prayers) {
       if (prayer.id == id) {
