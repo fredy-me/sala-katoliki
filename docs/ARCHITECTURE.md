@@ -2,6 +2,8 @@
 
 Sala Katoliki uses a simple offline-first Flutter architecture defined by the MVP SRS.
 
+The canonical target folder structure is documented in [folder_structure.md](architecture/folder_structure.md). Content-specific architecture is documented in [content_architecture.md](architecture/content_architecture.md), and JSON model details are documented in [data_models.md](architecture/data_models.md).
+
 ```text
 User
   -> Flutter UI
