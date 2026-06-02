@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/datasources/prayer_local_datasource.dart';
 import '../../../../data/repositories/prayer_repository.dart';
 import '../../../../data/repositories/prayer_repository_impl.dart';
+import '../../../../core/localization/localization_providers.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../../domain/usecases/get_all_prayers_usecase.dart';
 import '../../domain/usecases/get_prayer_by_id_usecase.dart';
@@ -24,14 +25,20 @@ final getPrayerByIdUseCaseProvider = Provider<GetPrayerByIdUseCase>((ref) {
 });
 
 final prayersProvider = FutureProvider<List<PrayerEntity>>((ref) {
-  return ref.watch(getAllPrayersUseCaseProvider).call();
+  final languageCode = ref.watch(activeLanguageProvider);
+  return ref
+      .watch(getAllPrayersUseCaseProvider)
+      .call(languageCode: languageCode);
 });
 
 final prayerByIdProvider = FutureProvider.family<PrayerEntity?, String>((
   ref,
   id,
 ) {
-  return ref.watch(getPrayerByIdUseCaseProvider).call(id);
+  final languageCode = ref.watch(activeLanguageProvider);
+  return ref
+      .watch(getPrayerByIdUseCaseProvider)
+      .call(id, languageCode: languageCode);
 });
 
 final favoritePrayerIdsProvider =
@@ -42,7 +49,7 @@ final favoritePrayerIdsProvider =
 class FavoritePrayerIdsNotifier extends Notifier<Set<String>> {
   @override
   Set<String> build() {
-    return {'hail-mary'};
+    return {'hail_mary'};
   }
 
   void toggle(String prayerId) {
