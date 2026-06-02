@@ -1,41 +1,37 @@
-# Sala Katoliki Implementation Plan
+# Sala Katoliki MVP Implementation Plan
 
-This document is the local development reference for building Sala Katoliki from the README specification. Keep it updated as decisions change.
+This plan follows the Sala Katoliki MVP SRS prepared for Kilimanjaro Technology on 2 June 2026. The SRS PDF is the source of truth:
 
-## Current State
+`/home/meck/Downloads/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf`
 
-- Phase 1 foundation has started.
-- `lib/main.dart` now boots `SalaKatolikiApp` inside Riverpod `ProviderScope`.
-- `pubspec.yaml` includes Riverpod, Go Router, `intl`, and `shared_preferences`.
-- The README defines the intended product, architecture, tech stack, and roadmap.
-- App routing, dark theme, onboarding, home dashboard, bottom navigation, and placeholder feature screens are implemented.
-- No real app content, localization files, local database, real auth, or backend integration are implemented yet.
+Do not add out-of-scope features to the MVP implementation path without a written requirement change.
 
 ## Product Goal
 
-Build a calm, offline-first Catholic prayer app for African Catholics with:
+Build an offline-first Catholic prayer mobile app in Flutter that helps users access essential prayers, Rosary guidance, novenas, favorites, search, reminders, and settings in English and Kiswahili.
 
-- Prayer library in English and Swahili
-- Interactive rosary
-- Daily Mass readings
-- Saints and feast days
-- Favorites and bookmarks
-- Guest-first usage
-- Optional account sync
-- Settings for language, theme, notifications, and reading preferences
+The MVP must not require authentication, a backend, payment, ads, media content, community features, or copyrighted content without approval.
+
+## Current State
+
+- Flutter app shell exists.
+- Riverpod, Go Router, `intl`, `shared_preferences`, and `easy_localization` are present.
+- Routing, theme, onboarding, home, settings, Rosary placeholder, and prayer library screens exist.
+- Prayer library currently uses `assets/data/prayers.json`, but the schema does not yet match the SRS recommended content structure.
+- Some folders from earlier planning reference non-MVP areas such as auth, saints, notifications, and readings. These must not drive MVP work unless they are converted into SRS-compliant modules or removed during restructuring.
 
 ## Development Principles
 
-- Start useful offline before adding cloud sync.
-- Do not force login before users can access spiritual content.
-- Keep feature folders independent.
-- Keep business logic outside widgets.
-- Prefer simple local content flows before integrating Supabase and Firebase.
-- Match the shared Screen UI folder once available.
+- Build offline-first before any remote capability.
+- Load prayer, category, Rosary, and novena content from JSON assets.
+- Keep UI, domain logic, content loading, and local storage separated.
+- Use repository interfaces so future remote content can be added behind the same contract.
+- Persist only low-sensitivity local data: language, theme, font size, favorites, reminders, Rosary progress, and novena progress.
+- Request only notification permission when needed.
+- Validate content fields, language codes, IDs, and duplicate IDs through tests or scripts.
+- Treat content source and licensing metadata as release-blocking.
 
-## Target Architecture
-
-Use feature-first clean architecture:
+## Target Structure
 
 ```text
 lib/
@@ -44,30 +40,19 @@ lib/
   config/
     routes/
     theme/
-    constants/
   core/
+    content/
     errors/
-    extensions/
-    services/
+    localization/
+    notifications/
+    storage/
     utils/
   features/
-    home/
-      data/
-      domain/
+    onboarding/
+      presentation/
+    today/
       presentation/
     prayer_library/
-      data/
-      domain/
-      presentation/
-    rosary/
-      data/
-      domain/
-      presentation/
-    daily_readings/
-      data/
-      domain/
-      presentation/
-    saints/
       data/
       domain/
       presentation/
@@ -75,259 +60,174 @@ lib/
       data/
       domain/
       presentation/
+    rosary/
+      data/
+      domain/
+      presentation/
+    novenas/
+      data/
+      domain/
+      presentation/
     settings/
       data/
       domain/
       presentation/
-    auth/
-      data/
-      domain/
-      presentation/
 assets/
-  data/
+  content/
+    categories.json
+    prayers/
+    rosary/
+    novenas/
   translations/
-  images/
+docs/
 ```
 
-## Phase 0: UI And Content Inputs
+## Phase 1: Documentation Baseline
 
-Reference UI location:
-
-- `/home/meck/Desktop/Sala-picturesUI`
-
-Current reference screens:
-
-- Onboarding slide: daily Catholic prayer
-- Onboarding slide: offline usage
-- Onboarding slide: English and Swahili with guest/account actions
-- Home dashboard with quick access cards and bottom navigation
-
-Auth decision:
-
-- Authentication will be mocked until the end of the project.
-- Early phases must support guest-first usage and placeholder auth actions only.
-
-Still collect:
-
-- Logo/app icon if available
-- Prayer content sources
-- Swahili translations
-- Daily readings source decision
-- Saints and feast day content source
-
-Notes when Screen UI folder is shared:
-
-- Review every screen before coding layout.
-- Extract shared design rules: colors, spacing, typography, navigation patterns, button styles, cards, empty states, loading states.
-- Update this plan with exact screen list and implementation order.
-
-## Phase 1: App Foundation
-
-Status: Implemented as the first app shell. Keep refining as more UI references arrive.
+Status: In progress.
 
 Tasks:
 
-- Replace the default counter app.
-- Add core dependencies:
-  - `flutter_riverpod`
-  - `go_router`
-  - `intl`
-  - `shared_preferences`
-  - localization package
-- Create `lib/app.dart`.
-- Create app theme using README colors.
-- Create initial route structure.
-- Create shell navigation for Home, Prayers, Rosary, and Menu.
-- Create placeholder screens matching the final app sections.
+- Replace README claims that conflict with the SRS.
+- Add architecture documentation.
+- Add content contribution and schema documentation.
+- Add requirements traceability documentation.
+- Keep implementation plan aligned to the SRS.
 
 Acceptance checks:
 
-- App launches without the default Flutter demo UI.
-- Navigation works between main sections.
-- Theme is consistent and calm.
-- `flutter analyze` passes.
-- `flutter test` passes.
+- README states the PDF as source of truth.
+- MVP scope and out-of-scope features match the SRS.
+- Architecture docs describe offline-first bundled JSON and local storage.
+- Content docs describe required fields and validation rules.
 
-## Phase 2: Local Offline Content MVP
-
-Status: Implemented for the Prayer Library MVP with bundled JSON content. Saints and readings placeholder data remain for later phases.
+## Phase 2: SRS-Aligned App Skeleton
 
 Tasks:
 
-- Create bundled JSON files:
-  - `assets/data/prayers.json`
-  - `assets/data/saints.json`
-  - `assets/data/readings.json`
-- Register assets in `pubspec.yaml`.
-- Implement prayer entity/model.
-- Implement local JSON data source for prayers.
-- Implement prayer repository.
-- Implement Riverpod providers for prayer list, categories, and prayer detail.
-- Build Prayer Library screen.
-- Build Prayer Detail screen.
-- Add search and category filtering.
+- Rename or align navigation tabs to Today, Pray, Novenas, Library.
+- Keep first-launch language selection as the entry flow.
+- Remove or quarantine non-MVP navigation for auth, saints, daily readings, backend sync, and media.
+- Ensure Settings includes language, reminder, font size, theme, About, and content sources.
 
 Acceptance checks:
 
-- User can open app and browse prayers offline.
-- User can search prayers.
-- User can open a prayer detail page.
-- Missing/empty content has a graceful UI.
+- First-time user can choose English or Kiswahili and reach Today.
+- Main tabs match the SRS.
+- No MVP screen requires account login or internet.
 
-## Phase 3: Favorites And Settings
+## Phase 3: Bundled Content System
 
 Tasks:
 
-- Add local persistence for favorites.
-- Add favorite/unfavorite action on prayer details.
-- Build Favorites screen.
-- Add settings persistence:
-  - language
-  - theme mode
-  - notification preference placeholder
-  - text size or reading comfort options
-- Add light, dark, and optional sepia modes.
+- Move content to the SRS structure under `assets/content/`.
+- Implement category JSON loading.
+- Implement prayer JSON loading by language and category.
+- Implement Rosary JSON loading by language.
+- Implement novena JSON loading by language.
+- Add content validation tests or scripts for required fields, duplicate IDs, valid language codes, and valid category references.
 
 Acceptance checks:
 
-- Favorites survive app restart.
-- Settings survive app restart.
-- Guest mode can use favorites locally.
+- Common prayers load from JSON, not screen files.
+- Adding a valid prayer JSON entry shows it in category and search without a new screen.
+- Invalid content fails validation during development.
+- Missing translations show fallback or safe unavailable state.
 
-## Phase 4: Rosary
+## Phase 4: Prayer Library, Favorites, And Search
 
 Tasks:
 
-- Define rosary mysteries and daily mystery rules.
-- Define rosary progress state.
-- Build interactive rosary screen:
-  - current mystery
-  - current prayer
-  - bead progress
-  - next/back/reset controls
-- Persist in-progress rosary locally.
+- Implement category list from JSON.
+- Implement prayer list filtered by language and category.
+- Implement prayer detail with title, body, source, category, and favorite state.
+- Implement local favorites persistence.
+- Implement offline search across title, body, tags, and category.
 
 Acceptance checks:
 
-- User can complete a rosary without internet.
-- Progress is visually clear.
-- App can restore unfinished progress.
+- User can browse prayers offline.
+- User can open prayer detail offline.
+- Favorites can be added, removed, displayed, and persist after restart.
+- Search works offline and handles empty/no-match states.
 
-## Phase 5: Daily Readings And Saints
+## Phase 5: Rosary
 
 Tasks:
 
-- Implement readings entity/model.
-- Implement local readings repository.
-- Build Daily Readings screen.
-- Add date selection/archive.
-- Implement saints entity/model.
-- Build Saints screen.
-- Build Saint Detail screen.
-- Add saint of the day logic.
+- Define mysteries and step sequence in content/data files.
+- Suggest mystery from local day.
+- Implement next, previous, restart, exit, and continue.
+- Persist mystery ID and current step locally.
+- Reset corrupt saved progress with a friendly message.
 
 Acceptance checks:
 
-- Today readings load from local content.
-- Saints can be browsed by date/month.
-- Saint detail page displays biography, feast day, and prayer/quote if available.
+- User can start and complete a Rosary offline.
+- Progress survives leaving the screen or app backgrounding where possible.
+- User can restart and clear progress.
 
-## Phase 6: Localization
+## Phase 6: Novenas
 
 Tasks:
 
-- Add English and Swahili translation files.
-- Localize all UI strings.
-- Confirm content model supports English and Swahili fields.
-- Add language setting.
+- Define novena model with 9 day objects.
+- Implement novena list, detail, start, mark day complete, and continue.
+- Persist active novena ID and completed days locally.
+- Show active novena continuation on Today.
 
 Acceptance checks:
 
-- User can switch English/Swahili.
-- Prayer content changes language where translation exists.
-- Missing translations have a clear fallback.
+- User can start a novena offline.
+- User can mark Day 1-Day 9 complete.
+- Active progress is visible from Today.
+- Invalid day values are rejected or safely reset.
 
-## Phase 7: Auth And Cloud Sync
+## Phase 7: Reminders And Settings
 
 Tasks:
 
-- Add Supabase configuration.
-- Add environment config handling.
-- Implement auth:
-  - guest mode
-  - email/password
-  - optional Google/Apple later
-- Sync favorites and settings for authenticated users.
-- Keep local-first behavior when offline.
+- Add local notification scheduling for daily reminders.
+- Add reminder enable, change, and disable.
+- Add language, font size, theme, About, content source, support, and privacy policy entries.
+- Handle notification permission denial gracefully.
 
 Acceptance checks:
 
-- App works without account.
-- User can sign up/login when online.
-- Local favorites can sync after login.
-- Offline behavior remains usable.
+- Reminder can be scheduled, changed, and disabled.
+- Settings persist after app restart.
+- Tapping reminder opens the app, preferably Today or active novena when feasible.
+- App requests no permission except notification permission where required.
 
-## Phase 8: Notifications
+## Phase 8: QA And Release Readiness
 
 Tasks:
 
-- Add Firebase setup.
-- Add notification permission flow.
-- Add daily prayer/readings reminder settings.
-- Add local notification scheduling if appropriate.
+- Run airplane-mode regression testing.
+- Run 2-hour exploratory core-flow QA.
+- Verify Android minimum and target SDK requirements at release time.
+- Verify iOS minimum support if iOS release is included.
+- Verify content source/permission status.
+- Verify support link, privacy policy link, content attribution, and external links.
+- Prepare Android internal testing build and optional iOS TestFlight build.
 
 Acceptance checks:
 
-- User can enable/disable reminders.
-- Notifications are respectful and not aggressive.
-- App handles notification taps correctly.
+- Core prayer features work offline.
+- No crash in normal core flows during exploratory QA.
+- App size remains text-first and lightweight.
+- Store checklist is complete.
 
-## Phase 9: Quality, Release, And Store Prep
+## Future Backlog
 
-Tasks:
+Only after MVP validation:
 
-- Replace app package id from `com.example.salakatoliki`.
-- Add app icon and splash screen.
-- Add privacy policy.
-- Add Play Store metadata.
-- Add CI for analyze/test/build.
-- Add release signing configuration.
-- Add integration tests for critical flows.
-
-Acceptance checks:
-
-- Android release build succeeds.
-- Analyzer and tests pass in CI.
-- App has production identity and assets.
-
-## First Coding Milestone
-
-The first useful coding target should be:
-
-1. App foundation with real theme and navigation.
-2. Home screen placeholder based on Screen UI reference.
-3. Prayer Library using bundled local JSON.
-4. Prayer Detail screen.
-5. Local favorites.
-
-This gives users immediate value without waiting for Supabase, Firebase, or full content completion.
-
-## Open Decisions
-
-- Exact Screen UI folder path.
-- Exact app package id.
-- Preferred localization package.
-- Whether to use Isar immediately or start with bundled JSON plus `shared_preferences`.
-- Source and licensing for prayers, readings, and saints.
-- Whether daily readings are bundled yearly, fetched from an API, or managed in Supabase.
-- Whether notifications use Firebase only, local notifications, or both.
-
-## Developer Checklist Before Each Phase
-
-- Read README section related to the phase.
-- Review Screen UI reference for affected screens.
-- Keep changes scoped to the current phase.
-- Add or update tests where behavior is introduced.
-- Run `flutter analyze`.
-- Run `flutter test`.
-- Update this plan when implementation reality changes.
+- Backend or CMS.
+- Remote content updates.
+- User accounts and cloud sync.
+- Audio prayers.
+- Full Bible.
+- Daily Mass readings with licensed source.
+- Community features.
+- AI spiritual assistant.
+- Donations or subscriptions.
