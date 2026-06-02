@@ -1,0 +1,10 @@
+{
+  "app_name": "Sala Katoliki",
+  "version": "0.1.0",
+  "developer": "Kilimanjaro Technology",
+  "support_email": "hello@kilimanjaro.tech",
+  "website": "https://kilimanjaro.tech",
+  "privacy_policy_url": "https://kilimanjaro.tech/privacy",
+  "content_disclaimer": "This app is a prayer aid, not a substitute for the Sacraments or Magisterium.",
+  "content_sources_note": "Traditional Catholic prayers and approved devotions."
+}
