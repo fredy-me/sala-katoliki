@@ -6,7 +6,7 @@ class GetPrayerByIdUseCase {
 
   final PrayerRepository _repository;
 
-  Future<PrayerEntity?> call(String id) {
-    return _repository.getPrayerById(id);
+  Future<PrayerEntity?> call(String id, {String languageCode = 'sw'}) {
+    return _repository.getPrayerById(id, languageCode: languageCode);
   }
 }
