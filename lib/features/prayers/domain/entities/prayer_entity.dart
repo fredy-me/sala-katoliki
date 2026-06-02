@@ -1,40 +1,63 @@
 class PrayerEntity {
   const PrayerEntity({
     required this.id,
-    required this.category,
-    required this.categorySw,
-    required this.titles,
-    required this.texts,
+    required this.type,
+    required this.categoryId,
+    required this.language,
+    required this.localizedTitle,
+    required this.body,
+    required this.categoryTitles,
+    this.description,
+    this.tags = const [],
+    this.source,
+    this.version,
+    this.lastUpdated,
+    this.isOfflineAvailable = true,
     this.isFavorite = false,
   });
 
   final String id;
-  final String category;
-  final String categorySw;
-  final Map<String, String> titles;
-  final Map<String, String> texts;
+  final String type;
+  final String categoryId;
+  final String language;
+  final String localizedTitle;
+  final String body;
+  final Map<String, String> categoryTitles;
+  final String? description;
+  final List<String> tags;
+  final String? source;
+  final int? version;
+  final DateTime? lastUpdated;
+  final bool isOfflineAvailable;
   final bool isFavorite;
 
-  String title([String languageCode = 'sw']) {
-    return titles[languageCode] ?? titles['en'] ?? titles.values.first;
+  String title([String? languageCode]) {
+    return localizedTitle;
   }
 
-  String text([String languageCode = 'sw']) {
-    return texts[languageCode] ?? texts['en'] ?? texts.values.first;
+  String text([String? languageCode]) {
+    return body;
   }
 
-  String categoryLabel([String languageCode = 'sw']) {
-    return languageCode == 'sw' ? categorySw : category;
+  String categoryLabel([String? languageCode]) {
+    final effectiveLanguageCode = languageCode ?? language;
+    return categoryTitles[effectiveLanguageCode] ??
+        categoryTitles['en'] ??
+        categoryId.replaceAll('_', ' ');
   }
 
-  bool matches(String query, [String languageCode = 'sw']) {
+  bool matches(String query, [String? languageCode]) {
+    final effectiveLanguageCode = languageCode ?? language;
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) {
       return true;
     }
 
-    return title(languageCode).toLowerCase().contains(normalized) ||
-        categoryLabel(languageCode).toLowerCase().contains(normalized) ||
-        text(languageCode).toLowerCase().contains(normalized);
+    return title(effectiveLanguageCode).toLowerCase().contains(normalized) ||
+        categoryLabel(
+          effectiveLanguageCode,
+        ).toLowerCase().contains(normalized) ||
+        text(effectiveLanguageCode).toLowerCase().contains(normalized) ||
+        tags.any((tag) => tag.toLowerCase().contains(normalized));
   }
 }
