@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
@@ -35,6 +37,10 @@ class PrayerDetailScreen extends ConsumerWidget {
                 onBack: () => context.pop(),
               );
             }
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(recentPrayerIdsProvider.notifier).record(prayer.id);
+            });
 
             final isFavorite = favorites.contains(prayer.id);
 
@@ -102,6 +108,31 @@ class PrayerDetailScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 24),
                       PrayerTextView(text: prayer.text()),
+                      const SizedBox(height: AppSpacing.xl),
+                      AppCard(
+                        backgroundColor: AppColors.surfaceWarm,
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Source',
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: AppColors.mutedText,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              prayer.source?.trim().isNotEmpty == true
+                                  ? prayer.source!
+                                  : 'Traditional Catholic Prayer',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
