@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
@@ -37,10 +38,13 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
   Widget build(BuildContext context) {
     final prayersState = ref.watch(prayersProvider);
     final favoriteIds = ref.watch(favoritePrayerIdsProvider);
+    final languageCode = ref.watch(activeLanguageProvider);
+    final strings = _PrayerLibraryStrings(languageCode);
 
     return prayersState.when(
-      loading: () => const AppLoading(label: 'Inapakia sala...'),
+      loading: () => AppLoading(label: strings.loading),
       error: (error, stackTrace) => _PrayerLoadError(
+        strings: strings,
         onRetry: () {
           ref.invalidate(prayersProvider);
         },
@@ -53,16 +57,20 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
         return ListView(
           padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
           children: [
-            Text('Sala', style: Theme.of(context).textTheme.headlineLarge),
+            Text(
+              strings.title,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
             const SizedBox(height: 18),
             AppSearchBar(
               controller: _searchController,
-              hintText: 'Tafuta sala...',
+              hintText: strings.searchHint,
               onChanged: (value) => setState(() => _query = value),
             ),
             const SizedBox(height: 18),
             _TabSelector(
               selected: _selectedTab,
+              strings: strings,
               onChanged: (tab) => setState(() => _selectedTab = tab),
             ),
             const SizedBox(height: 16),
@@ -70,11 +78,16 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
               _PrayerTab.all => _AllPrayersList(
                 prayers: filtered,
                 favoriteIds: favoriteIds,
+                emptyMessage: strings.noSearchResults,
               ),
-              _PrayerTab.categories => _CategoryList(prayers: filtered),
+              _PrayerTab.categories => _CategoryList(
+                prayers: filtered,
+                emptyMessage: strings.noCategoryResults,
+              ),
               _PrayerTab.favorites => _FavoritesList(
                 prayers: filtered,
                 favoriteIds: favoriteIds,
+                emptyMessage: strings.emptyFavorites,
               ),
             },
           ],
@@ -85,9 +98,14 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
 }
 
 class _TabSelector extends StatelessWidget {
-  const _TabSelector({required this.selected, required this.onChanged});
+  const _TabSelector({
+    required this.selected,
+    required this.strings,
+    required this.onChanged,
+  });
 
   final _PrayerTab selected;
+  final _PrayerLibraryStrings strings;
   final ValueChanged<_PrayerTab> onChanged;
 
   @override
@@ -102,17 +120,17 @@ class _TabSelector extends StatelessWidget {
       child: Row(
         children: [
           _TabButton(
-            label: 'Sala zote',
+            label: strings.allTab,
             selected: selected == _PrayerTab.all,
             onTap: () => onChanged(_PrayerTab.all),
           ),
           _TabButton(
-            label: 'Makundi',
+            label: strings.categoriesTab,
             selected: selected == _PrayerTab.categories,
             onTap: () => onChanged(_PrayerTab.categories),
           ),
           _TabButton(
-            label: 'Vipendwa',
+            label: strings.favoritesTab,
             selected: selected == _PrayerTab.favorites,
             onTap: () => onChanged(_PrayerTab.favorites),
           ),
@@ -159,17 +177,20 @@ class _TabButton extends StatelessWidget {
 }
 
 class _AllPrayersList extends StatelessWidget {
-  const _AllPrayersList({required this.prayers, required this.favoriteIds});
+  const _AllPrayersList({
+    required this.prayers,
+    required this.favoriteIds,
+    required this.emptyMessage,
+  });
 
   final List<PrayerEntity> prayers;
   final Set<String> favoriteIds;
+  final String emptyMessage;
 
   @override
   Widget build(BuildContext context) {
     if (prayers.isEmpty) {
-      return const _EmptyState(
-        message: 'Hakuna sala inayolingana na utafutaji huu.',
-      );
+      return _EmptyState(message: emptyMessage);
     }
 
     return Column(
@@ -188,10 +209,15 @@ class _AllPrayersList extends StatelessWidget {
 }
 
 class _FavoritesList extends StatelessWidget {
-  const _FavoritesList({required this.prayers, required this.favoriteIds});
+  const _FavoritesList({
+    required this.prayers,
+    required this.favoriteIds,
+    required this.emptyMessage,
+  });
 
   final List<PrayerEntity> prayers;
   final Set<String> favoriteIds;
+  final String emptyMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -200,26 +226,27 @@ class _FavoritesList extends StatelessWidget {
         .toList(growable: false);
 
     if (favorites.isEmpty) {
-      return const _EmptyState(
-        message: 'Gusa moyo kwenye sala yoyote kuihifadhi hapa.',
-      );
+      return _EmptyState(message: emptyMessage);
     }
 
-    return _AllPrayersList(prayers: favorites, favoriteIds: favoriteIds);
+    return _AllPrayersList(
+      prayers: favorites,
+      favoriteIds: favoriteIds,
+      emptyMessage: emptyMessage,
+    );
   }
 }
 
 class _CategoryList extends StatelessWidget {
-  const _CategoryList({required this.prayers});
+  const _CategoryList({required this.prayers, required this.emptyMessage});
 
   final List<PrayerEntity> prayers;
+  final String emptyMessage;
 
   @override
   Widget build(BuildContext context) {
     if (prayers.isEmpty) {
-      return const _EmptyState(
-        message: 'Hakuna kundi linalolingana na utafutaji huu.',
-      );
+      return _EmptyState(message: emptyMessage);
     }
 
     final grouped = <String, List<PrayerEntity>>{};
@@ -282,17 +309,48 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _PrayerLoadError extends StatelessWidget {
-  const _PrayerLoadError({required this.onRetry});
+  const _PrayerLoadError({required this.strings, required this.onRetry});
 
+  final _PrayerLibraryStrings strings;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     return AppErrorState(
-      title: 'Sala hazijapakia',
-      message: 'Kuna tatizo kusoma maudhui ya ndani.',
-      actionLabel: 'Jaribu tena',
+      title: strings.loadErrorTitle,
+      message: strings.loadErrorMessage,
+      actionLabel: strings.retry,
       onAction: onRetry,
     );
   }
+}
+
+class _PrayerLibraryStrings {
+  const _PrayerLibraryStrings(this.languageCode);
+
+  final String languageCode;
+
+  bool get _sw => languageCode == 'sw';
+
+  String get title => _sw ? 'Sala' : 'Pray';
+  String get loading => _sw ? 'Inapakia sala...' : 'Loading prayers...';
+  String get searchHint => _sw ? 'Tafuta sala...' : 'Search prayers...';
+  String get allTab => _sw ? 'Sala zote' : 'All';
+  String get categoriesTab => _sw ? 'Makundi' : 'Categories';
+  String get favoritesTab => _sw ? 'Vipendwa' : 'Favorites';
+  String get noSearchResults => _sw
+      ? 'Hakuna sala inayolingana na utafutaji huu.'
+      : 'No prayers match this search.';
+  String get noCategoryResults => _sw
+      ? 'Hakuna kundi linalolingana na utafutaji huu.'
+      : 'No categories match this search.';
+  String get emptyFavorites => _sw
+      ? 'Gusa moyo kwenye sala yoyote kuihifadhi hapa.'
+      : 'Tap the heart on any prayer to save it here.';
+  String get loadErrorTitle =>
+      _sw ? 'Sala hazijapakia' : 'Prayers did not load';
+  String get loadErrorMessage => _sw
+      ? 'Kuna tatizo kusoma maudhui ya ndani.'
+      : 'There was a problem reading local content.';
+  String get retry => _sw ? 'Jaribu tena' : 'Retry';
 }
