@@ -189,6 +189,25 @@ Acceptance checks:
 - Invalid content fails validation during development.
 - Missing translations show fallback or safe unavailable state.
 
+## Phase 4A: Onboarding And Localization
+
+Status: Completed.
+
+Tasks:
+
+- Replace onboarding carousel with first-launch English/Kiswahili language selection.
+- Persist selected language locally.
+- Load prayer content using selected language.
+- Allow language changes from Settings.
+- Localize current onboarding, settings, and prayer-library labels.
+
+Acceptance checks:
+
+- First-time user can choose English or Kiswahili and reach Today.
+- Selected language persists after restart.
+- Prayer content changes language based on saved preference.
+- Language can be changed from Settings.
+
 ## Phase 4: Prayer Library, Favorites, And Search
 
 Tasks:
