@@ -10,8 +10,8 @@ final selectedLanguageProvider =
       SelectedLanguageNotifier.new,
     );
 
-final activeLanguageProvider = FutureProvider<String>((ref) async {
-  return await ref.watch(selectedLanguageProvider.future) ??
+final activeLanguageProvider = Provider<String>((ref) {
+  return ref.watch(selectedLanguageProvider).asData?.value ??
       AppConstants.defaultLanguageCode;
 });
 
