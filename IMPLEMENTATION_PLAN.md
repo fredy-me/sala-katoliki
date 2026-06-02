@@ -208,7 +208,28 @@ Acceptance checks:
 - Prayer content changes language based on saved preference.
 - Language can be changed from Settings.
 
+## Phase 5: Today Screen
+
+Status: Completed.
+
+Tasks:
+
+- Build Today dashboard.
+- Add daily prayer hero card.
+- Add active or empty novena state.
+- Add Rosary today card.
+- Add quick actions grid.
+- Add reminder status row reflecting local preferences.
+
+Acceptance checks:
+
+- User can reach a prayer or Rosary within two taps.
+- Active novena state appears when local progress exists.
+- Reminder row reflects local reminder preference.
+
 ## Phase 4: Prayer Library, Favorites, And Search
+
+Status: Phase 6 prayer library and search baseline completed. Favorites persistence remains scheduled for the dedicated Favorites phase.
 
 Tasks:
 
