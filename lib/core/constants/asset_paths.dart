@@ -1,4 +1,6 @@
 abstract final class AssetPaths {
+  static const defaultContentLanguage = 'sw';
+
   static const images = 'assets/images/';
   static const logo = 'assets/images/logo/';
   static const icons = 'assets/images/icons/';
@@ -13,6 +15,10 @@ abstract final class AssetPaths {
   static const rosaryEn = 'assets/content/rosary/en/';
   static const rosarySw = 'assets/content/rosary/sw/';
   static const metadata = 'assets/content/metadata/';
+
+  static const contentManifest =
+      'assets/content/metadata/content_manifest.json';
+  static const categoriesFile = 'assets/content/categories/categories.json';
 
   static const legacyPrayers = 'assets/data/prayers.json';
 }
