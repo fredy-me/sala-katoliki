@@ -1,0 +1,67 @@
+[
+  {
+    "id": "common_prayers",
+    "title": {
+      "en": "Common Prayers",
+      "sw": "Sala za Kawaida"
+    },
+    "description": {
+      "en": "Essential Catholic prayers for daily use.",
+      "sw": "Sala muhimu za Kikatoliki kwa matumizi ya kila siku."
+    },
+    "sort_order": 1,
+    "icon": "cross"
+  },
+  {
+    "id": "marian_prayers",
+    "title": {
+      "en": "Marian Prayers",
+      "sw": "Sala za Bikira Maria"
+    },
+    "description": {
+      "en": "Prayers honoring Our Lady.",
+      "sw": "Sala za kumheshimu Bikira Maria."
+    },
+    "sort_order": 2,
+    "icon": "star"
+  },
+  {
+    "id": "confession_prayers",
+    "title": {
+      "en": "Confession Prayers",
+      "sw": "Sala za Kitubio"
+    },
+    "description": {
+      "en": "Examination and acts of contrition.",
+      "sw": "Tafakari na sala za toba."
+    },
+    "sort_order": 3,
+    "icon": "hands_prayer"
+  },
+  {
+    "id": "mass_prayers",
+    "title": {
+      "en": "Mass Prayers",
+      "sw": "Sala za Misa"
+    },
+    "description": {
+      "en": "Prayers connected with the Holy Mass.",
+      "sw": "Sala zinazohusiana na Misa Takatifu."
+    },
+    "sort_order": 4,
+    "icon": "church"
+  },
+  {
+    "id": "divine_mercy",
+    "title": {
+      "en": "Divine Mercy",
+      "sw": "Huruma ya Mungu"
+    },
+    "description": {
+      "en": "Chaplet and Divine Mercy devotions.",
+      "sw": "Rozari na ibada za Huruma ya Mungu."
+    },
+    "sort_order": 5,
+    "icon": "heart"
+  }
+]
