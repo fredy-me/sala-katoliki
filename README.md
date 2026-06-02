@@ -44,6 +44,8 @@ Explicitly out of scope for the MVP:
 - [Adding New Prayers](docs/content_guidelines/adding_new_prayers.md) documents the no-hard-coded-prayer workflow.
 - [Translation Guidelines](docs/content_guidelines/translation_guidelines.md) documents English/Kiswahili content rules.
 - [Content Rights](docs/content_guidelines/content_rights.md) documents source and licensing requirements.
+- [UI Reference](docs/ui_reference.md) documents the provided mobile screenshots and visual rules.
+- [Implementation Phases](docs/implementation_phases.md) defines the roadmap from restructure to production readiness.
 - [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) maps MVP requirements to implementation and tests.
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) is the active development sequence.
 
