@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_card.dart';
 import '../../domain/entities/prayer_entity.dart';
 
 class PrayerCard extends StatelessWidget {
@@ -17,16 +19,14 @@ class PrayerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(22),
+    return AppCard(
       onTap: onTap,
+      radius: AppSpacing.radiusLg,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.lg,
+      ),
       child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: AppColors.nightPanel,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(22),
-        ),
         child: Row(
           children: [
             Expanded(
