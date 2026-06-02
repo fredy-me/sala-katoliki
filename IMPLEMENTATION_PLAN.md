@@ -4,6 +4,12 @@ This plan follows the Sala Katoliki MVP SRS prepared for Kilimanjaro Technology 
 
 `/home/meck/Downloads/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf`
 
+The UI reference source is:
+
+`/home/meck/Desktop/Sala-picturesUI`
+
+The production roadmap is documented in [docs/implementation_phases.md](docs/implementation_phases.md).
+
 Do not add out-of-scope features to the MVP implementation path without a written requirement change.
 
 ## Product Goal
@@ -97,7 +103,7 @@ tools/
 
 ## Phase 1: Documentation Baseline
 
-Status: In progress.
+Status: Completed.
 
 Tasks:
 
@@ -113,6 +119,26 @@ Acceptance checks:
 - MVP scope and out-of-scope features match the SRS.
 - Architecture docs describe offline-first bundled JSON and local storage.
 - Content docs describe required fields and validation rules.
+
+## UI Reference Baseline
+
+Status: Completed.
+
+Reference folder:
+
+`/home/meck/Desktop/Sala-picturesUI`
+
+Documented in [docs/ui_reference.md](docs/ui_reference.md).
+
+The screenshots define these MVP UI targets:
+
+- Language selection in English and Kiswahili.
+- Today dashboard.
+- Pray category grid.
+- Holy Rosary home and Rosary step flow.
+- Novenas list, novena progress, and novena day reading.
+- Library, Favorites, About, Settings entry points.
+- Cream background, dark navy primary surfaces, gold accent actions, serif headings, rounded white cards, and four-tab bottom navigation.
 
 ## Phase 2: SRS-Aligned App Skeleton
 
