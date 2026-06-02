@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "last_updated": "2026-06-02",
+  "languages": ["en", "sw"],
+  "categories": "assets/content/categories/categories.json",
+  "prayers": {
+    "en": [
+      "assets/content/prayers/en/common_prayers.json",
+      "assets/content/prayers/en/marian_prayers.json",
+      "assets/content/prayers/en/confession_prayers.json",
+      "assets/content/prayers/en/mass_prayers.json",
+      "assets/content/prayers/en/divine_mercy.json"
+    ],
+    "sw": [
+      "assets/content/prayers/sw/common_prayers.json",
+      "assets/content/prayers/sw/marian_prayers.json",
+      "assets/content/prayers/sw/confession_prayers.json",
+      "assets/content/prayers/sw/mass_prayers.json",
+      "assets/content/prayers/sw/divine_mercy.json"
+    ]
+  },
+  "rosary": {
+    "en": [
+      "assets/content/rosary/en/rosary_prayers.json",
+      "assets/content/rosary/en/mysteries.json"
+    ],
+    "sw": [
+      "assets/content/rosary/sw/rosary_prayers.json",
+      "assets/content/rosary/sw/mysteries.json"
+    ]
+  },
+  "novenas": {
+    "en": ["assets/content/novenas/en/divine_mercy_novena.json"],
+    "sw": ["assets/content/novenas/sw/divine_mercy_novena.json"]
+  }
+}
