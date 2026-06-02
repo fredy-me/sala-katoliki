@@ -33,53 +33,66 @@ The MVP must not require authentication, a backend, payment, ads, media content,
 
 ## Target Structure
 
+The detailed canonical structure is documented in [docs/architecture/folder_structure.md](docs/architecture/folder_structure.md). Summary:
+
 ```text
 lib/
   app.dart
   main.dart
+  bootstrap.dart
   config/
-    routes/
-    theme/
+    app_config.dart
+    environment.dart
+  routes/
+    app_router.dart
+    route_names.dart
   core/
-    content/
-    errors/
+    constants/
+    theme/
     localization/
-    notifications/
-    storage/
+    errors/
     utils/
+  shared/
+    widgets/
+    models/
+    services/
+  data/
+    models/
+    repositories/
+    datasources/
   features/
     onboarding/
       presentation/
     today/
       presentation/
-    prayer_library/
-      data/
-      domain/
+    prayers/
       presentation/
-    favorites/
-      data/
       domain/
-      presentation/
     rosary/
-      data/
-      domain/
       presentation/
+      domain/
     novenas/
-      data/
-      domain/
       presentation/
+      domain/
+    library/
+      presentation/
+      domain/
     settings/
-      data/
-      domain/
       presentation/
+      domain/
 assets/
   content/
-    categories.json
+    categories/
     prayers/
-    rosary/
     novenas/
+    rosary/
+    metadata/
+  images/
   translations/
 docs/
+  architecture/
+  content_guidelines/
+tools/
 ```
 
 ## Phase 1: Documentation Baseline
