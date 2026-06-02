@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/app_error_state.dart';
+import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/prayer_text_view.dart';
 import '../providers/prayer_providers.dart';
 
 class PrayerDetailScreen extends ConsumerWidget {
@@ -18,7 +21,7 @@ class PrayerDetailScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: prayerState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const AppLoading(label: 'Inapakia sala...'),
           error: (error, stackTrace) => _DetailMessage(
             title: 'Sala haikupatikana',
             message: 'Jaribu kurudi kwenye maktaba ya sala.',
@@ -98,14 +101,7 @@ class PrayerDetailScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      Text(
-                        prayer.text(),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.text,
-                          fontSize: 20,
-                          height: 1.45,
-                        ),
-                      ),
+                      PrayerTextView(text: prayer.text()),
                     ],
                   ),
                 ),
@@ -162,24 +158,11 @@ class _DetailMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 24),
-            FilledButton(onPressed: onBack, child: const Text('Rudi')),
-          ],
-        ),
-      ),
+    return AppErrorState(
+      title: title,
+      message: message,
+      actionLabel: 'Rudi',
+      onAction: onBack,
     );
   }
 }
