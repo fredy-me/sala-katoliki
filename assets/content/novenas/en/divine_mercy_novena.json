@@ -1,0 +1,20 @@
+{
+  "id": "divine_mercy_novena",
+  "language": "en",
+  "title": "Divine Mercy Novena",
+  "description": "A nine-day Catholic devotion to Divine Mercy.",
+  "source": "Traditional Catholic devotion",
+  "version": 1,
+  "last_updated": "2026-06-02",
+  "days": [
+    { "day": 1, "title": "Day 1", "body": "Today bring to Me all mankind, especially all sinners, and immerse them in the ocean of My mercy." },
+    { "day": 2, "title": "Day 2", "body": "Today bring to Me the souls of priests and religious, and immerse them in My unfathomable mercy." },
+    { "day": 3, "title": "Day 3", "body": "Today bring to Me all devout and faithful souls, and immerse them in the ocean of My mercy." },
+    { "day": 4, "title": "Day 4", "body": "Today bring to Me those who do not believe in God and those who do not yet know Me." },
+    { "day": 5, "title": "Day 5", "body": "Today bring to Me the souls of those who have separated themselves from My Church." },
+    { "day": 6, "title": "Day 6", "body": "Today bring to Me the meek and humble souls and the souls of little children." },
+    { "day": 7, "title": "Day 7", "body": "Today bring to Me the souls who especially venerate and glorify My mercy." },
+    { "day": 8, "title": "Day 8", "body": "Today bring to Me the souls who are detained in purgatory." },
+    { "day": 9, "title": "Day 9", "body": "Today bring to Me souls who have become lukewarm and immerse them in the abyss of My mercy." }
+  ]
+}
