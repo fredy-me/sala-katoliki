@@ -1,0 +1,20 @@
+{
+  "id": "divine_mercy_novena",
+  "language": "sw",
+  "title": "Novena ya Huruma ya Mungu",
+  "description": "Ibada ya siku tisa ya Kikatoliki kwa Huruma ya Mungu.",
+  "source": "Ibada ya kimapokeo ya Kikatoliki",
+  "version": 1,
+  "last_updated": "2026-06-02",
+  "days": [
+    { "day": 1, "title": "Siku ya 1", "body": "Leo niletee wanadamu wote, hasa wakosefu wote, na uwazamishie katika bahari ya huruma yangu." },
+    { "day": 2, "title": "Siku ya 2", "body": "Leo niletee roho za mapadre na watawa, na uwazamishie katika huruma yangu isiyopimika." },
+    { "day": 3, "title": "Siku ya 3", "body": "Leo niletee roho zote za waaminifu na wachaji, na uwazamishie katika bahari ya huruma yangu." },
+    { "day": 4, "title": "Siku ya 4", "body": "Leo niletee wale wasiomuamini Mungu na wale ambao bado hawanijui." },
+    { "day": 5, "title": "Siku ya 5", "body": "Leo niletee roho za wale waliojitenga na Kanisa langu." },
+    { "day": 6, "title": "Siku ya 6", "body": "Leo niletee roho za wapole na wanyenyekevu pamoja na roho za watoto wadogo." },
+    { "day": 7, "title": "Siku ya 7", "body": "Leo niletee roho zinazoheshimu na kuitukuza huruma yangu hasa." },
+    { "day": 8, "title": "Siku ya 8", "body": "Leo niletee roho zinazozuiliwa toharani." },
+    { "day": 9, "title": "Siku ya 9", "body": "Leo niletee roho zilizopoa na uzizamishie katika kina cha huruma yangu." }
+  ]
+}
