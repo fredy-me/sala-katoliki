@@ -1,21 +1,13 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
-
 import '../models/prayer_model.dart';
+import 'local_content_datasource.dart';
 
 class PrayerLocalDataSource {
-  PrayerLocalDataSource({AssetBundle? bundle}) : _bundle = bundle ?? rootBundle;
+  PrayerLocalDataSource({LocalContentDataSource? contentDataSource})
+    : _contentDataSource = contentDataSource ?? LocalContentDataSource();
 
-  final AssetBundle _bundle;
+  final LocalContentDataSource _contentDataSource;
 
-  Future<List<PrayerModel>> getPrayers() async {
-    final raw = await _bundle.loadString('assets/data/prayers.json');
-    final decoded = jsonDecode(raw) as List<dynamic>;
-
-    return decoded
-        .cast<Map<String, dynamic>>()
-        .map(PrayerModel.fromJson)
-        .toList(growable: false);
+  Future<List<PrayerModel>> getPrayers({String languageCode = 'sw'}) {
+    return _contentDataSource.getPrayers(languageCode: languageCode);
   }
 }
