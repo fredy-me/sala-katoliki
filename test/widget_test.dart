@@ -16,7 +16,7 @@ void main() {
     await tester.tap(find.text('Ruka'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Sala').last);
+    await tester.tap(find.text('Pray'));
     await tester.pumpAndSettle();
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
