@@ -43,87 +43,84 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 430),
-            child: Padding(
+            child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.xxl,
                 AppSpacing.xxl,
                 AppSpacing.xxl,
                 AppSpacing.xl,
               ),
-              child: Column(
-                children: [
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: Icon(Icons.more_horiz, color: AppColors.mutedText),
+              children: [
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: Icon(Icons.more_horiz, color: AppColors.mutedText),
+                ),
+                const SizedBox(height: 34),
+                const _AppMark(),
+                const SizedBox(height: AppSpacing.section),
+                Text(
+                  isKiswahili
+                      ? 'Chagua Lugha Yako ya Sala'
+                      : 'Choose Your Prayer Language',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  isKiswahili
+                      ? 'Chagua lugha unayopendelea kwa sala na maudhui ya programu.'
+                      : 'Select the language you prefer for prayers and app content.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: AppSpacing.section),
+                _LanguageOptionCard(
+                  language: SupportedLanguages.english,
+                  selected:
+                      _selectedLanguageCode == SupportedLanguages.english.code,
+                  onTap: () => setState(
+                    () =>
+                        _selectedLanguageCode = SupportedLanguages.english.code,
                   ),
-                  const SizedBox(height: 54),
-                  const _AppMark(),
-                  const SizedBox(height: AppSpacing.section),
-                  Text(
-                    isKiswahili
-                        ? 'Chagua Lugha Yako ya Sala'
-                        : 'Choose Your Prayer Language',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    isKiswahili
-                        ? 'Chagua lugha unayopendelea kwa sala na maudhui ya programu.'
-                        : 'Select the language you prefer for prayers and app content.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 46),
-                  _LanguageOptionCard(
-                    language: SupportedLanguages.english,
-                    selected:
-                        _selectedLanguageCode ==
-                        SupportedLanguages.english.code,
-                    onTap: () => setState(
-                      () => _selectedLanguageCode =
-                          SupportedLanguages.english.code,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  _LanguageOptionCard(
-                    language: SupportedLanguages.kiswahili,
-                    selected:
-                        _selectedLanguageCode ==
+                ),
+                const SizedBox(height: AppSpacing.md),
+                _LanguageOptionCard(
+                  language: SupportedLanguages.kiswahili,
+                  selected:
+                      _selectedLanguageCode ==
+                      SupportedLanguages.kiswahili.code,
+                  onTap: () => setState(
+                    () => _selectedLanguageCode =
                         SupportedLanguages.kiswahili.code,
-                    onTap: () => setState(
-                      () => _selectedLanguageCode =
-                          SupportedLanguages.kiswahili.code,
-                    ),
                   ),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: languageState.isLoading
-                        ? null
-                        : () => ref
-                              .read(selectedLanguageProvider.notifier)
-                              .selectLanguage(_selectedLanguageCode),
-                    child: Text(isKiswahili ? 'Endelea' : 'Continue'),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextButton(
-                    onPressed: languageState.isLoading
-                        ? null
-                        : () => ref
-                              .read(selectedLanguageProvider.notifier)
-                              .selectLanguage(SupportedLanguages.english.code),
-                    child: Text(isKiswahili ? 'Ruka' : 'Skip'),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    isKiswahili
-                        ? 'Unaweza kubadilisha hii baadaye katika Mipangilio.'
-                        : 'You can change this later in Settings.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: AppSpacing.section),
+                FilledButton(
+                  onPressed: languageState.isLoading
+                      ? null
+                      : () => ref
+                            .read(selectedLanguageProvider.notifier)
+                            .selectLanguage(_selectedLanguageCode),
+                  child: Text(isKiswahili ? 'Endelea' : 'Continue'),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TextButton(
+                  onPressed: languageState.isLoading
+                      ? null
+                      : () => ref
+                            .read(selectedLanguageProvider.notifier)
+                            .selectLanguage(SupportedLanguages.english.code),
+                  child: Text(isKiswahili ? 'Ruka' : 'Skip'),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  isKiswahili
+                      ? 'Unaweza kubadilisha hii baadaye katika Mipangilio.'
+                      : 'You can change this later in Settings.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
           ),
         ),
