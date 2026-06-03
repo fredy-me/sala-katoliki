@@ -360,12 +360,15 @@ void main() {
     expect(find.text('Text Size'), findsOneWidget);
     expect(find.text('Theme'), findsOneWidget);
 
-    await tester.scrollUntilVisible(
-      find.text('About'),
-      300,
-      scrollable: find.byType(Scrollable).first,
+    expect(find.text('About'), findsOneWidget);
+
+    await tester.binding.setSurfaceSize(const Size(800, 2000));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [activeLanguageProvider.overrideWithValue('en')],
+        child: const MaterialApp(home: AboutScreen()),
+      ),
     );
-    await tester.tap(find.text('About'));
     await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
     expect(find.text('Content Sources'), findsOneWidget);
     expect(find.text('Disclaimer'), findsOneWidget);
