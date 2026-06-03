@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/library/presentation/screens/favorites_screen.dart';
 import '../features/library/presentation/screens/library_screen.dart';
 import '../features/novenas/presentation/screens/novenas_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -46,6 +47,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SettingsScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/favorites',
+        builder: (context, state) => const FavoritesScreen(),
       ),
       GoRoute(
         path: '/prayers/category/:categoryId',
