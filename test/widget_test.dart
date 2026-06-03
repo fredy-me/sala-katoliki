@@ -58,6 +58,7 @@ void main() {
 
     await tester.tap(find.text('Pray'));
     await _pumpUntilFound(tester, find.text('Sala za Kawaida'));
+    await tester.ensureVisible(find.text('Sala za Kawaida').first);
     await tester.tap(find.text('Sala za Kawaida').first);
     await _pumpUntilFound(tester, find.text('Baba Yetu'));
     await tester.tap(find.byTooltip('Save favorite').first);
@@ -77,6 +78,7 @@ void main() {
     expect(find.text('Baba Yetu'), findsOneWidget);
     expect(find.text('1 sala zilizohifadhiwa'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Vipendwa').last);
     await tester.tap(find.text('Vipendwa').last);
     await _pumpUntilFound(tester, find.byTooltip('Remove favorite'));
     await tester.tap(find.byTooltip('Remove favorite').first);
