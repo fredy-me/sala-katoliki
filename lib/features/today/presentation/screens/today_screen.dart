@@ -243,7 +243,9 @@ class _ContinueNovenaCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           OutlinedButton(
-            onPressed: () => context.go('/novenas'),
+            onPressed: () => context.push(
+              '/novenas/${state.activeNovenaId}/day/${state.nextNovenaDay}',
+            ),
             child: Text(strings.continueAction),
           ),
         ],
