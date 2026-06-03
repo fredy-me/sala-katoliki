@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/novenas/presentation/screens/novena_day_screen.dart';
+import '../features/novenas/presentation/screens/novena_detail_screen.dart';
 import '../features/library/presentation/screens/favorites_screen.dart';
 import '../features/library/presentation/screens/library_screen.dart';
 import '../features/novenas/presentation/screens/novenas_screen.dart';
@@ -83,6 +85,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           return RosaryStepScreen(
             mysteryId: state.pathParameters['mysteryId']!,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/novenas/:novenaId',
+        builder: (context, state) {
+          return NovenaDetailScreen(
+            novenaId: state.pathParameters['novenaId']!,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/novenas/:novenaId/day/:day',
+        builder: (context, state) {
+          return NovenaDayScreen(
+            novenaId: state.pathParameters['novenaId']!,
+            day: int.tryParse(state.pathParameters['day'] ?? '') ?? -1,
           );
         },
       ),
