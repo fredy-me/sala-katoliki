@@ -182,10 +182,9 @@ void main() {
     await container
         .read(rosaryProgressProvider.notifier)
         .start('joyful_mysteries');
-    await container.read(rosaryProgressProvider.notifier).save(
-          mysteryId: 'joyful_mysteries',
-          stepIndex: 1,
-        );
+    await container
+        .read(rosaryProgressProvider.notifier)
+        .save(mysteryId: 'joyful_mysteries', stepIndex: 1);
 
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getInt('rosary_step_index'), 1);
