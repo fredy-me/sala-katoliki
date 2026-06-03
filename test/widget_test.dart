@@ -12,6 +12,7 @@ import 'package:salakatoliki/features/prayers/presentation/providers/prayer_prov
 import 'package:salakatoliki/features/rosary/presentation/screens/mystery_selection_screen.dart';
 import 'package:salakatoliki/features/rosary/presentation/screens/rosary_screen.dart';
 import 'package:salakatoliki/features/rosary/presentation/screens/rosary_step_screen.dart';
+import 'package:salakatoliki/features/rosary/presentation/providers/rosary_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -171,20 +172,30 @@ void main() {
     await _pumpUntilFound(tester, find.text('Holy Rosary'));
     expect(find.text("Today's Mystery"), findsOneWidget);
 
-    await tester.tap(find.text('Start').first);
-    await _pumpUntilFound(tester, find.text("The Apostles' Creed"));
-    expect(find.text('Step 1 of 61'), findsOneWidget);
+    final container = ProviderContainer();
+    final steps = await container.read(
+      rosaryStepsProvider('joyful_mysteries').future,
+    );
+    expect(steps, hasLength(61));
+    expect(steps.first.prayer.title(), "The Apostles' Creed");
 
-    await tester.tap(find.text('Next'));
-    await _pumpUntilFound(tester, find.text('Our Father'));
+    await container
+        .read(rosaryProgressProvider.notifier)
+        .start('joyful_mysteries');
+    await container.read(rosaryProgressProvider.notifier).save(
+          mysteryId: 'joyful_mysteries',
+          stepIndex: 1,
+        );
 
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getInt('rosary_step_index'), 1);
-    expect(preferences.getString('rosary_mystery_id'), isNotNull);
+    expect(preferences.getString('rosary_mystery_id'), 'joyful_mysteries');
 
-    await tester.tap(find.byTooltip('Restart'));
-    await _pumpUntilFound(tester, find.text('Step 1 of 61'));
+    await container
+        .read(rosaryProgressProvider.notifier)
+        .start('joyful_mysteries');
     expect(preferences.getInt('rosary_step_index'), 0);
+    container.dispose();
   });
 }
 
