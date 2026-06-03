@@ -186,6 +186,8 @@ Done when:
 
 ## Phase 8: Rosary
 
+Status: Completed.
+
 Goal: Build the Rosary home and guided step flow.
 
 Tasks:
