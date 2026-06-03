@@ -21,7 +21,8 @@ class PrayerListScreen extends ConsumerWidget {
     final languageCode = ref.watch(activeLanguageProvider);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
-    final favoriteIds = ref.watch(favoritePrayerIdsProvider);
+    final favoriteIds =
+        ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
     return Scaffold(
       body: SafeArea(
@@ -91,6 +92,9 @@ class PrayerListScreen extends ConsumerWidget {
                       prayer: prayer,
                       isFavorite: favoriteIds.contains(prayer.id),
                       onTap: () => context.push('/prayers/${prayer.id}'),
+                      onFavoriteToggle: () => ref
+                          .read(favoritePrayerIdsProvider.notifier)
+                          .toggle(prayer.id),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                   ],
