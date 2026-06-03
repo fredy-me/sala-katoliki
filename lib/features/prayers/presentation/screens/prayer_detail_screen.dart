@@ -18,7 +18,8 @@ class PrayerDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final prayerState = ref.watch(prayerByIdProvider(prayerId));
-    final favorites = ref.watch(favoritePrayerIdsProvider);
+    final favorites =
+        ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
     return Scaffold(
       body: SafeArea(
