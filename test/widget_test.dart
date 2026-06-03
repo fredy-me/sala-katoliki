@@ -371,8 +371,8 @@ void main() {
       ),
     );
     await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
-    expect(find.text('Content Sources'), findsOneWidget);
-    expect(find.text('Disclaimer'), findsOneWidget);
+    expect(find.text('CONTENT SOURCES'), findsOneWidget);
+    expect(find.text('DISCLAIMER'), findsOneWidget);
   });
 }
 
