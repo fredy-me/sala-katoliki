@@ -48,6 +48,9 @@ void main() {
   testWidgets('persists favorite prayers and shows favorites screen', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(800, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(const ProviderScope(child: SalaKatolikiApp()));
 
     await tester.pumpAndSettle();
@@ -55,9 +58,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Endelea'));
     await _pumpUntilFound(tester, find.text('Pray'));
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('Pray'));
     await _pumpUntilFound(tester, find.text('Sala za Kawaida'));
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.ensureVisible(find.text('Sala za Kawaida').first);
     await tester.tap(find.text('Sala za Kawaida').first);
     await _pumpUntilFound(tester, find.text('Baba Yetu'));
