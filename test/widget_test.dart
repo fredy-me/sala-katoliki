@@ -349,9 +349,19 @@ void main() {
 
     await _pumpUntilFound(tester, find.text('Settings'));
     expect(find.text('Daily Reminder'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Text Size'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Text Size'), findsOneWidget);
     expect(find.text('Theme'), findsOneWidget);
 
+    await tester.scrollUntilVisible(
+      find.text('About'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('About'));
     await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
     expect(find.text('Content Sources'), findsOneWidget);
