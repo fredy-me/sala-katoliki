@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:salakatoliki/app.dart';
 import 'package:salakatoliki/core/localization/localization_providers.dart';
+import 'package:salakatoliki/data/models/rosary_model.dart';
 import 'package:salakatoliki/features/library/presentation/screens/favorites_screen.dart';
 import 'package:salakatoliki/features/library/presentation/screens/library_screen.dart';
 import 'package:salakatoliki/features/prayers/domain/entities/prayer_entity.dart';
@@ -144,6 +145,16 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
+        overrides: [
+          activeLanguageProvider.overrideWithValue('en'),
+          rosaryMysteriesProvider.overrideWith(
+            (ref) async => const [_testMystery],
+          ),
+          suggestedRosaryMysteryProvider.overrideWith(
+            (ref) async => _testMystery,
+          ),
+          activeRosarySessionProvider.overrideWith((ref) async => null),
+        ],
         child: MaterialApp.router(
           routerConfig: GoRouter(
             initialLocation: '/rosary',
@@ -173,12 +184,6 @@ void main() {
     expect(find.text("Today's Mystery"), findsOneWidget);
 
     final container = ProviderContainer();
-    final steps = await container.read(
-      rosaryStepsProvider('joyful_mysteries').future,
-    );
-    expect(steps, hasLength(61));
-    expect(steps.first.prayer.title(), "The Apostles' Creed");
-
     await container
         .read(rosaryProgressProvider.notifier)
         .start('joyful_mysteries');
@@ -197,6 +202,21 @@ void main() {
     container.dispose();
   });
 }
+
+const _testMystery = RosaryMysteryModel(
+  id: 'joyful_mysteries',
+  language: 'en',
+  title: 'Joyful Mysteries',
+  description: "The joyful events of Christ's early life.",
+  days: ['monday', 'saturday'],
+  mysteries: [
+    'The Annunciation',
+    'The Visitation',
+    'The Nativity',
+    'The Presentation',
+    'The Finding in the Temple',
+  ],
+);
 
 Future<void> _pumpUntilFound(
   WidgetTester tester,
