@@ -36,7 +36,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final languageCode = ref.watch(activeLanguageProvider);
     final strings = _LibraryStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
-    final favoriteIds = ref.watch(favoritePrayerIdsProvider);
+    final favoriteIds =
+        ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
     final recentIds =
         ref.watch(recentPrayerIdsProvider).asData?.value ?? const <String>[];
 
@@ -85,6 +86,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 prayers: filtered,
                 favoriteIds: favoriteIds,
                 emptyMessage: strings.noSearchResults,
+                onFavoriteToggle: (prayerId) => ref
+                    .read(favoritePrayerIdsProvider.notifier)
+                    .toggle(prayerId),
               )
             else ...[
               SectionHeader(title: strings.favorites),
@@ -98,7 +102,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 icon: Icons.favorite_border,
                 title: strings.favorites,
                 subtitle: strings.favoriteCount(favorites.length),
-                onTap: () => context.go('/library'),
+                onTap: () => context.push('/favorites'),
               ),
               _LibraryEntry(
                 icon: Icons.schedule,
@@ -248,11 +252,13 @@ class _LibrarySearchResults extends StatelessWidget {
     required this.prayers,
     required this.favoriteIds,
     required this.emptyMessage,
+    required this.onFavoriteToggle,
   });
 
   final List<PrayerEntity> prayers;
   final Set<String> favoriteIds;
   final String emptyMessage;
+  final ValueChanged<String> onFavoriteToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -270,6 +276,7 @@ class _LibrarySearchResults extends StatelessWidget {
             prayer: prayer,
             isFavorite: favoriteIds.contains(prayer.id),
             onTap: () => context.push('/prayers/${prayer.id}'),
+            onFavoriteToggle: () => onFavoriteToggle(prayer.id),
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
