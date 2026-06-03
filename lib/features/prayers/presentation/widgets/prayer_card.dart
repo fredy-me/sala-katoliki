@@ -10,12 +10,14 @@ class PrayerCard extends StatelessWidget {
     required this.prayer,
     required this.isFavorite,
     required this.onTap,
+    this.onFavoriteToggle,
     super.key,
   });
 
   final PrayerEntity prayer;
   final bool isFavorite;
   final VoidCallback onTap;
+  final VoidCallback? onFavoriteToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +50,15 @@ class PrayerCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (isFavorite)
-              const Icon(Icons.favorite, color: AppColors.primary, size: 20),
+            IconButton(
+              tooltip: isFavorite ? 'Remove favorite' : 'Save favorite',
+              onPressed: onFavoriteToggle,
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? AppColors.primary : AppColors.mutedText,
+                size: 20,
+              ),
+            ),
           ],
         ),
       ),
