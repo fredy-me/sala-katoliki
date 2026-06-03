@@ -320,6 +320,9 @@ void main() {
     expect(fakeNotifications.cancelled, true);
     container.dispose();
 
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -365,11 +368,6 @@ void main() {
     await tester.tap(find.text('About'));
     await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
     expect(find.text('Content Sources'), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text('Disclaimer'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
     expect(find.text('Disclaimer'), findsOneWidget);
   });
 }
