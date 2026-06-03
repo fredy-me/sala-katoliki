@@ -22,6 +22,7 @@ import 'package:salakatoliki/features/rosary/presentation/providers/rosary_provi
 import 'package:salakatoliki/features/settings/presentation/providers/settings_providers.dart';
 import 'package:salakatoliki/features/settings/presentation/screens/about_screen.dart';
 import 'package:salakatoliki/features/settings/presentation/screens/settings_screen.dart';
+import 'package:salakatoliki/features/today/presentation/providers/today_providers.dart';
 import 'package:salakatoliki/shared/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -373,6 +374,43 @@ void main() {
     await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
     expect(find.text('CONTENT SOURCES'), findsOneWidget);
     expect(find.text('DISCLAIMER'), findsOneWidget);
+  });
+
+  test('sanitizes corrupt local storage values', () async {
+    SharedPreferences.setMockInitialValues({
+      'theme_mode': 'unknown',
+      'font_size': 5.0,
+      'reminder_time': 'bad',
+      'active_novena_id': 'divine_mercy_novena',
+      'completed_novena_days': ['1', 'x', '12', '-1', '2'],
+      'rosary_mystery_id': 'missing_mystery',
+      'rosary_step_index': 999,
+    });
+
+    final container = ProviderContainer(
+      overrides: [
+        rosaryMysteriesProvider.overrideWith(
+          (ref) async => const [_testMystery],
+        ),
+      ],
+    );
+
+    final settings = await container.read(userSettingsProvider.future);
+    expect(settings.themeMode, ThemeMode.system);
+    expect(settings.fontScale, 1.3);
+    expect(settings.reminderTime, '19:00');
+
+    final todayState = await container.read(todayLocalStateProvider.future);
+    expect(todayState.completedNovenaDays, {1, 2});
+
+    final session = await container.read(activeRosarySessionProvider.future);
+    expect(session, isNull);
+    await Future<void>.delayed(Duration.zero);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('rosary_mystery_id'), isNull);
+    expect(preferences.getInt('rosary_step_index'), isNull);
+    container.dispose();
   });
 }
 
