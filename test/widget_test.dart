@@ -54,12 +54,12 @@ void main() {
     await tester.tap(find.text('Kiswahili'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Endelea'));
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.text('Pray'));
 
     await tester.tap(find.text('Pray'));
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.text('Sala za Kawaida'));
     await tester.tap(find.text('Sala za Kawaida').first);
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.text('Baba Yetu'));
     await tester.tap(find.byTooltip('Save favorite').first);
     await tester.pump(const Duration(milliseconds: 300));
 
@@ -70,15 +70,15 @@ void main() {
     );
 
     await tester.tap(find.byIcon(Icons.arrow_back).first);
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.text('Library'));
     await tester.tap(find.text('Library'));
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.text('Vipendwa'));
 
     expect(find.text('Baba Yetu'), findsOneWidget);
     expect(find.text('1 sala zilizohifadhiwa'), findsOneWidget);
 
     await tester.tap(find.text('Vipendwa').last);
-    await tester.pump(const Duration(seconds: 1));
+    await _pumpUntilFound(tester, find.byTooltip('Remove favorite'));
     await tester.tap(find.byTooltip('Remove favorite').first);
     await tester.pump(const Duration(milliseconds: 300));
 
@@ -88,4 +88,17 @@ void main() {
     );
     expect(find.text('Hakuna vipendwa bado'), findsOneWidget);
   });
+}
+
+Future<void> _pumpUntilFound(
+  WidgetTester tester,
+  Finder finder, {
+  int maxPumps = 30,
+}) async {
+  for (var index = 0; index < maxPumps; index += 1) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) {
+      return;
+    }
+  }
 }
