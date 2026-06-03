@@ -93,7 +93,7 @@ void main() {
 Future<void> _pumpUntilFound(
   WidgetTester tester,
   Finder finder, {
-  int maxPumps = 30,
+  int maxPumps = 100,
 }) async {
   for (var index = 0; index < maxPumps; index += 1) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -101,4 +101,6 @@ Future<void> _pumpUntilFound(
       return;
     }
   }
+
+  fail('Expected ${finder.description} to appear.');
 }
