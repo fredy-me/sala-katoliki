@@ -19,6 +19,10 @@ import 'package:salakatoliki/features/rosary/presentation/screens/mystery_select
 import 'package:salakatoliki/features/rosary/presentation/screens/rosary_screen.dart';
 import 'package:salakatoliki/features/rosary/presentation/screens/rosary_step_screen.dart';
 import 'package:salakatoliki/features/rosary/presentation/providers/rosary_providers.dart';
+import 'package:salakatoliki/features/settings/presentation/providers/settings_providers.dart';
+import 'package:salakatoliki/features/settings/presentation/screens/about_screen.dart';
+import 'package:salakatoliki/features/settings/presentation/screens/settings_screen.dart';
+import 'package:salakatoliki/shared/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -280,6 +284,77 @@ void main() {
     preferences = await SharedPreferences.getInstance();
     expect(preferences.getStringList('completed_novena_days'), ['1', '2']);
   });
+
+  testWidgets('persists settings and shows about content', (tester) async {
+    final fakeNotifications = _NotificationTestService();
+    final container = ProviderContainer(
+      overrides: [
+        notificationServiceProvider.overrideWithValue(fakeNotifications),
+      ],
+    );
+
+    await container.read(userSettingsProvider.future);
+    await container
+        .read(userSettingsProvider.notifier)
+        .setThemeMode(ThemeMode.dark);
+    await container.read(userSettingsProvider.notifier).setFontScale(1.2);
+    await container
+        .read(userSettingsProvider.notifier)
+        .setReminderTime('06:30');
+    await container
+        .read(userSettingsProvider.notifier)
+        .setReminderEnabled(true);
+
+    var preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('theme_mode'), 'dark');
+    expect(preferences.getDouble('font_size'), 1.2);
+    expect(preferences.getString('reminder_time'), '06:30');
+    expect(preferences.getBool('reminder_enabled'), true);
+    expect(fakeNotifications.scheduled, true);
+
+    await container
+        .read(userSettingsProvider.notifier)
+        .setReminderEnabled(false);
+    preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('reminder_enabled'), false);
+    expect(fakeNotifications.cancelled, true);
+    container.dispose();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          activeLanguageProvider.overrideWithValue('en'),
+          notificationServiceProvider.overrideWithValue(_NotificationTestService()),
+        ],
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/settings',
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) =>
+                    const Scaffold(body: SettingsScreen()),
+              ),
+              GoRoute(
+                path: '/about',
+                builder: (context, state) => const AboutScreen(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await _pumpUntilFound(tester, find.text('Settings'));
+    expect(find.text('Daily Reminder'), findsOneWidget);
+    expect(find.text('Text Size'), findsOneWidget);
+    expect(find.text('Theme'), findsOneWidget);
+
+    await tester.tap(find.text('About'));
+    await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
+    expect(find.text('Content Sources'), findsOneWidget);
+    expect(find.text('Disclaimer'), findsOneWidget);
+  });
 }
 
 const _testMystery = RosaryMysteryModel(
@@ -353,5 +428,26 @@ class _FavoritesTestNotifier extends FavoritePrayerIdsNotifier {
   Future<void> remove(String prayerId) async {
     final current = state.asData?.value ?? await future;
     state = AsyncData(Set<String>.from(current)..remove(prayerId));
+  }
+}
+
+class _NotificationTestService extends NotificationService {
+  bool scheduled = false;
+  bool cancelled = false;
+
+  @override
+  Future<bool> scheduleDailyReminder({
+    required int hour,
+    required int minute,
+    required String title,
+    required String body,
+  }) async {
+    scheduled = true;
+    return true;
+  }
+
+  @override
+  Future<void> cancelDailyReminder() async {
+    cancelled = true;
   }
 }
