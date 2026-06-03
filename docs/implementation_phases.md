@@ -229,6 +229,8 @@ Done when:
 
 ## Phase 10: Reminders And Settings
 
+Status: Completed.
+
 Goal: Implement local reminders and user preferences.
 
 Tasks:
