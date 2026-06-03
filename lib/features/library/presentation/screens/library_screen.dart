@@ -136,7 +136,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 icon: Icons.info_outline,
                 title: strings.about,
                 subtitle: strings.aboutSubtitle,
-                onTap: () => _showAbout(context, strings),
+                onTap: () => context.push('/about'),
               ),
             ],
           ],
@@ -154,41 +154,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         .map((id) => byId[id])
         .whereType<PrayerEntity>()
         .toList(growable: false);
-  }
-
-  void _showAbout(BuildContext context, _LibraryStrings strings) {
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Sala Katoliki',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                strings.aboutBody,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              AppCard(
-                backgroundColor: AppColors.surfaceWarm,
-                child: Text(
-                  strings.contentSources,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 }
 
@@ -378,10 +343,4 @@ class _LibraryStrings {
   String get noSearchResults => _sw
       ? 'Hakuna maudhui yanayolingana na utafutaji huu.'
       : 'No content matches this search.';
-  String get aboutBody => _sw
-      ? 'Programu rahisi ya sala ya Kikatoliki inayofanya kazi nje ya mtandao.'
-      : 'A simple offline-first Catholic prayer companion.';
-  String get contentSources => _sw
-      ? 'Vyanzo: Sala za kimapokeo za Kikatoliki na ibada zilizoidhinishwa.'
-      : 'Sources: Traditional Catholic prayers and approved devotions.';
 }
