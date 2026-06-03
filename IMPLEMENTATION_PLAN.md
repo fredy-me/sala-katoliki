@@ -302,6 +302,8 @@ Acceptance checks:
 
 ## Phase 8: QA And Release Readiness
 
+Status: Phase 11 offline and lifecycle hardening baseline completed. Store-specific release checks remain for final release preparation.
+
 Tasks:
 
 - Run airplane-mode regression testing.
