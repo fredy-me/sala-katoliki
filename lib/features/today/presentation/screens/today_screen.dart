@@ -316,7 +316,7 @@ class _QuickActionGrid extends StatelessWidget {
       _QuickAction(Icons.menu_book_outlined, strings.commonPrayers, '/prayers'),
       _QuickAction(Icons.radio_button_checked, strings.rosary, '/rosary'),
       _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
-      _QuickAction(Icons.favorite_border, strings.favorites, '/library'),
+      _QuickAction(Icons.favorite_border, strings.favorites, '/favorites'),
     ];
 
     return GridView.count(
