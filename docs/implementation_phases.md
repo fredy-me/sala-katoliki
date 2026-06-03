@@ -208,6 +208,8 @@ Done when:
 
 ## Phase 9: Novenas
 
+Status: Completed.
+
 Goal: Build novena browsing, progress, and day reading.
 
 Tasks:
