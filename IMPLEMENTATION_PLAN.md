@@ -229,7 +229,7 @@ Acceptance checks:
 
 ## Phase 4: Prayer Library, Favorites, And Search
 
-Status: Phase 6 prayer library and search baseline completed. Favorites persistence remains scheduled for the dedicated Favorites phase.
+Status: Phase 6 prayer library/search baseline and Phase 7 favorites persistence completed.
 
 Tasks:
 
