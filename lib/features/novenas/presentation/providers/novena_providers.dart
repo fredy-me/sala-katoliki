@@ -42,7 +42,9 @@ final activeNovenaSessionProvider = FutureProvider<NovenaSession?>((ref) async {
 
   final novena = await ref.watch(novenaByIdProvider(activeId).future);
   if (novena == null) {
-    await ref.read(novenaProgressProvider.notifier).clear();
+    Future<void>.microtask(() {
+      ref.read(novenaProgressProvider.notifier).clear();
+    });
     return null;
   }
 
