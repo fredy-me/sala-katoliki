@@ -39,7 +39,8 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
     final strings = _PrayerLibraryStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
-    final favoriteIds = ref.watch(favoritePrayerIdsProvider);
+    final favoriteIds =
+        ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
     return prayersState.when(
       loading: () => AppLoading(label: strings.loading),
@@ -81,6 +82,9 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
                 prayers: filtered,
                 favoriteIds: favoriteIds,
                 emptyMessage: strings.noSearchResults,
+                onFavoriteToggle: (prayerId) => ref
+                    .read(favoritePrayerIdsProvider.notifier)
+                    .toggle(prayerId),
               )
             else
               categoriesState.when(
@@ -109,11 +113,13 @@ class _SearchResults extends StatelessWidget {
     required this.prayers,
     required this.favoriteIds,
     required this.emptyMessage,
+    required this.onFavoriteToggle,
   });
 
   final List<PrayerEntity> prayers;
   final Set<String> favoriteIds;
   final String emptyMessage;
+  final ValueChanged<String> onFavoriteToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +137,7 @@ class _SearchResults extends StatelessWidget {
             prayer: prayer,
             isFavorite: favoriteIds.contains(prayer.id),
             onTap: () => context.push('/prayers/${prayer.id}'),
+            onFavoriteToggle: () => onFavoriteToggle(prayer.id),
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
