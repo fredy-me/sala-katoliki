@@ -250,6 +250,8 @@ Done when:
 
 ## Phase 11: Offline And Lifecycle Hardening
 
+Status: Completed.
+
 Goal: Prove the offline-first MVP behavior.
 
 Tasks:
@@ -264,6 +266,8 @@ Done when:
 - Core MVP works without internet.
 - Bad local progress does not crash the app.
 - Manual offline checklist passes.
+
+Checklist: [offline_regression_checklist.md](offline_regression_checklist.md).
 
 ## Phase 12: Testing
 
