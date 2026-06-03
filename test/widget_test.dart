@@ -324,7 +324,9 @@ void main() {
       ProviderScope(
         overrides: [
           activeLanguageProvider.overrideWithValue('en'),
-          notificationServiceProvider.overrideWithValue(_NotificationTestService()),
+          notificationServiceProvider.overrideWithValue(
+            _NotificationTestService(),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: GoRouter(
