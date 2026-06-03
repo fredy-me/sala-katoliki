@@ -168,6 +168,8 @@ Done when:
 
 ## Phase 7: Favorites
 
+Status: Completed.
+
 Goal: Persist favorite prayers locally.
 
 Tasks:
