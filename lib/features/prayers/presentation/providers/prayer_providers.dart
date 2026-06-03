@@ -62,7 +62,7 @@ final prayerByIdProvider = FutureProvider.family<PrayerEntity?, String>((
 });
 
 final favoritePrayerIdsProvider =
-    NotifierProvider<FavoritePrayerIdsNotifier, Set<String>>(
+    AsyncNotifierProvider<FavoritePrayerIdsNotifier, Set<String>>(
       FavoritePrayerIdsNotifier.new,
     );
 
@@ -71,19 +71,48 @@ final recentPrayerIdsProvider =
       RecentPrayerIdsNotifier.new,
     );
 
-class FavoritePrayerIdsNotifier extends Notifier<Set<String>> {
+class FavoritePrayerIdsNotifier extends AsyncNotifier<Set<String>> {
   @override
-  Set<String> build() {
-    return {'hail_mary'};
+  Future<Set<String>> build() async {
+    final preferences = await SharedPreferences.getInstance();
+    return preferences
+            .getStringList(StorageKeys.favoritePrayerIds)
+            ?.where((id) => id.trim().isNotEmpty)
+            .toSet() ??
+        <String>{};
   }
 
-  void toggle(String prayerId) {
-    if (state.contains(prayerId)) {
-      state = Set<String>.from(state)..remove(prayerId);
+  Future<void> toggle(String prayerId) async {
+    final current = state.asData?.value ?? await future;
+    final updated = Set<String>.from(current);
+
+    if (updated.contains(prayerId)) {
+      updated.remove(prayerId);
+    } else {
+      updated.add(prayerId);
+    }
+
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setStringList(
+      StorageKeys.favoritePrayerIds,
+      updated.toList()..sort(),
+    );
+    state = AsyncData(updated);
+  }
+
+  Future<void> remove(String prayerId) async {
+    final current = state.asData?.value ?? await future;
+    if (!current.contains(prayerId)) {
       return;
     }
 
-    state = {...state, prayerId};
+    final updated = Set<String>.from(current)..remove(prayerId);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setStringList(
+      StorageKeys.favoritePrayerIds,
+      updated.toList()..sort(),
+    );
+    state = AsyncData(updated);
   }
 }
 
