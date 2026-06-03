@@ -248,6 +248,8 @@ Acceptance checks:
 
 ## Phase 5: Rosary
 
+Status: Completed as Phase 8 Rosary implementation.
+
 Tasks:
 
 - Define mysteries and step sequence in content/data files.
