@@ -363,6 +363,7 @@ void main() {
     expect(find.text('About'), findsOneWidget);
 
     await tester.binding.setSurfaceSize(const Size(800, 2000));
+    await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpWidget(
       ProviderScope(
         overrides: [activeLanguageProvider.overrideWithValue('en')],
