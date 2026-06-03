@@ -4,9 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:salakatoliki/app.dart';
 import 'package:salakatoliki/core/localization/localization_providers.dart';
+import 'package:salakatoliki/data/models/novena_model.dart';
 import 'package:salakatoliki/data/models/rosary_model.dart';
 import 'package:salakatoliki/features/library/presentation/screens/favorites_screen.dart';
 import 'package:salakatoliki/features/library/presentation/screens/library_screen.dart';
+import 'package:salakatoliki/features/novenas/presentation/providers/novena_providers.dart';
+import 'package:salakatoliki/features/novenas/presentation/screens/novena_day_screen.dart';
+import 'package:salakatoliki/features/novenas/presentation/screens/novena_detail_screen.dart';
+import 'package:salakatoliki/features/novenas/presentation/screens/novenas_screen.dart';
 import 'package:salakatoliki/features/prayers/domain/entities/prayer_entity.dart';
 import 'package:salakatoliki/features/prayers/presentation/screens/prayer_detail_screen.dart';
 import 'package:salakatoliki/features/prayers/presentation/providers/prayer_providers.dart';
@@ -201,6 +206,80 @@ void main() {
     expect(preferences.getInt('rosary_step_index'), 0);
     container.dispose();
   });
+
+  testWidgets('shows active novena and marks current day complete', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    await container
+        .read(novenaProgressProvider.notifier)
+        .start('divine_mercy_novena');
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('divine_mercy_novena', 1);
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('divine_mercy_novena', 12);
+
+    var preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('active_novena_id'), 'divine_mercy_novena');
+    expect(preferences.getStringList('completed_novena_days'), ['1']);
+    container.dispose();
+
+    SharedPreferences.setMockInitialValues({
+      'selected_language': 'en',
+      'active_novena_id': 'divine_mercy_novena',
+      'completed_novena_days': ['1', '99', 'bad'],
+    });
+    await tester.binding.setSurfaceSize(const Size(800, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          activeLanguageProvider.overrideWithValue('en'),
+          novenasProvider.overrideWith((ref) async => const [_testNovena]),
+        ],
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/novenas',
+            routes: [
+              GoRoute(
+                path: '/novenas',
+                builder: (context, state) =>
+                    const Scaffold(body: NovenasScreen()),
+              ),
+              GoRoute(
+                path: '/novenas/:novenaId',
+                builder: (context, state) => NovenaDetailScreen(
+                  novenaId: state.pathParameters['novenaId']!,
+                ),
+              ),
+              GoRoute(
+                path: '/novenas/:novenaId/day/:day',
+                builder: (context, state) => NovenaDayScreen(
+                  novenaId: state.pathParameters['novenaId']!,
+                  day: int.tryParse(state.pathParameters['day'] ?? '') ?? -1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await _pumpUntilFound(tester, find.text('Active Novena'));
+    expect(find.text('Divine Mercy Novena'), findsWidgets);
+    expect(find.text('Day 2 of 9'), findsOneWidget);
+
+    await tester.tap(find.text('Continue').first);
+    await _pumpUntilFound(tester, find.text('Day 2'));
+    await tester.tap(find.text('Mark Complete'));
+    await _pumpUntilFound(tester, find.text('Day 3 of 9'));
+
+    preferences = await SharedPreferences.getInstance();
+    expect(preferences.getStringList('completed_novena_days'), ['1', '2']);
+  });
 }
 
 const _testMystery = RosaryMysteryModel(
@@ -215,6 +294,25 @@ const _testMystery = RosaryMysteryModel(
     'The Nativity',
     'The Presentation',
     'The Finding in the Temple',
+  ],
+);
+
+const _testNovena = NovenaModel(
+  id: 'divine_mercy_novena',
+  language: 'en',
+  title: 'Divine Mercy Novena',
+  description: 'A nine-day Catholic devotion to Divine Mercy.',
+  source: 'Traditional Catholic devotion',
+  days: [
+    NovenaDayModel(day: 1, title: 'Day 1', body: 'Day one prayer.'),
+    NovenaDayModel(day: 2, title: 'Day 2', body: 'Day two prayer.'),
+    NovenaDayModel(day: 3, title: 'Day 3', body: 'Day three prayer.'),
+    NovenaDayModel(day: 4, title: 'Day 4', body: 'Day four prayer.'),
+    NovenaDayModel(day: 5, title: 'Day 5', body: 'Day five prayer.'),
+    NovenaDayModel(day: 6, title: 'Day 6', body: 'Day six prayer.'),
+    NovenaDayModel(day: 7, title: 'Day 7', body: 'Day seven prayer.'),
+    NovenaDayModel(day: 8, title: 'Day 8', body: 'Day eight prayer.'),
+    NovenaDayModel(day: 9, title: 'Day 9', body: 'Day nine prayer.'),
   ],
 );
 
