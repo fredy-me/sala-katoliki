@@ -133,6 +133,14 @@ class _ContentValidator {
           if (dayNumber != null && !seenDays.add(dayNumber)) {
             _errors.add('Novena $id has duplicate day: $dayNumber');
           }
+          if (dayNumber != null && (dayNumber < 1 || dayNumber > 9)) {
+            _errors.add('Novena $id has out-of-range day: $dayNumber');
+          }
+        }
+        for (var day = 1; day <= 9; day += 1) {
+          if (!seenDays.contains(day)) {
+            _errors.add('Novena $id is missing day: $day');
+          }
         }
         if (novenaLanguage != language) {
           _errors.add(
