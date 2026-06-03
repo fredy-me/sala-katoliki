@@ -51,7 +51,9 @@ final activeRosarySessionProvider = FutureProvider<RosarySession?>((ref) async {
   final mysteries = await ref.watch(rosaryMysteriesProvider.future);
   final mystery = _mysteryById(mysteries, progress.mysteryId);
   if (mystery == null) {
-    await ref.read(rosaryProgressProvider.notifier).clear();
+    Future<void>.microtask(() {
+      ref.read(rosaryProgressProvider.notifier).clear();
+    });
     return null;
   }
 
@@ -59,7 +61,9 @@ final activeRosarySessionProvider = FutureProvider<RosarySession?>((ref) async {
   if (steps.isEmpty ||
       progress.stepIndex < 0 ||
       progress.stepIndex >= steps.length) {
-    await ref.read(rosaryProgressProvider.notifier).clear();
+    Future<void>.microtask(() {
+      ref.read(rosaryProgressProvider.notifier).clear();
+    });
     return null;
   }
 
