@@ -9,6 +9,9 @@ import 'package:salakatoliki/features/library/presentation/screens/library_scree
 import 'package:salakatoliki/features/prayers/domain/entities/prayer_entity.dart';
 import 'package:salakatoliki/features/prayers/presentation/screens/prayer_detail_screen.dart';
 import 'package:salakatoliki/features/prayers/presentation/providers/prayer_providers.dart';
+import 'package:salakatoliki/features/rosary/presentation/screens/mystery_selection_screen.dart';
+import 'package:salakatoliki/features/rosary/presentation/screens/rosary_screen.dart';
+import 'package:salakatoliki/features/rosary/presentation/screens/rosary_step_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -129,6 +132,59 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('No favorites yet'), findsOneWidget);
+  });
+
+  testWidgets('starts rosary and persists guided step progress', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({'selected_language': 'en'});
+    await tester.binding.setSurfaceSize(const Size(800, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/rosary',
+            routes: [
+              GoRoute(
+                path: '/rosary',
+                builder: (context, state) =>
+                    const Scaffold(body: RosaryScreen()),
+              ),
+              GoRoute(
+                path: '/rosary/select',
+                builder: (context, state) => const MysterySelectionScreen(),
+              ),
+              GoRoute(
+                path: '/rosary/step/:mysteryId',
+                builder: (context, state) => RosaryStepScreen(
+                  mysteryId: state.pathParameters['mysteryId']!,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await _pumpUntilFound(tester, find.text('Holy Rosary'));
+    expect(find.text("Today's Mystery"), findsOneWidget);
+
+    await tester.tap(find.text('Start').first);
+    await _pumpUntilFound(tester, find.text("The Apostles' Creed"));
+    expect(find.text('Step 1 of 61'), findsOneWidget);
+
+    await tester.tap(find.text('Next'));
+    await _pumpUntilFound(tester, find.text('Our Father'));
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getInt('rosary_step_index'), 1);
+    expect(preferences.getString('rosary_mystery_id'), isNotNull);
+
+    await tester.tap(find.byTooltip('Restart'));
+    await _pumpUntilFound(tester, find.text('Step 1 of 61'));
+    expect(preferences.getInt('rosary_step_index'), 0);
   });
 }
 
