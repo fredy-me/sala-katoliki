@@ -98,7 +98,8 @@ void main() {
             routes: [
               GoRoute(
                 path: '/library',
-                builder: (context, state) => const LibraryScreen(),
+                builder: (context, state) =>
+                    const Scaffold(body: LibraryScreen()),
               ),
               GoRoute(
                 path: '/favorites',
@@ -152,6 +153,7 @@ class _FavoritesTestNotifier extends FavoritePrayerIdsNotifier {
     return {'our_father', 'missing_prayer'};
   }
 
+  @override
   Future<void> toggle(String prayerId) async {
     final current = state.asData?.value ?? await future;
     final updated = Set<String>.from(current);
@@ -163,6 +165,7 @@ class _FavoritesTestNotifier extends FavoritePrayerIdsNotifier {
     state = AsyncData(updated);
   }
 
+  @override
   Future<void> remove(String prayerId) async {
     final current = state.asData?.value ?? await future;
     state = AsyncData(Set<String>.from(current)..remove(prayerId));
