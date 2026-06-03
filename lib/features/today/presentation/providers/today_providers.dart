@@ -14,6 +14,7 @@ final todayLocalStateProvider = FutureProvider<TodayLocalState>((ref) async {
     completedNovenaDays: completedDays
         .map(int.tryParse)
         .whereType<int>()
+        .where((day) => day >= 1 && day <= 9)
         .toSet(),
     reminderEnabled: preferences.getBool(StorageKeys.reminderEnabled) ?? false,
     reminderTime: preferences.getString(StorageKeys.reminderTime),
