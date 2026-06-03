@@ -266,6 +266,8 @@ Acceptance checks:
 
 ## Phase 6: Novenas
 
+Status: Completed as Phase 9 Novenas implementation.
+
 Tasks:
 
 - Define novena model with 9 day objects.
