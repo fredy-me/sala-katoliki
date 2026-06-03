@@ -8,7 +8,9 @@ import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/prayers/presentation/screens/prayer_detail_screen.dart';
 import '../features/prayers/presentation/screens/prayer_library_screen.dart';
 import '../features/prayers/presentation/screens/prayer_list_screen.dart';
+import '../features/rosary/presentation/screens/mystery_selection_screen.dart';
 import '../features/rosary/presentation/screens/rosary_screen.dart';
+import '../features/rosary/presentation/screens/rosary_step_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/today/presentation/screens/today_screen.dart';
 import '../shared/widgets/app_shell.dart';
@@ -71,6 +73,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/rosary',
         builder: (context, state) => const RosaryScreen(),
+      ),
+      GoRoute(
+        path: '/rosary/select',
+        builder: (context, state) => const MysterySelectionScreen(),
+      ),
+      GoRoute(
+        path: '/rosary/step/:mysteryId',
+        builder: (context, state) {
+          return RosaryStepScreen(
+            mysteryId: state.pathParameters['mysteryId']!,
+          );
+        },
       ),
     ],
   );
