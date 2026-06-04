@@ -303,6 +303,8 @@ Done when:
 
 ## Phase 13: Android Release Preparation
 
+Status: Completed.
+
 Goal: Prepare Android-first MVP release.
 
 Tasks:
