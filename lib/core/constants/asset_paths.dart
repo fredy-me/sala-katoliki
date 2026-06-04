@@ -19,6 +19,4 @@ abstract final class AssetPaths {
   static const contentManifest =
       'assets/content/metadata/content_manifest.json';
   static const categoriesFile = 'assets/content/categories/categories.json';
-
-  static const legacyPrayers = 'assets/data/prayers.json';
 }
