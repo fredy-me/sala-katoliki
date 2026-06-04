@@ -17,18 +17,6 @@ abstract final class AppTheme {
     return _baseTheme(scheme, AppColors.background);
   }
 
-  static ThemeData get dark {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.navy,
-      brightness: Brightness.dark,
-      primary: AppColors.gold,
-      secondary: AppColors.gold,
-      surface: AppColors.navyPressed,
-    );
-
-    return _baseTheme(scheme, const Color(0xFF111827));
-  }
-
   static ThemeData _baseTheme(ColorScheme scheme, Color background) {
     return ThemeData(
       useMaterial3: true,
