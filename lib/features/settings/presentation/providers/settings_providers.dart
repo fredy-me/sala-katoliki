@@ -66,8 +66,8 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
   Future<void> setThemeMode(ThemeMode themeMode) async {
     final current = state.asData?.value ?? await future;
     final preferences = await SharedPreferences.getInstance();
-    await preferences.setString(StorageKeys.themeMode, ThemeMode.light.name);
-    state = AsyncData(current.copyWith(themeMode: ThemeMode.light));
+    await preferences.setString(StorageKeys.themeMode, themeMode.name);
+    state = AsyncData(current.copyWith(themeMode: themeMode));
   }
 
   Future<void> setFontScale(double fontScale) async {
@@ -148,7 +148,11 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
   }
 
   ThemeMode _themeModeFromStorage(String? value) {
-    return ThemeMode.light;
+    return switch (value) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
   }
 
   double _validFontScale(double? value) {
