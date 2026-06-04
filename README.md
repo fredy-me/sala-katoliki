@@ -46,6 +46,8 @@ Explicitly out of scope for the MVP:
 - [Content Rights](docs/content_guidelines/content_rights.md) documents source and licensing requirements.
 - [UI Reference](docs/ui_reference.md) documents the provided mobile screenshots and visual rules.
 - [Implementation Phases](docs/implementation_phases.md) defines the roadmap from restructure to production readiness.
+- [Android Release Preparation](docs/release/android_release_preparation.md) documents Android package identity, signing, permissions, and AAB preparation.
+- [Google Play Internal Testing Metadata](docs/release/google_play_internal_testing.md) contains the first internal testing listing draft.
 - [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) maps MVP requirements to implementation and tests.
 - [Implementation Plan](IMPLEMENTATION_PLAN.md) is the active development sequence.
 
