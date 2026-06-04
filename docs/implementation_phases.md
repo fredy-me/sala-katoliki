@@ -271,6 +271,8 @@ Checklist: [offline_regression_checklist.md](offline_regression_checklist.md).
 
 ## Phase 12: Testing
 
+Status: Completed.
+
 Goal: Cover core behavior with focused tests.
 
 Tasks:
