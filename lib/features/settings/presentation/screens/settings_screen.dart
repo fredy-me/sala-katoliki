@@ -82,8 +82,6 @@ class SettingsScreen extends ConsumerWidget {
           SectionHeader(title: strings.reading),
           const SizedBox(height: AppSpacing.md),
           _FontScaleCard(settings: settings, strings: strings),
-          const SizedBox(height: AppSpacing.md),
-          _ThemeCard(settings: settings, strings: strings),
           const SizedBox(height: AppSpacing.section),
           SectionHeader(title: strings.information),
           const SizedBox(height: AppSpacing.md),
@@ -234,49 +232,6 @@ class _FontScaleCard extends ConsumerWidget {
   }
 }
 
-class _ThemeCard extends ConsumerWidget {
-  const _ThemeCard({required this.settings, required this.strings});
-
-  final UserSettings settings;
-  final _SettingsStrings strings;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(strings.theme, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.md),
-          SegmentedButton<ThemeMode>(
-            segments: [
-              ButtonSegment(
-                value: ThemeMode.system,
-                icon: const Icon(Icons.phone_android),
-                label: Text(strings.system),
-              ),
-              ButtonSegment(
-                value: ThemeMode.light,
-                icon: const Icon(Icons.light_mode),
-                label: Text(strings.light),
-              ),
-              ButtonSegment(
-                value: ThemeMode.dark,
-                icon: const Icon(Icons.dark_mode),
-                label: Text(strings.dark),
-              ),
-            ],
-            selected: {settings.themeMode},
-            onSelectionChanged: (selection) => ref
-                .read(userSettingsProvider.notifier)
-                .setThemeMode(selection.first),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _InfoTile extends StatelessWidget {
   const _InfoTile({
     required this.icon,
@@ -369,8 +324,8 @@ class _SettingsStrings {
 
   String get title => _sw ? 'Mipangilio' : 'Settings';
   String get subtitle => _sw
-      ? 'Dhibiti lugha, vikumbusho, maandishi, na mandhari.'
-      : 'Manage language, reminders, text size, and theme.';
+      ? 'Dhibiti lugha, vikumbusho, na maandishi.'
+      : 'Manage language, reminders, and text size.';
   String get loading => _sw ? 'Inapakia mipangilio...' : 'Loading settings...';
   String get loadError => _sw
       ? 'Kuna tatizo kusoma mipangilio.'
@@ -391,10 +346,6 @@ class _SettingsStrings {
   String get fontSize => _sw ? 'Ukubwa wa Maandishi' : 'Text Size';
   String get fontSizeSubtitle =>
       _sw ? 'Badili ukubwa wa maandishi ya programu.' : 'Adjust app text size.';
-  String get theme => _sw ? 'Mandhari' : 'Theme';
-  String get system => _sw ? 'Mfumo' : 'System';
-  String get light => _sw ? 'Mwanga' : 'Light';
-  String get dark => _sw ? 'Giza' : 'Dark';
   String get information => _sw ? 'Taarifa' : 'Information';
   String get about => _sw ? 'Kuhusu' : 'About';
   String get aboutSubtitle =>
