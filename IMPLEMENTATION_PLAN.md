@@ -302,7 +302,7 @@ Acceptance checks:
 
 ## Phase 8: QA And Release Readiness
 
-Status: Phase 11 offline and lifecycle hardening baseline completed. Phase 12 focused test coverage completed. Store-specific release checks remain for final release preparation.
+Status: Phase 11 offline and lifecycle hardening baseline completed. Phase 12 focused test coverage completed. Phase 13 Android release-preparation baseline completed. Store-specific signing secrets, support URL, and privacy policy URL remain external release inputs.
 
 Tasks:
 
