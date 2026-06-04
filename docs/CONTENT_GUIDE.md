@@ -48,7 +48,7 @@ assets/
       app_info.json
 ```
 
-The current project may still contain older content under `assets/data/`. During restructuring, move MVP content to `assets/content/` and register it in `pubspec.yaml`.
+Legacy prayer content under `assets/data/` has been removed. MVP content must live under `assets/content/` and be registered in `pubspec.yaml`.
 
 Detailed content workflows are documented in:
 
