@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
+import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 
-class PrayerDetailScreen extends ConsumerWidget {
+class PrayerDetailScreen extends ConsumerStatefulWidget {
   const PrayerDetailScreen({required this.prayerId, super.key});
 
   final String prayerId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final prayerState = ref.watch(prayerByIdProvider(prayerId));
+  ConsumerState<PrayerDetailScreen> createState() => _PrayerDetailScreenState();
+}
+
+class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
+  static const _defaultTextScale = 1.0;
+  static const _minTextScale = 0.85;
+  static const _maxTextScale = 1.3;
+  static const _textScaleStep = 0.15;
+
+  double _textScale = _defaultTextScale;
+
+  @override
+  Widget build(BuildContext context) {
+    final prayerState = ref.watch(prayerByIdProvider(widget.prayerId));
+    final activeLanguageCode = ref.watch(activeLanguageProvider);
     final favorites =
         ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
@@ -62,12 +78,12 @@ class PrayerDetailScreen extends ConsumerWidget {
                       const Spacer(),
                       IconButton(
                         tooltip: 'Badili lugha',
-                        onPressed: () {},
+                        onPressed: () => _toggleLanguage(activeLanguageCode),
                         icon: const Icon(Icons.translate_outlined),
                       ),
                       IconButton(
                         tooltip: 'Shiriki',
-                        onPressed: () {},
+                        onPressed: () => _sharePrayer(prayer),
                         icon: const Icon(Icons.share_outlined),
                       ),
                       IconButton(
@@ -102,13 +118,28 @@ class PrayerDetailScreen extends ConsumerWidget {
                       const SizedBox(height: 28),
                       Row(
                         children: [
-                          _TextSizeChip(label: 'A-', selected: false),
-                          _TextSizeChip(label: 'A', selected: true),
-                          _TextSizeChip(label: 'A+', selected: false),
+                          _TextSizeChip(
+                            label: 'A-',
+                            selected: _textScale < _defaultTextScale,
+                            onPressed: _decreaseTextSize,
+                          ),
+                          _TextSizeChip(
+                            label: 'A',
+                            selected: _textScale == _defaultTextScale,
+                            onPressed: _resetTextSize,
+                          ),
+                          _TextSizeChip(
+                            label: 'A+',
+                            selected: _textScale > _defaultTextScale,
+                            onPressed: _increaseTextSize,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 24),
-                      PrayerTextView(text: prayer.text()),
+                      PrayerTextView(
+                        text: prayer.text(),
+                        fontScale: _textScale,
+                      ),
                       const SizedBox(height: AppSpacing.xl),
                       AppCard(
                         backgroundColor: AppColors.surfaceWarm,
@@ -148,29 +179,107 @@ class PrayerDetailScreen extends ConsumerWidget {
   void _toggleFavorite(WidgetRef ref, String prayerId) {
     ref.read(favoritePrayerIdsProvider.notifier).toggle(prayerId);
   }
+
+  Future<void> _toggleLanguage(String activeLanguageCode) async {
+    final nextLanguageCode = activeLanguageCode == 'sw' ? 'en' : 'sw';
+    await ref
+        .read(selectedLanguageProvider.notifier)
+        .selectLanguage(nextLanguageCode);
+
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          nextLanguageCode == 'sw'
+              ? 'Lugha imebadilishwa kwenda Kiswahili.'
+              : 'Language changed to English.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sharePrayer(PrayerEntity prayer) async {
+    final source = prayer.source?.trim().isNotEmpty == true
+        ? prayer.source!
+        : 'Traditional Catholic Prayer';
+    final shareText = '${prayer.title()}\n\n${prayer.text()}\n\nSource: $source';
+
+    try {
+      await SharePlus.instance.share(
+        ShareParams(text: shareText, subject: prayer.title()),
+      );
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Imeshindikana kushiriki sala hii.')),
+      );
+    }
+  }
+
+  void _decreaseTextSize() {
+    setState(() {
+      _textScale = (_textScale - _textScaleStep).clamp(
+        _minTextScale,
+        _maxTextScale,
+      );
+    });
+  }
+
+  void _resetTextSize() {
+    setState(() {
+      _textScale = _defaultTextScale;
+    });
+  }
+
+  void _increaseTextSize() {
+    setState(() {
+      _textScale = (_textScale + _textScaleStep).clamp(
+        _minTextScale,
+        _maxTextScale,
+      );
+    });
+  }
 }
 
 class _TextSizeChip extends StatelessWidget {
-  const _TextSizeChip({required this.label, required this.selected});
+  const _TextSizeChip({
+    required this.label,
+    required this.selected,
+    required this.onPressed,
+  });
 
   final String label;
   final bool selected;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      margin: const EdgeInsets.only(right: 8),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
         color: selected ? AppColors.nightPanelAlt : Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: selected ? AppColors.text : AppColors.primary,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onPressed,
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: Center(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: selected ? AppColors.text : AppColors.primary,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
