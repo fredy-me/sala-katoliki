@@ -205,7 +205,8 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
     final source = prayer.source?.trim().isNotEmpty == true
         ? prayer.source!
         : 'Traditional Catholic Prayer';
-    final shareText = '${prayer.title()}\n\n${prayer.text()}\n\nSource: $source';
+    final shareText =
+        '${prayer.title()}\n\n${prayer.text()}\n\nSource: $source';
 
     try {
       await SharePlus.instance.share(
