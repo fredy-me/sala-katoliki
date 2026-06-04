@@ -17,7 +17,8 @@ class SalaKatolikiApp extends ConsumerWidget {
       title: 'Sala Katoliki',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      themeMode: ThemeMode.light,
+      darkTheme: AppTheme.dark,
+      themeMode: settings?.themeMode ?? ThemeMode.system,
       routerConfig: router,
       builder: (context, child) {
         final scale = settings?.fontScale ?? 1;
