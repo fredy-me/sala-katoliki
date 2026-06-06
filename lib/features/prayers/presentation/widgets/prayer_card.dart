@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../domain/entities/prayer_entity.dart';
@@ -43,7 +42,6 @@ class PrayerCard extends StatelessWidget {
                   Text(
                     prayer.categoryLabel(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.mutedText,
                       fontSize: 12,
                     ),
                   ),
@@ -55,7 +53,9 @@ class PrayerCard extends StatelessWidget {
               onPressed: onFavoriteToggle,
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? AppColors.primary : AppColors.mutedText,
+                color: isFavorite
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
             ),
