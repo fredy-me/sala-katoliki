@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 
 class AppCard extends StatelessWidget {
@@ -8,8 +7,8 @@ class AppCard extends StatelessWidget {
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(AppSpacing.lg),
-    this.backgroundColor = AppColors.surface,
-    this.borderColor = AppColors.border,
+    this.backgroundColor,
+    this.borderColor,
     this.radius = AppSpacing.radiusLg,
     super.key,
   });
@@ -17,20 +16,26 @@ class AppCard extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
-  final Color backgroundColor;
-  final Color borderColor;
+  final Color? backgroundColor;
+  final Color? borderColor;
   final double radius;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.surface;
+    final effectiveBorderColor =
+        borderColor ??
+        Theme.of(context).dividerTheme.color ??
+        Theme.of(context).colorScheme.outlineVariant;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
-      side: BorderSide(color: borderColor),
+      side: BorderSide(color: effectiveBorderColor),
     );
 
     if (onTap == null) {
       return Material(
-        color: backgroundColor,
+        color: effectiveBackgroundColor,
         shape: shape,
         clipBehavior: Clip.antiAlias,
         child: Padding(padding: padding, child: child),
@@ -38,7 +43,7 @@ class AppCard extends StatelessWidget {
     }
 
     return Material(
-      color: backgroundColor,
+      color: effectiveBackgroundColor,
       shape: shape,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
