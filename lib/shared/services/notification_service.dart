@@ -6,8 +6,15 @@ class NotificationService {
   NotificationService({FlutterLocalNotificationsPlugin? plugin})
     : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
+  static const int _dailyReminderId = 1;
+  static const String _dailyReminderChannelId = 'daily_prayer_reminder';
+  static const String _dailyReminderChannelName = 'Daily prayer reminder';
+  static const String _dailyReminderChannelDescription =
+      'Daily reminder to pray with Sala Katoliki';
+
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
+  bool _timeZonesInitialized = false;
 
   Future<bool> scheduleDailyReminder({
     required int hour,
@@ -25,18 +32,20 @@ class NotificationService {
       return false;
     }
 
+    await _plugin.cancel(id: _dailyReminderId);
     await _plugin.zonedSchedule(
-      id: 1,
+      id: _dailyReminderId,
       title: title,
       body: body,
       scheduledDate: _nextReminderTime(hour: hour, minute: minute),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
-          'daily_prayer_reminder',
-          'Daily prayer reminder',
-          channelDescription: 'Daily reminder to pray with Sala Katoliki',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
+          _dailyReminderChannelId,
+          _dailyReminderChannelName,
+          channelDescription: _dailyReminderChannelDescription,
+          importance: Importance.high,
+          priority: Priority.high,
+          category: AndroidNotificationCategory.reminder,
         ),
         iOS: DarwinNotificationDetails(),
         macOS: DarwinNotificationDetails(),
@@ -51,7 +60,7 @@ class NotificationService {
   Future<void> cancelDailyReminder() async {
     final initialized = await _initialize();
     if (initialized) {
-      await _plugin.cancel(id: 1);
+      await _plugin.cancel(id: _dailyReminderId);
     }
   }
 
@@ -61,7 +70,7 @@ class NotificationService {
     }
 
     try {
-      tz_data.initializeTimeZones();
+      _initializeTimeZones();
       const settings = InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
         iOS: DarwinInitializationSettings(),
@@ -73,6 +82,24 @@ class NotificationService {
     } catch (_) {
       return false;
     }
+  }
+
+  void _initializeTimeZones() {
+    if (_timeZonesInitialized) {
+      return;
+    }
+
+    tz_data.initializeTimeZones();
+    final now = DateTime.now();
+    final localZone = tz.Location('device_local', [tz.minTime], [0], [
+      tz.TimeZone(
+        now.timeZoneOffset,
+        isDst: false,
+        abbreviation: now.timeZoneName,
+      ),
+    ]);
+    tz.setLocalLocation(localZone);
+    _timeZonesInitialized = true;
   }
 
   Future<bool> _requestPermissionIfNeeded() async {
