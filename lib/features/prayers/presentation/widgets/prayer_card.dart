@@ -41,9 +41,9 @@ class PrayerCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     prayer.categoryLabel(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 12,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 12),
                   ),
                 ],
               ),
