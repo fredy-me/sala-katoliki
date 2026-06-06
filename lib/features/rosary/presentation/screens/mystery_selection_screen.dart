@@ -79,7 +79,7 @@ class MysterySelectionScreen extends ConsumerWidget {
   ) async {
     await ref.read(rosaryProgressProvider.notifier).start(mysteryId);
     if (context.mounted) {
-      context.go('/rosary/step/$mysteryId');
+      context.push('/rosary/step/$mysteryId');
     }
   }
 }
