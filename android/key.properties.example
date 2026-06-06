@@ -1,0 +1,4 @@
+storePassword=replace-with-keystore-password
+keyPassword=replace-with-key-password
+keyAlias=sala-katoliki-release
+storeFile=../release-keystore/sala-katoliki-release.jks
