@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
@@ -45,7 +46,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             title: strings.loadErrorTitle,
             message: strings.loadErrorMessage,
             actionLabel: strings.back,
-            onAction: () => context.pop(),
+            onAction: () => context.popOrGo('/library'),
           ),
           data: (prayers) {
             final favorites = _favoritePrayers(prayers, favoriteIds);
@@ -65,7 +66,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                   children: [
                     IconButton(
                       tooltip: strings.back,
-                      onPressed: () => context.pop(),
+                      onPressed: () => context.popOrGo('/library'),
                       icon: const Icon(Icons.arrow_back),
                     ),
                     const SizedBox(width: AppSpacing.sm),
