@@ -59,7 +59,7 @@ class NovenaDayScreen extends ConsumerWidget {
                   backLabel: strings.back,
                   onBack: () => context.pop(),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                Divider(height: 1, color: Theme.of(context).dividerTheme.color),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(
@@ -83,7 +83,6 @@ class NovenaDayScreen extends ConsumerWidget {
                       if (novena.source != null) ...[
                         const SizedBox(height: AppSpacing.lg),
                         AppCard(
-                          backgroundColor: AppColors.surfaceWarm,
                           child: Text(
                             novena.source!,
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -172,10 +171,14 @@ class _CompleteBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor =
+        Theme.of(context).dividerTheme.color ??
+        Theme.of(context).colorScheme.outlineVariant;
+
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(top: BorderSide(color: borderColor)),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
