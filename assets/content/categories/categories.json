@@ -39,6 +39,19 @@
     "icon": "hands_prayer"
   },
   {
+    "id": "litanies",
+    "title": {
+      "en": "Litanies",
+      "sw": "Litania"
+    },
+    "description": {
+      "en": "Responsive devotional prayers such as litanies of the Saints, Mary, and the Sacred Heart.",
+      "sw": "Sala za kuitikiana kama Litania ya Watakatifu, Bikira Maria, na Moyo Mtakatifu."
+    },
+    "sort_order": 4,
+    "icon": "list"
+  },
+  {
     "id": "mass_prayers",
     "title": {
       "en": "Mass Prayers",
@@ -48,7 +61,7 @@
       "en": "Prayers connected with the Holy Mass.",
       "sw": "Sala zinazohusiana na Misa Takatifu."
     },
-    "sort_order": 4,
+    "sort_order": 5,
     "icon": "church"
   },
   {
@@ -61,7 +74,7 @@
       "en": "Chaplet and Divine Mercy devotions.",
       "sw": "Rozari na ibada za Huruma ya Mungu."
     },
-    "sort_order": 5,
+    "sort_order": 6,
     "icon": "heart"
   }
 ]
