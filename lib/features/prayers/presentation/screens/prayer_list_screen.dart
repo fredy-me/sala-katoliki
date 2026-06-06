@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
@@ -36,7 +37,7 @@ class PrayerListScreen extends ConsumerWidget {
                 ? 'Kuna tatizo kusoma sala za kundi hili.'
                 : 'There was a problem reading this category.',
             actionLabel: languageCode == 'sw' ? 'Rudi' : 'Back',
-            onAction: () => context.pop(),
+            onAction: () => context.popOrGo('/prayers'),
           ),
           data: (prayers) {
             final categoryPrayers = prayers
@@ -66,7 +67,7 @@ class PrayerListScreen extends ConsumerWidget {
                   children: [
                     IconButton(
                       tooltip: languageCode == 'sw' ? 'Rudi' : 'Back',
-                      onPressed: () => context.pop(),
+                      onPressed: () => context.popOrGo('/prayers'),
                       icon: const Icon(Icons.arrow_back),
                     ),
                     const SizedBox(width: AppSpacing.sm),
