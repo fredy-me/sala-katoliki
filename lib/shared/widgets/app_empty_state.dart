@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 
 class AppEmptyState extends StatelessWidget {
@@ -28,11 +27,11 @@ class AppEmptyState extends StatelessWidget {
           Container(
             width: 52,
             height: 52,
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceWarm,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.gold),
+            child: Icon(icon, color: Theme.of(context).colorScheme.primary),
           ),
           if (title != null) ...[
             const SizedBox(height: AppSpacing.lg),
