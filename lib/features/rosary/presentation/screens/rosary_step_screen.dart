@@ -53,7 +53,10 @@ class RosaryStepScreen extends ConsumerWidget {
                   onBack: () => _goBack(context),
                   onRestart: () => _restart(context, ref),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).dividerTheme.color,
+                ),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(
@@ -228,7 +231,6 @@ class _BeadProgress extends StatelessWidget {
         : 'Decade ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
-      backgroundColor: AppColors.surfaceWarm,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -245,9 +247,15 @@ class _BeadProgress extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: index <= step.beadNumber
                         ? AppColors.gold
-                        : AppColors.surface,
+                        : Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(
+                      color:
+                          Theme.of(context).dividerTheme.color ??
+                          Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                 ),
             ],
@@ -275,10 +283,14 @@ class _StepControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor =
+        Theme.of(context).dividerTheme.color ??
+        Theme.of(context).colorScheme.outlineVariant;
+
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(top: BorderSide(color: borderColor)),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
