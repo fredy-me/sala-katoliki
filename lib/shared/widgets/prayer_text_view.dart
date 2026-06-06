@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_text_styles.dart';
-
 class PrayerTextView extends StatelessWidget {
   const PrayerTextView({
     required this.text,
@@ -16,11 +14,15 @@ class PrayerTextView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseStyle = Theme.of(context).textTheme.headlineMedium;
+
     return Text(
       text,
       textAlign: textAlign,
-      style: AppTextStyles.prayerBody.copyWith(
-        fontSize: AppTextStyles.prayerBody.fontSize! * fontScale,
+      style: baseStyle?.copyWith(
+        fontSize: 20 * fontScale,
+        height: 1.62,
+        fontWeight: FontWeight.w400,
       ),
     );
   }
