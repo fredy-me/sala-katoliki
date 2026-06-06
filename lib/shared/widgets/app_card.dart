@@ -28,17 +28,24 @@ class AppCard extends StatelessWidget {
       side: BorderSide(color: borderColor),
     );
 
-    final content = Material(
+    if (onTap == null) {
+      return Material(
+        color: backgroundColor,
+        shape: shape,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(padding: padding, child: child),
+      );
+    }
+
+    return Material(
       color: backgroundColor,
       shape: shape,
       clipBehavior: Clip.antiAlias,
-      child: Padding(padding: padding, child: child),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: shape,
+        child: Padding(padding: padding, child: child),
+      ),
     );
-
-    if (onTap == null) {
-      return content;
-    }
-
-    return InkWell(onTap: onTap, customBorder: shape, child: content);
   }
 }
