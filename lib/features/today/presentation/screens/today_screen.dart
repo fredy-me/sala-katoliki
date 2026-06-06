@@ -298,7 +298,7 @@ class _RosaryTodayCard extends StatelessWidget {
             ),
           ),
           OutlinedButton(
-            onPressed: () => context.go('/rosary'),
+            onPressed: () => context.push('/rosary'),
             child: Text(strings.startRosary),
           ),
         ],
@@ -331,7 +331,14 @@ class _QuickActionGrid extends StatelessWidget {
       children: [
         for (final action in actions)
           AppCard(
-            onTap: () => context.go(action.path),
+            onTap: () {
+              if (action.path == '/rosary') {
+                context.push(action.path);
+                return;
+              }
+
+              context.go(action.path);
+            },
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
