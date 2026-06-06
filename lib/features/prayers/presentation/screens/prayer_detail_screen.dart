@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/localization/localization_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
@@ -44,14 +43,14 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
           error: (error, stackTrace) => _DetailMessage(
             title: 'Sala haikupatikana',
             message: 'Jaribu kurudi kwenye maktaba ya sala.',
-            onBack: () => context.pop(),
+            onBack: () => context.popOrGo('/prayers'),
           ),
           data: (prayer) {
             if (prayer == null) {
               return _DetailMessage(
                 title: 'Sala haikupatikana',
                 message: 'Jaribu kuchagua sala nyingine.',
-                onBack: () => context.pop(),
+                onBack: () => context.popOrGo('/prayers'),
               );
             }
 
@@ -72,7 +71,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                     children: [
                       IconButton(
                         tooltip: 'Rudi',
-                        onPressed: () => context.pop(),
+                        onPressed: () => context.popOrGo('/prayers'),
                         icon: const Icon(Icons.arrow_back),
                       ),
                       const Spacer(),
