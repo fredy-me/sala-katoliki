@@ -47,66 +47,59 @@ class RosaryScreen extends ConsumerWidget {
         final suggested = suggestedState.asData?.value ?? mysteries.first;
         final activeSession = activeSessionState.asData?.value;
 
-        return ColoredBox(
-          color: AppColors.background,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenTop,
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenBottom,
-            ),
-            children: [
-              Text(
-                strings.title,
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineLarge?.copyWith(color: AppColors.text),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                strings.subtitle,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _TodayMysteryCard(
-                mystery: suggested,
-                strings: strings,
-                onStart: () => _startRosary(context, ref, suggested.id),
-                onSelect: () => context.push('/rosary/select'),
-              ),
-              if (activeSession != null) ...[
-                const SizedBox(height: AppSpacing.lg),
-                _ContinueCard(
-                  mystery: activeSession.mystery,
-                  progress: activeSession.progress,
-                  stepLabel: strings.stepLabel(
-                    activeSession.stepIndex + 1,
-                    activeSession.steps.length,
-                  ),
-                  strings: strings,
-                  onContinue: () =>
-                      context.push('/rosary/step/${activeSession.mystery.id}'),
-                  onRestart: () =>
-                      _startRosary(context, ref, activeSession.mystery.id),
-                ),
-              ],
-              const SizedBox(height: AppSpacing.section),
-              SectionHeader(title: strings.allMysteries),
-              const SizedBox(height: AppSpacing.md),
-              for (final mystery in mysteries) ...[
-                _MysteryRow(
-                  mystery: mystery,
-                  isSuggested: mystery.id == suggested.id,
-                  strings: strings,
-                  onTap: () => _startRosary(context, ref, mystery.id),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-            ],
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenHorizontal,
+            AppSpacing.screenTop,
+            AppSpacing.screenHorizontal,
+            AppSpacing.screenBottom,
           ),
+          children: [
+            Text(
+              strings.title,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              strings.subtitle,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _TodayMysteryCard(
+              mystery: suggested,
+              strings: strings,
+              onStart: () => _startRosary(context, ref, suggested.id),
+              onSelect: () => context.push('/rosary/select'),
+            ),
+            if (activeSession != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              _ContinueCard(
+                mystery: activeSession.mystery,
+                progress: activeSession.progress,
+                stepLabel: strings.stepLabel(
+                  activeSession.stepIndex + 1,
+                  activeSession.steps.length,
+                ),
+                strings: strings,
+                onContinue: () =>
+                    context.push('/rosary/step/${activeSession.mystery.id}'),
+                onRestart: () =>
+                    _startRosary(context, ref, activeSession.mystery.id),
+              ),
+            ],
+            const SizedBox(height: AppSpacing.section),
+            SectionHeader(title: strings.allMysteries),
+            const SizedBox(height: AppSpacing.md),
+            for (final mystery in mysteries) ...[
+              _MysteryRow(
+                mystery: mystery,
+                isSuggested: mystery.id == suggested.id,
+                strings: strings,
+                onTap: () => _startRosary(context, ref, mystery.id),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+          ],
         );
       },
     );
@@ -140,8 +133,6 @@ class _TodayMysteryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      backgroundColor: AppColors.surface,
-      borderColor: AppColors.border,
       radius: AppSpacing.radiusXl,
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -157,16 +148,12 @@ class _TodayMysteryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             mystery.title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(color: AppColors.text),
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             mystery.description,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: AppSpacing.xl),
           Wrap(
@@ -216,24 +203,12 @@ class _ContinueCard extends StatelessWidget {
         children: [
           Text(
             strings.savedProgress,
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: AppColors.gold),
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            mystery.title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(color: AppColors.text),
-          ),
+          Text(mystery.title, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            stepLabel,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
-          ),
+          Text(stepLabel, style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.md),
           LinearProgressIndicator(
             value: progress,
@@ -301,16 +276,12 @@ class _MysteryRow extends StatelessWidget {
               children: [
                 Text(
                   mystery.title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(color: AppColors.text),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   isSuggested ? strings.suggestedToday : mystery.description,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: AppColors.mutedText),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
