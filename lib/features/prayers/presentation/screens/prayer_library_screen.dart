@@ -285,16 +285,18 @@ class _PrayerSection extends StatelessWidget {
       children: [
         Text(
           title.toUpperCase(),
-          style: Theme.of(context).textTheme.labelSmall,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.gold,
+            letterSpacing: 1.2,
+          ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
         for (final entry in entries) ...[
           switch (entry) {
             _PrayerCategoryEntry() => _CategoryCard(
               category: entry.category,
               count: entry.count,
               languageCode: languageCode,
-              countLabel: strings.countLabel(entry.count),
               unavailableLabel: strings.comingSoon,
             ),
             _PrayerFeatureEntry() => _FeatureCard(entry: entry),
@@ -311,14 +313,12 @@ class _CategoryCard extends StatelessWidget {
     required this.category,
     required this.count,
     required this.languageCode,
-    required this.countLabel,
     required this.unavailableLabel,
   });
 
   final CategoryModel category;
   final int count;
   final String languageCode;
-  final String countLabel;
   final String unavailableLabel;
 
   @override
@@ -333,35 +333,32 @@ class _CategoryCard extends StatelessWidget {
       onTap: hasContent
           ? () => context.push('/prayers/category/${category.id}')
           : null,
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      radius: AppSpacing.radiusXl,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.lg,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _CategoryIcon(iconName: category.icon),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(width: AppSpacing.lg),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    hasContent ? countLabel : unavailableLabel,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  hasContent ? description : unavailableLabel,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           Icon(
             hasContent ? Icons.chevron_right : Icons.lock_outline,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -381,31 +378,35 @@ class _FeatureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: () => context.push(entry.route),
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      radius: AppSpacing.radiusXl,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.lg,
+      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _CategoryIcon(iconName: entry.iconName),
+          const SizedBox(width: AppSpacing.lg),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entry.title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    entry.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  entry.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           Icon(
             Icons.chevron_right,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -435,13 +436,13 @@ class _CategoryIcon extends StatelessWidget {
     };
 
     return Container(
-      width: 38,
-      height: 38,
+      width: 58,
+      height: 58,
       decoration: const BoxDecoration(
         color: AppColors.goldSoft,
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, color: AppColors.navy, size: 21),
+      child: Icon(icon, color: AppColors.navy, size: 28),
     );
   }
 }
