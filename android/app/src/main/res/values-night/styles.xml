@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launch_background">#1F1B18</color>
-    <color name="launcher_background">#7B1E2D</color>
+    <color name="launch_background">#FAF7F0</color>
+    <color name="launcher_background">#FFFFFF</color>
 
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is on -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
