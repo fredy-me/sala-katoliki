@@ -96,7 +96,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                     ],
                   ),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                Divider(height: 1, color: Theme.of(context).dividerTheme.color),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
@@ -105,7 +105,6 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         prayer.categoryLabel().toUpperCase(),
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
-                              color: AppColors.mutedText,
                               letterSpacing: 1.6,
                               fontWeight: FontWeight.w700,
                             ),
@@ -142,7 +141,6 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       AppCard(
-                        backgroundColor: AppColors.surfaceWarm,
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,10 +148,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                             Text(
                               'Source',
                               style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(
-                                    color: AppColors.mutedText,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                  ?.copyWith(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
@@ -264,7 +259,9 @@ class _TextSizeChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? AppColors.nightPanelAlt : Colors.transparent,
+        color: selected
+            ? Theme.of(context).colorScheme.surfaceContainerHighest
+            : Colors.transparent,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
@@ -276,7 +273,9 @@ class _TextSizeChip extends StatelessWidget {
               child: Text(
                 label,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: selected ? AppColors.text : AppColors.primary,
+                  color: selected
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
