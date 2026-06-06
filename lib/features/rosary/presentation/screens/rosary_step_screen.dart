@@ -31,7 +31,7 @@ class RosaryStepScreen extends ConsumerWidget {
             title: strings.errorTitle,
             message: strings.errorMessage,
             actionLabel: strings.back,
-            onAction: () => context.go('/rosary'),
+            onAction: () => _goBack(context),
           ),
           data: (session) {
             if (session == null) {
@@ -39,7 +39,7 @@ class RosaryStepScreen extends ConsumerWidget {
                 title: strings.missingTitle,
                 message: strings.missingMessage,
                 actionLabel: strings.back,
-                onAction: () => context.go('/rosary'),
+                onAction: () => _goBack(context),
               );
             }
 
@@ -50,7 +50,7 @@ class RosaryStepScreen extends ConsumerWidget {
                 _TopBar(
                   title: session.mystery.title,
                   strings: strings,
-                  onBack: () => context.go('/rosary'),
+                  onBack: () => _goBack(context),
                   onRestart: () => _restart(context, ref),
                 ),
                 const Divider(height: 1, color: AppColors.border),
@@ -134,6 +134,15 @@ class RosaryStepScreen extends ConsumerWidget {
   Future<void> _restart(BuildContext context, WidgetRef ref) async {
     await ref.read(rosaryProgressProvider.notifier).start(mysteryId);
     ref.invalidate(rosarySessionProvider(mysteryId));
+  }
+
+  void _goBack(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    context.go('/rosary');
   }
 }
 
