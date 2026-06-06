@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/navigation_utils.dart';
 import '../../../../data/models/novena_model.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
@@ -33,7 +33,7 @@ class NovenaDayScreen extends ConsumerWidget {
             title: strings.errorTitle,
             message: strings.errorMessage,
             actionLabel: strings.back,
-            onAction: () => context.pop(),
+            onAction: () => context.popOrGo('/novenas/$novenaId'),
           ),
           data: (novena) {
             if (novena == null || day < 1 || day > novena.days.length) {
@@ -41,7 +41,7 @@ class NovenaDayScreen extends ConsumerWidget {
                 title: strings.missingTitle,
                 message: strings.missingMessage,
                 actionLabel: strings.back,
-                onAction: () => context.pop(),
+                onAction: () => context.popOrGo('/novenas/$novenaId'),
               );
             }
 
@@ -57,7 +57,7 @@ class NovenaDayScreen extends ConsumerWidget {
                 _TopBar(
                   title: novena.title,
                   backLabel: strings.back,
-                  onBack: () => context.pop(),
+                  onBack: () => context.popOrGo('/novenas/$novenaId'),
                 ),
                 Divider(height: 1, color: Theme.of(context).dividerTheme.color),
                 Expanded(
