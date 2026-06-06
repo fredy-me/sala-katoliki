@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
-
 class AppSearchBar extends StatelessWidget {
   const AppSearchBar({
     required this.controller,
@@ -19,12 +17,13 @@ class AppSearchBar extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(color: AppColors.text, height: 1.2),
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.2),
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: const Icon(Icons.search, color: AppColors.mutedText),
+        prefixIcon: Icon(
+          Icons.search,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
