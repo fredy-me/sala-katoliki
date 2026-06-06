@@ -53,10 +53,7 @@ class RosaryStepScreen extends ConsumerWidget {
                   onBack: () => _goBack(context),
                   onRestart: () => _restart(context, ref),
                 ),
-                Divider(
-                  height: 1,
-                  color: Theme.of(context).dividerTheme.color,
-                ),
+                Divider(height: 1, color: Theme.of(context).dividerTheme.color),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(
@@ -247,9 +244,7 @@ class _BeadProgress extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: index <= step.beadNumber
                         ? AppColors.gold
-                        : Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color:
