@@ -50,24 +50,26 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(strings.subtitle, style: Theme.of(context).textTheme.bodyLarge),
           const SizedBox(height: AppSpacing.section),
-          SectionHeader(title: strings.language),
-          const SizedBox(height: AppSpacing.md),
-          for (final language in SupportedLanguages.all) ...[
-            _LanguageSettingTile(
-              language: language,
-              selected: selectedLanguage == language.code,
-              onTap: () {
-                ref
-                    .read(selectedLanguageProvider.notifier)
-                    .selectLanguage(language.code);
-              },
-            ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-          const SizedBox(height: AppSpacing.section),
-          SectionHeader(title: strings.reminders),
-          const SizedBox(height: AppSpacing.md),
-          _ReminderCard(settings: settings, strings: strings),
+          _SettingsGroup(
+            title: strings.language,
+            children: [
+              for (final language in SupportedLanguages.all)
+                _LanguageSettingRow(
+                  language: language,
+                  selected: selectedLanguage == language.code,
+                  onTap: () {
+                    ref
+                        .read(selectedLanguageProvider.notifier)
+                        .selectLanguage(language.code);
+                  },
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _SettingsGroup(
+            title: strings.reminders,
+            children: [_ReminderRow(settings: settings, strings: strings)],
+          ),
           if (settings.permissionDenied) ...[
             const SizedBox(height: AppSpacing.md),
             AppCard(
@@ -78,27 +80,31 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ],
-          const SizedBox(height: AppSpacing.section),
-          SectionHeader(title: strings.reading),
-          const SizedBox(height: AppSpacing.md),
-          _FontScaleCard(settings: settings, strings: strings),
-          const SizedBox(height: AppSpacing.md),
-          _ThemeCard(settings: settings, strings: strings),
-          const SizedBox(height: AppSpacing.section),
-          SectionHeader(title: strings.information),
-          const SizedBox(height: AppSpacing.md),
-          _InfoTile(
-            icon: Icons.info_outline,
-            title: strings.about,
-            subtitle: strings.aboutSubtitle,
-            onTap: () => context.push('/about'),
+          const SizedBox(height: AppSpacing.lg),
+          _SettingsGroup(
+            title: strings.reading,
+            children: [
+              _FontScaleRow(settings: settings, strings: strings),
+              _ThemeRow(settings: settings, strings: strings),
+            ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          _InfoTile(
-            icon: Icons.source_outlined,
-            title: strings.contentSources,
-            subtitle: strings.contentSourcesSubtitle,
-            onTap: () => context.push('/about'),
+          const SizedBox(height: AppSpacing.lg),
+          _SettingsGroup(
+            title: strings.information,
+            children: [
+              _InfoRow(
+                icon: Icons.info_outline,
+                title: strings.about,
+                subtitle: strings.aboutSubtitle,
+                onTap: () => context.push('/about'),
+              ),
+              _InfoRow(
+                icon: Icons.source_outlined,
+                title: strings.contentSources,
+                subtitle: strings.contentSourcesSubtitle,
+                onTap: () => context.push('/about'),
+              ),
+            ],
           ),
         ],
       ),
@@ -106,15 +112,51 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-class _ReminderCard extends ConsumerWidget {
-  const _ReminderCard({required this.settings, required this.strings});
+class _SettingsGroup extends StatelessWidget {
+  const _SettingsGroup({required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(title: title),
+        const SizedBox(height: AppSpacing.sm),
+        AppCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (var index = 0; index < children.length; index++) ...[
+                children[index],
+                if (index != children.length - 1)
+                  const Divider(
+                    height: 1,
+                    indent: AppSpacing.lg,
+                    endIndent: AppSpacing.lg,
+                    color: AppColors.border,
+                  ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReminderRow extends ConsumerWidget {
+  const _ReminderRow({required this.settings, required this.strings});
 
   final UserSettings settings;
   final _SettingsStrings strings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppCard(
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         children: [
           Row(
@@ -149,13 +191,34 @@ class _ReminderCard extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _pickTime(context, ref, settings.reminderTime),
-              icon: const Icon(Icons.schedule),
-              label: Text(strings.changeTime),
+          const SizedBox(height: AppSpacing.sm),
+          InkWell(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+            onTap: () => _pickTime(context, ref, settings.reminderTime),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.schedule,
+                    color: AppColors.mutedText,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      strings.changeTime,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Text(
+                    _formatDisplayTime(settings.reminderTime),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  const Icon(Icons.chevron_right, color: AppColors.mutedText),
+                ],
+              ),
             ),
           ),
         ],
@@ -198,15 +261,16 @@ class _ReminderCard extends ConsumerWidget {
   }
 }
 
-class _FontScaleCard extends ConsumerWidget {
-  const _FontScaleCard({required this.settings, required this.strings});
+class _FontScaleRow extends ConsumerWidget {
+  const _FontScaleRow({required this.settings, required this.strings});
 
   final UserSettings settings;
   final _SettingsStrings strings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppCard(
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -234,15 +298,16 @@ class _FontScaleCard extends ConsumerWidget {
   }
 }
 
-class _ThemeCard extends ConsumerWidget {
-  const _ThemeCard({required this.settings, required this.strings});
+class _ThemeRow extends ConsumerWidget {
+  const _ThemeRow({required this.settings, required this.strings});
 
   final UserSettings settings;
   final _SettingsStrings strings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppCard(
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -277,8 +342,8 @@ class _ThemeCard extends ConsumerWidget {
   }
 }
 
-class _InfoTile extends StatelessWidget {
-  const _InfoTile({
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -292,31 +357,38 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
+    return InkWell(
       onTap: onTap,
       child: Row(
         children: [
-          Icon(icon, color: AppColors.gold),
-          const SizedBox(width: AppSpacing.md),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Icon(icon, color: AppColors.gold),
+          ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: AppSpacing.xs),
-                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ),
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           const Icon(Icons.chevron_right, color: AppColors.mutedText),
+          const SizedBox(width: AppSpacing.md),
         ],
       ),
     );
   }
 }
 
-class _LanguageSettingTile extends StatelessWidget {
-  const _LanguageSettingTile({
+class _LanguageSettingRow extends StatelessWidget {
+  const _LanguageSettingRow({
     required this.language,
     required this.selected,
     required this.onTap,
@@ -328,32 +400,37 @@ class _LanguageSettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
+    return InkWell(
       onTap: onTap,
-      borderColor: selected ? AppColors.gold : AppColors.border,
-      backgroundColor: selected ? AppColors.goldSoft : AppColors.surface,
       child: Row(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  language.name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  language.nativeName,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Icon(
+              selected ? Icons.check_circle : Icons.language,
+              color: selected ? AppColors.gold : AppColors.mutedText,
             ),
           ),
-          if (selected)
-            const Icon(Icons.check_circle, color: AppColors.gold)
-          else
-            const Icon(Icons.radio_button_unchecked, color: AppColors.dimText),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    language.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    language.nativeName,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
         ],
       ),
     );
