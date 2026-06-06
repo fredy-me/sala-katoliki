@@ -149,7 +149,6 @@ class _ProgressPanel extends StatelessWidget {
     final active = session.isActive;
 
     return AppCard(
-      backgroundColor: active ? AppColors.surface : AppColors.surfaceWarm,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -199,9 +198,11 @@ class _DayRow extends StatelessWidget {
     final color = switch (status) {
       NovenaDayStatus.completed => AppColors.success,
       NovenaDayStatus.current => AppColors.gold,
-      NovenaDayStatus.open => AppColors.navy,
-      NovenaDayStatus.locked => AppColors.dimText,
-      NovenaDayStatus.notStarted => AppColors.mutedText,
+      NovenaDayStatus.open => Theme.of(context).colorScheme.primary,
+      NovenaDayStatus.locked => Theme.of(context).colorScheme.onSurfaceVariant,
+      NovenaDayStatus.notStarted => Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant,
     };
     final icon = switch (status) {
       NovenaDayStatus.completed => Icons.check,
@@ -213,9 +214,7 @@ class _DayRow extends StatelessWidget {
 
     return AppCard(
       onTap: onTap,
-      borderColor: status == NovenaDayStatus.current
-          ? AppColors.gold
-          : AppColors.border,
+      borderColor: status == NovenaDayStatus.current ? AppColors.gold : null,
       child: Row(
         children: [
           Container(
@@ -242,7 +241,10 @@ class _DayRow extends StatelessWidget {
             ),
           ),
           if (onTap != null)
-            const Icon(Icons.chevron_right, color: AppColors.mutedText),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
         ],
       ),
     );
