@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/theme/app_colors.dart';
-
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     required this.location,
@@ -19,10 +17,14 @@ class AppBottomNav extends StatelessWidget {
       (destination) => location == destination.path,
     );
 
+    final borderColor =
+        Theme.of(context).dividerTheme.color ??
+        Theme.of(context).colorScheme.outlineVariant;
+
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(top: BorderSide(color: borderColor)),
       ),
       child: NavigationBar(
         selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
