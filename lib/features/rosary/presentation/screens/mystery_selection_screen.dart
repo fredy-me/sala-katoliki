@@ -101,7 +101,7 @@ class _MysteryOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      borderColor: isSuggested ? AppColors.gold : AppColors.border,
+      borderColor: isSuggested ? AppColors.gold : null,
       child: Row(
         children: [
           const Icon(Icons.auto_awesome, color: AppColors.gold),
