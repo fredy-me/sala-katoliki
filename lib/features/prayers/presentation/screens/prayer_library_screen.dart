@@ -159,22 +159,148 @@ class _CategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: AppSpacing.md,
-      crossAxisSpacing: AppSpacing.md,
-      childAspectRatio: 0.98,
+    final strings = _PrayerLibraryStrings(languageCode);
+    final categoriesById = {
+      for (final category in categories) category.id: category,
+    };
+    final countsByCategory = <String, int>{};
+    for (final prayer in prayers) {
+      countsByCategory.update(
+        prayer.categoryId,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final category in categories)
-          _CategoryCard(
-            category: category,
-            count: prayers
-                .where((prayer) => prayer.categoryId == category.id)
-                .length,
-            languageCode: languageCode,
-          ),
+        _PrayerSection(
+          title: strings.corePrayers,
+          entries: [
+            for (final id in const [
+              'common_prayers',
+              'mass_prayers',
+              'confession_prayers',
+            ])
+              if (categoriesById[id] != null)
+                _PrayerCategoryEntry(
+                  category: categoriesById[id]!,
+                  count: countsByCategory[id] ?? 0,
+                ),
+          ],
+          languageCode: languageCode,
+          strings: strings,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _PrayerSection(
+          title: strings.marianAndRosary,
+          entries: [
+            if (categoriesById['marian_prayers'] != null)
+              _PrayerCategoryEntry(
+                category: categoriesById['marian_prayers']!,
+                count: countsByCategory['marian_prayers'] ?? 0,
+              ),
+            _PrayerFeatureEntry(
+              title: strings.rosaryAndMysteries,
+              description: strings.rosaryAndMysteriesDescription,
+              iconName: 'rosary',
+              route: '/rosary',
+            ),
+          ],
+          languageCode: languageCode,
+          strings: strings,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _PrayerSection(
+          title: strings.devotions,
+          entries: [
+            if (categoriesById['litanies'] != null)
+              _PrayerCategoryEntry(
+                category: categoriesById['litanies']!,
+                count: countsByCategory['litanies'] ?? 0,
+              ),
+            _PrayerFeatureEntry(
+              title: strings.novenas,
+              description: strings.novenasDescription,
+              iconName: 'calendar',
+              route: '/novenas',
+            ),
+            if (categoriesById['divine_mercy'] != null)
+              _PrayerCategoryEntry(
+                category: categoriesById['divine_mercy']!,
+                count: countsByCategory['divine_mercy'] ?? 0,
+              ),
+          ],
+          languageCode: languageCode,
+          strings: strings,
+        ),
+      ],
+    );
+  }
+}
+
+sealed class _PrayerEntry {
+  const _PrayerEntry();
+}
+
+class _PrayerCategoryEntry extends _PrayerEntry {
+  const _PrayerCategoryEntry({required this.category, required this.count});
+
+  final CategoryModel category;
+  final int count;
+}
+
+class _PrayerFeatureEntry extends _PrayerEntry {
+  const _PrayerFeatureEntry({
+    required this.title,
+    required this.description,
+    required this.iconName,
+    required this.route,
+  });
+
+  final String title;
+  final String description;
+  final String iconName;
+  final String route;
+}
+
+class _PrayerSection extends StatelessWidget {
+  const _PrayerSection({
+    required this.title,
+    required this.entries,
+    required this.languageCode,
+    required this.strings,
+  });
+
+  final String title;
+  final List<_PrayerEntry> entries;
+  final String languageCode;
+  final _PrayerLibraryStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title.toUpperCase(),
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        for (final entry in entries) ...[
+          switch (entry) {
+            _PrayerCategoryEntry() => _CategoryCard(
+              category: entry.category,
+              count: entry.count,
+              languageCode: languageCode,
+              countLabel: strings.countLabel(entry.count),
+              unavailableLabel: strings.comingSoon,
+            ),
+            _PrayerFeatureEntry() => _FeatureCard(entry: entry),
+          },
+          const SizedBox(height: AppSpacing.sm),
+        ],
       ],
     );
   }
@@ -185,11 +311,15 @@ class _CategoryCard extends StatelessWidget {
     required this.category,
     required this.count,
     required this.languageCode,
+    required this.countLabel,
+    required this.unavailableLabel,
   });
 
   final CategoryModel category;
   final int count;
   final String languageCode;
+  final String countLabel;
+  final String unavailableLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -197,28 +327,88 @@ class _CategoryCard extends StatelessWidget {
         category.title[languageCode] ?? category.title['en'] ?? category.id;
     final description =
         category.description[languageCode] ?? category.description['en'] ?? '';
+    final hasContent = count > 0;
 
     return AppCard(
-      onTap: () => context.push('/prayers/category/${category.id}'),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      onTap: hasContent
+          ? () => context.push('/prayers/category/${category.id}')
+          : null,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _CategoryIcon(iconName: category.icon),
           const SizedBox(height: AppSpacing.md),
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.xs),
           Expanded(
-            child: Text(
-              description,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyMedium,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    hasContent ? countLabel : unavailableLabel,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ),
             ),
           ),
-          Text(
-            '$count ${count == 1 ? 'prayer' : 'prayers'}',
-            style: Theme.of(context).textTheme.labelSmall,
+          Icon(
+            hasContent ? Icons.chevron_right : Icons.lock_outline,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeatureCard extends StatelessWidget {
+  const _FeatureCard({required this.entry});
+
+  final _PrayerFeatureEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: () => context.push(entry.route),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Row(
+        children: [
+          _CategoryIcon(iconName: entry.iconName),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    entry.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ],
       ),
@@ -238,6 +428,9 @@ class _CategoryIcon extends StatelessWidget {
       'hands_prayer' => Icons.volunteer_activism,
       'church' => Icons.church,
       'heart' => Icons.favorite_border,
+      'list' => Icons.format_list_bulleted,
+      'calendar' => Icons.calendar_month_outlined,
+      'rosary' => Icons.radio_button_checked,
       _ => Icons.add,
     };
 
@@ -278,10 +471,33 @@ class _PrayerLibraryStrings {
   bool get _sw => languageCode == 'sw';
 
   String get title => _sw ? 'Sala' : 'Pray';
-  String get subtitle =>
-      _sw ? 'Vinjari sala kwa makundi' : 'Browse prayers by category';
+  String get subtitle => _sw
+      ? 'Chagua sala, ibada, novena, na rozari kwa mpangilio.'
+      : 'Choose prayers, devotions, novenas, and rosary in order.';
   String get loading => _sw ? 'Inapakia sala...' : 'Loading prayers...';
   String get searchHint => _sw ? 'Tafuta sala...' : 'Search prayers...';
+  String get corePrayers => _sw ? 'Sala Muhimu' : 'Essential Prayers';
+  String get marianAndRosary =>
+      _sw ? 'Bikira Maria na Rozari' : 'Mary and Rosary';
+  String get devotions => _sw ? 'Ibada Maalum' : 'Devotions';
+  String get rosaryAndMysteries =>
+      _sw ? 'Rozari na Mafumbo' : 'Rosary and Mysteries';
+  String get rosaryAndMysteriesDescription => _sw
+      ? 'Sali rozari kwa hatua na mafumbo ya siku.'
+      : 'Pray the rosary step by step with the mysteries of the day.';
+  String get novenas => _sw ? 'Novena' : 'Novenas';
+  String get novenasDescription => _sw
+      ? 'Ibada za siku tisa na ufuatiliaji wa maendeleo.'
+      : 'Nine-day devotions with progress tracking.';
+  String get comingSoon => _sw ? 'Inaandaliwa' : 'Coming soon';
+  String countLabel(int count) {
+    if (_sw) {
+      return count == 1 ? 'Sala 1' : 'Sala $count';
+    }
+
+    return count == 1 ? '1 prayer' : '$count prayers';
+  }
+
   String get noSearchResults => _sw
       ? 'Hakuna sala inayolingana na utafutaji huu.'
       : 'No prayers match this search.';
