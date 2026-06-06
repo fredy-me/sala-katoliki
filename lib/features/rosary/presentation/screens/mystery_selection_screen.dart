@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/navigation_utils.dart';
 import '../../../../data/models/rosary_model.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
@@ -29,7 +30,7 @@ class MysterySelectionScreen extends ConsumerWidget {
             title: strings.errorTitle,
             message: strings.errorMessage,
             actionLabel: strings.back,
-            onAction: () => context.pop(),
+            onAction: () => context.popOrGo('/rosary'),
           ),
           data: (mysteries) => ListView(
             padding: const EdgeInsets.fromLTRB(
@@ -43,7 +44,7 @@ class MysterySelectionScreen extends ConsumerWidget {
                 children: [
                   IconButton(
                     tooltip: strings.back,
-                    onPressed: () => context.pop(),
+                    onPressed: () => context.popOrGo('/rosary'),
                     icon: const Icon(Icons.arrow_back),
                   ),
                   const SizedBox(width: AppSpacing.sm),
