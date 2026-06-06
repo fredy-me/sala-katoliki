@@ -50,7 +50,7 @@ void main() {
     await tester.tap(find.text('Endelea'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Pray'));
+    await tester.tap(find.text('Sala'));
     await tester.pumpAndSettle();
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
