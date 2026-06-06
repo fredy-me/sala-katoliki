@@ -178,7 +178,7 @@ class _NovenaListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      borderColor: isActive ? AppColors.gold : AppColors.border,
+      borderColor: isActive ? AppColors.gold : null,
       child: Row(
         children: [
           Container(
@@ -207,7 +207,10 @@ class _NovenaListItem extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: AppColors.mutedText),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ],
       ),
     );
