@@ -238,7 +238,7 @@ class _ContinueNovenaCard extends StatelessWidget {
           LinearProgressIndicator(
             value: state.novenaProgress,
             minHeight: 4,
-            backgroundColor: AppColors.border,
+            backgroundColor: Theme.of(context).dividerTheme.color,
             color: AppColors.gold,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -362,7 +362,6 @@ class _ReminderStatusCard extends StatelessWidget {
     final reminderTime = state?.reminderTime ?? '7:00 PM';
 
     return AppCard(
-      backgroundColor: AppColors.surfaceWarm,
       child: Row(
         children: [
           const _IconBadge(icon: Icons.notifications_none, compact: true),
