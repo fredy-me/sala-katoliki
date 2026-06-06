@@ -32,29 +32,12 @@ class NotificationService {
       return false;
     }
 
-    await _plugin.cancel(id: _dailyReminderId);
-    await _plugin.zonedSchedule(
-      id: _dailyReminderId,
+    final scheduledDate = _nextReminderTime(hour: hour, minute: minute);
+    return _scheduleDailyReminder(
       title: title,
       body: body,
-      scheduledDate: _nextReminderTime(hour: hour, minute: minute),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _dailyReminderChannelId,
-          _dailyReminderChannelName,
-          channelDescription: _dailyReminderChannelDescription,
-          importance: Importance.high,
-          priority: Priority.high,
-          category: AndroidNotificationCategory.reminder,
-        ),
-        iOS: DarwinNotificationDetails(),
-        macOS: DarwinNotificationDetails(),
-        linux: LinuxNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
+      scheduledDate: scheduledDate,
     );
-    return true;
   }
 
   Future<void> cancelDailyReminder() async {
@@ -72,7 +55,7 @@ class NotificationService {
     try {
       _initializeTimeZones();
       const settings = InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('@drawable/ic_stat_prayer'),
         iOS: DarwinInitializationSettings(),
         macOS: DarwinInitializationSettings(),
         linux: LinuxInitializationSettings(defaultActionName: 'Open'),
@@ -82,6 +65,50 @@ class NotificationService {
     } catch (_) {
       return false;
     }
+  }
+
+  Future<bool> _scheduleDailyReminder({
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduledDate,
+  }) async {
+    const scheduleModes = [
+      AndroidScheduleMode.inexactAllowWhileIdle,
+      AndroidScheduleMode.inexact,
+    ];
+
+    for (final scheduleMode in scheduleModes) {
+      try {
+        await _plugin.cancel(id: _dailyReminderId);
+        await _plugin.zonedSchedule(
+          id: _dailyReminderId,
+          title: title,
+          body: body,
+          scheduledDate: scheduledDate,
+          notificationDetails: const NotificationDetails(
+            android: AndroidNotificationDetails(
+              _dailyReminderChannelId,
+              _dailyReminderChannelName,
+              channelDescription: _dailyReminderChannelDescription,
+              importance: Importance.high,
+              priority: Priority.high,
+              category: AndroidNotificationCategory.reminder,
+            ),
+            iOS: DarwinNotificationDetails(),
+            macOS: DarwinNotificationDetails(),
+            linux: LinuxNotificationDetails(),
+          ),
+          androidScheduleMode: scheduleMode,
+          matchDateTimeComponents: DateTimeComponents.time,
+        );
+        return true;
+      } catch (_) {
+        // Some Android devices reject one alarm mode even after notification
+        // permission is granted. Try the next compatible mode before failing.
+      }
+    }
+
+    return false;
   }
 
   void _initializeTimeZones() {
@@ -147,7 +174,7 @@ class NotificationService {
       hour,
       minute,
     );
-    if (scheduled.isBefore(now)) {
+    if (!scheduled.isAfter(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
     return scheduled;
