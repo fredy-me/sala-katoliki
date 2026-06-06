@@ -68,6 +68,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/logo/
     - assets/content/categories/
     - assets/content/prayers/en/
     - assets/content/prayers/sw/
