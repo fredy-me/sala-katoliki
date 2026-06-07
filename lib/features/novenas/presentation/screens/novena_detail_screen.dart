@@ -83,6 +83,17 @@ class NovenaDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                 ],
+                if (session.novena.closingPrayer != null) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  _ClosingPrayerCard(
+                    title: session.novena.closingPrayer!.title,
+                    description: session.novena.closingPrayer!.description,
+                    strings: strings,
+                    onTap: () => context.push(
+                      '/novenas/${session.novena.id}/closing-prayer',
+                    ),
+                  ),
+                ],
               ],
             );
           },
@@ -100,6 +111,73 @@ class NovenaDetailScreen extends ConsumerWidget {
     if (context.mounted) {
       context.push('/novenas/$novenaId/day/1');
     }
+  }
+}
+
+class _ClosingPrayerCard extends StatelessWidget {
+  const _ClosingPrayerCard({
+    required this.title,
+    required this.description,
+    required this.strings,
+    required this.onTap,
+  });
+
+  final String title;
+  final String description;
+  final _NovenaDetailStrings strings;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: onTap,
+      radius: AppSpacing.radiusXl,
+      borderColor: AppColors.gold,
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
+              color: AppColors.goldSoft,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.format_list_bulleted,
+              color: AppColors.navy,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  strings.afterNovena,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.gold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -266,6 +344,7 @@ class _NovenaDetailStrings {
   String get startPrompt => _sw ? 'Anza Siku ya 1' : 'Start Day 1';
   String get start => _sw ? 'Anza Novena' : 'Start Novena';
   String get restart => _sw ? 'Anza Upya' : 'Restart';
+  String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
   String dayProgress(int day) =>
       _sw ? 'Siku ya $day kati ya 9' : 'Day $day of 9';
   String get errorTitle => _sw ? 'Novena haijapakia' : 'Novena did not load';
