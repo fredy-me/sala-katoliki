@@ -25,7 +25,8 @@ class LitanyTextView extends StatelessWidget {
         children: [
           for (var index = 0; index < lines.length; index += 1) ...[
             _LitanyLine(text: lines[index]),
-            if (index != lines.length - 1) const SizedBox(height: AppSpacing.md),
+            if (index != lines.length - 1)
+              const SizedBox(height: AppSpacing.md),
           ],
         ],
       ),
