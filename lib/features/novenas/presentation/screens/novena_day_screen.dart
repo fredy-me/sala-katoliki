@@ -245,26 +245,28 @@ class _CompleteBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        Theme.of(context).dividerTheme.color ??
-        Theme.of(context).colorScheme.outlineVariant;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(top: BorderSide(color: borderColor)),
-      ),
+    return SafeArea(
+      top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
+          AppSpacing.screenHorizontal,
+          AppSpacing.sm,
+          AppSpacing.screenHorizontal,
           AppSpacing.lg,
         ),
-        child: FilledButton.icon(
-          onPressed: onComplete,
-          icon: Icon(completed ? Icons.check : Icons.check_circle_outline),
-          label: Text(completed ? strings.completed : strings.markComplete),
+        child: Center(
+          child: FilledButton.icon(
+            onPressed: onComplete,
+            icon: Icon(completed ? Icons.check : Icons.check_circle_outline),
+            label: Text(completed ? strings.completed : strings.markComplete),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(0, 54),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.md,
+              ),
+            ),
+          ),
         ),
       ),
     );
