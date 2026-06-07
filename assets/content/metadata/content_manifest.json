@@ -8,6 +8,7 @@
       "assets/content/prayers/en/common_prayers.json",
       "assets/content/prayers/en/marian_prayers.json",
       "assets/content/prayers/en/confession_prayers.json",
+      "assets/content/prayers/en/litanies.json",
       "assets/content/prayers/en/mass_prayers.json",
       "assets/content/prayers/en/divine_mercy.json"
     ],
@@ -15,6 +16,7 @@
       "assets/content/prayers/sw/common_prayers.json",
       "assets/content/prayers/sw/marian_prayers.json",
       "assets/content/prayers/sw/confession_prayers.json",
+      "assets/content/prayers/sw/litanies.json",
       "assets/content/prayers/sw/mass_prayers.json",
       "assets/content/prayers/sw/divine_mercy.json"
     ]
