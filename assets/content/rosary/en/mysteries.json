@@ -3,56 +3,84 @@
     "id": "joyful_mysteries",
     "language": "en",
     "title": "Joyful Mysteries",
-    "description": "The joyful events of Christ's early life.",
+    "description": "Monday and Saturday.",
     "days": ["monday", "saturday"],
     "mysteries": [
-      "The Annunciation",
-      "The Visitation",
-      "The Nativity",
-      "The Presentation",
-      "The Finding in the Temple"
+      "First Mystery: The Angel Gabriel announces to Mary that she will be the Mother of God.",
+      "Second Mystery: Holy Mary goes to visit Elizabeth.",
+      "Third Mystery: Jesus is born in Bethlehem.",
+      "Fourth Mystery: Jesus is presented in the Temple.",
+      "Fifth Mystery: Mary finds Jesus in the Temple."
+    ],
+    "virtues": [
+      "Virtue: Let us ask God to grant us humility.",
+      "Virtue: Let us ask God to grant us love of neighbor.",
+      "Virtue: Let us ask God to grant us a spirit of poverty.",
+      "Virtue: Let us ask God to grant us purity of heart.",
+      "Virtue: Let us ask God to grant us obedience to our elders."
     ]
   },
   {
     "id": "sorrowful_mysteries",
     "language": "en",
     "title": "Sorrowful Mysteries",
-    "description": "The Passion of Our Lord.",
+    "description": "Tuesday and Friday.",
     "days": ["tuesday", "friday"],
     "mysteries": [
-      "The Agony in the Garden",
-      "The Scourging at the Pillar",
-      "The Crowning with Thorns",
-      "The Carrying of the Cross",
-      "The Crucifixion"
+      "First Mystery: Jesus sweats blood for our sake.",
+      "Second Mystery: Jesus is scourged for our sake.",
+      "Third Mystery: Jesus is crowned with thorns for our sake.",
+      "Fourth Mystery: Jesus carries the Cross for our sake.",
+      "Fifth Mystery: Jesus dies on the Cross."
+    ],
+    "virtues": [
+      "Virtue: Let us ask God to grant us sorrow for sin.",
+      "Virtue: Let us ask God to grant us freedom from sins of impurity.",
+      "Virtue: Let us ask God to grant us victory over pride.",
+      "Virtue: Let us ask God to grant us endurance in hardship.",
+      "Virtue: Let us ask God to grant us love for Jesus and Mary."
     ]
   },
   {
     "id": "glorious_mysteries",
     "language": "en",
     "title": "Glorious Mysteries",
-    "description": "The Resurrection and glory of Christ.",
+    "description": "Wednesday and Sunday.",
     "days": ["wednesday", "sunday"],
     "mysteries": [
-      "The Resurrection",
-      "The Ascension",
-      "The Descent of the Holy Spirit",
-      "The Assumption",
-      "The Coronation of Mary"
+      "First Mystery: Jesus rises from the dead.",
+      "Second Mystery: Jesus ascends into Heaven.",
+      "Third Mystery: The Holy Spirit descends upon the Apostles.",
+      "Fourth Mystery: The Blessed Virgin Mary is assumed into Heaven.",
+      "Fifth Mystery: The Blessed Virgin Mary is crowned Queen in Heaven."
+    ],
+    "virtues": [
+      "Virtue: Let us ask God to grant us conversion into holiness.",
+      "Virtue: Let us ask God to grant us entry into Heaven.",
+      "Virtue: Let us ask God to grant us zeal in our faith.",
+      "Virtue: Let us ask God to grant us a good death.",
+      "Virtue: Let us ask God to grant us perseverance in the good way."
     ]
   },
   {
     "id": "luminous_mysteries",
     "language": "en",
     "title": "Luminous Mysteries",
-    "description": "The public ministry of Jesus.",
+    "description": "Thursday.",
     "days": ["thursday"],
     "mysteries": [
-      "The Baptism of Jesus",
-      "The Wedding at Cana",
-      "The Proclamation of the Kingdom",
-      "The Transfiguration",
-      "The Institution of the Eucharist"
+      "First Mystery: Jesus is baptized in the River Jordan.",
+      "Second Mystery: Jesus changes water into wine at Cana.",
+      "Third Mystery: Jesus proclaims the Kingdom of God.",
+      "Fourth Mystery: Jesus is transfigured.",
+      "Fifth Mystery: Jesus institutes the Sacrament of the Eucharist."
+    ],
+    "virtues": [
+      "Virtue: Let us ask God to grant us faithfulness to our baptismal promises.",
+      "Virtue: Let us ask God to grant us grace to season the world with the leaven of the Gospel.",
+      "Virtue: Let us ask God to grant us reception of his Kingdom through true repentance.",
+      "Virtue: Let us ask God to grant us grace to brighten the world with the face of Jesus.",
+      "Virtue: Let us ask God to grant us grace to sacrifice ourselves for others."
     ]
   }
 ]
