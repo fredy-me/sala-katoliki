@@ -26,6 +26,7 @@ class RosaryMysteryModel {
     required this.description,
     required this.days,
     required this.mysteries,
+    this.virtues = const [],
   });
 
   final String id;
@@ -34,6 +35,7 @@ class RosaryMysteryModel {
   final String description;
   final List<String> days;
   final List<String> mysteries;
+  final List<String> virtues;
 
   factory RosaryMysteryModel.fromJson(Map<String, dynamic> json) {
     return RosaryMysteryModel(
@@ -43,6 +45,15 @@ class RosaryMysteryModel {
       description: json['description'] as String,
       days: (json['days'] as List<dynamic>).cast<String>(),
       mysteries: (json['mysteries'] as List<dynamic>).cast<String>(),
+      virtues: (json['virtues'] as List<dynamic>?)?.cast<String>() ?? const [],
     );
+  }
+
+  String? virtueAt(int index) {
+    if (index < 0 || index >= virtues.length) {
+      return null;
+    }
+    final virtue = virtues[index].trim();
+    return virtue.isEmpty ? null : virtue;
   }
 }
