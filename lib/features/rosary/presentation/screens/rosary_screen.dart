@@ -322,10 +322,10 @@ class _RosaryStrings {
 
   bool get _sw => languageCode == 'sw';
 
-  String get title => _sw ? 'Rozari Takatifu' : 'Holy Rosary';
+  String get title => _sw ? 'Rozari ya Bikira Maria' : 'Rosary of Mary';
   String get subtitle => _sw
-      ? 'Fuata mafumbo na sala hatua kwa hatua.'
-      : 'Pray the mysteries step by step.';
+      ? 'Fuata matendo, fadhila, na sala kwa mpangilio.'
+      : 'Follow the mysteries, virtues, and prayers in order.';
   String get loading => _sw ? 'Inapakia rozari...' : 'Loading Rosary...';
   String get todayMystery => _sw ? 'Fumbo la Leo' : "Today's Mystery";
   String get start => _sw ? 'Anza' : 'Start';
