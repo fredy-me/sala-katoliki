@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/litany_text_view.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
 import '../../domain/rosary_state.dart';
 import '../providers/rosary_providers.dart';
@@ -68,14 +69,11 @@ class RosaryStepScreen extends ConsumerWidget {
                       _BeadProgress(step: step),
                       const SizedBox(height: AppSpacing.xl),
                       if (step.mysteryTitle != null) ...[
-                        Text(
-                          step.mysteryTitle!,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
+                        _MysteryMeditationCard(step: step),
+                        const SizedBox(height: AppSpacing.lg),
                       ],
-                      AppCard(
-                        child: Column(
+                      if (step.prayer.categoryId == 'litanies')
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -83,10 +81,25 @@ class RosaryStepScreen extends ConsumerWidget {
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                             const SizedBox(height: AppSpacing.lg),
-                            PrayerTextView(text: step.prayer.text()),
+                            LitanyTextView(text: step.prayer.text()),
                           ],
+                        )
+                      else
+                        AppCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                step.prayer.title(),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                              PrayerTextView(text: step.prayer.text()),
+                            ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -224,8 +237,10 @@ class _BeadProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = step.isIntro
-        ? 'Intro'
-        : 'Decade ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
+        ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
+        : step.decadeIndex > 5
+        ? 'Litania'
+        : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
       child: Column(
@@ -255,6 +270,37 @@ class _BeadProgress extends StatelessWidget {
                 ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MysteryMeditationCard extends StatelessWidget {
+  const _MysteryMeditationCard({required this.step});
+
+  final RosaryStep step;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      borderColor: AppColors.gold,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            step.mysteryTitle!,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          if (step.mysteryVirtue != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              step.mysteryVirtue!,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ],
         ],
       ),
     );
