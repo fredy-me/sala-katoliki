@@ -49,6 +49,13 @@ void main() {
                   'Presentation',
                   'Finding in the Temple',
                 ],
+                virtues: [
+                  'Humility',
+                  'Love of neighbor',
+                  'Poverty of spirit',
+                  'Purity',
+                  'Obedience',
+                ],
               ),
             ],
           ),
@@ -60,9 +67,24 @@ void main() {
                 repeatCount: 1,
               ),
               RosaryPrayerModel(
+                id: 'our_father',
+                prayerId: 'our_father',
+                repeatCount: 1,
+              ),
+              RosaryPrayerModel(
                 id: 'hail_mary',
                 prayerId: 'hail_mary',
                 repeatCount: 10,
+              ),
+              RosaryPrayerModel(
+                id: 'glory_be',
+                prayerId: 'glory_be',
+                repeatCount: 1,
+              ),
+              RosaryPrayerModel(
+                id: 'bikira_maria_litany',
+                prayerId: 'bikira_maria_litany',
+                repeatCount: 1,
               ),
             ],
           ),
@@ -86,6 +108,33 @@ void main() {
                 body: 'Hail Mary.',
                 categoryTitles: {'en': 'Marian Prayers'},
               ),
+              PrayerEntity(
+                id: 'our_father',
+                type: 'prayer',
+                categoryId: 'common_prayers',
+                language: 'en',
+                localizedTitle: 'Our Father',
+                body: 'Our Father.',
+                categoryTitles: {'en': 'Common Prayers'},
+              ),
+              PrayerEntity(
+                id: 'glory_be',
+                type: 'prayer',
+                categoryId: 'common_prayers',
+                language: 'en',
+                localizedTitle: 'Glory Be',
+                body: 'Glory be.',
+                categoryTitles: {'en': 'Common Prayers'},
+              ),
+              PrayerEntity(
+                id: 'bikira_maria_litany',
+                type: 'prayer',
+                categoryId: 'litanies',
+                language: 'en',
+                localizedTitle: 'Litany of Mary',
+                body: 'Holy Mary, pray for us.',
+                categoryTitles: {'en': 'Litanies'},
+              ),
             ],
           ),
         ],
@@ -95,10 +144,11 @@ void main() {
         rosaryStepsProvider('joyful_mysteries').future,
       );
 
-      expect(steps, hasLength(51));
+      expect(steps, hasLength(67));
       expect(steps.first.isIntro, isTrue);
-      expect(steps[1].mysteryTitle, 'Annunciation');
-      expect(steps.last.beadNumber, 10);
+      expect(steps[6].mysteryTitle, 'Annunciation');
+      expect(steps[6].mysteryVirtue, 'Humility');
+      expect(steps.last.prayer.id, 'bikira_maria_litany');
       container.dispose();
     },
   );
