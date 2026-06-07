@@ -190,7 +190,7 @@ void main() {
       ),
     );
 
-    await _pumpUntilFound(tester, find.text('Holy Rosary'));
+    await _pumpUntilFound(tester, find.text('Rosary of Mary'));
     expect(find.text("Today's Mystery"), findsOneWidget);
 
     final container = ProviderContainer();
