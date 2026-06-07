@@ -18,5 +18,10 @@
     "id": "glory_be",
     "prayer_id": "glory_be",
     "repeat_count": 1
+  },
+  {
+    "id": "bikira_maria_litany",
+    "prayer_id": "bikira_maria_litany",
+    "repeat_count": 1
   }
 ]
