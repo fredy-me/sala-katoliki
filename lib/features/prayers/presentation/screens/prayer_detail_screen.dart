@@ -8,6 +8,7 @@ import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/litany_text_view.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
@@ -134,10 +135,13 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      PrayerTextView(
-                        text: prayer.text(),
-                        fontScale: _textScale,
-                      ),
+                      if (prayer.categoryId == 'litanies')
+                        LitanyTextView(text: prayer.text())
+                      else
+                        PrayerTextView(
+                          text: prayer.text(),
+                          fontScale: _textScale,
+                        ),
                       const SizedBox(height: AppSpacing.xl),
                       AppCard(
                         padding: const EdgeInsets.all(AppSpacing.lg),
