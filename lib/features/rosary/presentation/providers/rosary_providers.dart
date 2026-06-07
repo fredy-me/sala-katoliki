@@ -6,6 +6,7 @@ import '../../../../core/localization/localization_providers.dart';
 import '../../../../data/models/rosary_model.dart';
 import '../../../../data/repositories/rosary_repository.dart';
 import '../../../prayers/presentation/providers/prayer_providers.dart';
+import '../../../prayers/domain/entities/prayer_entity.dart';
 import '../../domain/rosary_state.dart';
 
 final rosaryRepositoryProvider = Provider<RosaryRepository>((ref) {
@@ -110,41 +111,96 @@ final rosaryStepsProvider = FutureProvider.family<List<RosaryStep>, String>((
   final rosaryPrayers = await ref.watch(rosaryPrayerSequenceProvider.future);
   final prayers = await ref.watch(prayersProvider.future);
   final prayersById = {for (final prayer in prayers) prayer.id: prayer};
+  final prayerIds = {for (final prayerRef in rosaryPrayers) prayerRef.id};
+  final apostlesCreed = prayerIds.contains('apostles_creed')
+      ? prayersById['apostles_creed']
+      : null;
+  final ourFather = prayerIds.contains('our_father')
+      ? prayersById['our_father']
+      : null;
+  final hailMary = prayerIds.contains('hail_mary')
+      ? prayersById['hail_mary']
+      : null;
+  final gloryBe = prayerIds.contains('glory_be')
+      ? prayersById['glory_be']
+      : null;
+  final litany = prayerIds.contains('bikira_maria_litany')
+      ? prayersById['bikira_maria_litany']
+      : null;
   final steps = <RosaryStep>[];
 
-  for (final prayerRef in rosaryPrayers) {
-    final prayer = prayersById[prayerRef.prayerId];
-    if (prayer == null) {
-      continue;
-    }
+  void addIntroStep({required PrayerEntity prayer, required int beadNumber}) {
+    steps.add(
+      RosaryStep(
+        index: steps.length,
+        prayer: prayer,
+        decadeIndex: 0,
+        beadNumber: beadNumber,
+        beadTotal: 6,
+      ),
+    );
+  }
 
-    if (prayerRef.id == 'apostles_creed') {
+  if (apostlesCreed != null) {
+    addIntroStep(prayer: apostlesCreed, beadNumber: 1);
+  }
+  if (ourFather != null) {
+    addIntroStep(prayer: ourFather, beadNumber: 2);
+  }
+  if (hailMary != null) {
+    for (var repeat = 0; repeat < 3; repeat += 1) {
+      addIntroStep(prayer: hailMary, beadNumber: repeat + 3);
+    }
+  }
+  if (gloryBe != null) {
+    addIntroStep(prayer: gloryBe, beadNumber: 6);
+  }
+
+  for (var decade = 0; decade < mystery.mysteries.length; decade += 1) {
+    final mysteryTitle = mystery.mysteries[decade];
+    final mysteryVirtue = mystery.virtueAt(decade);
+
+    void addDecadeStep({
+      required PrayerEntity prayer,
+      required int beadNumber,
+      required int beadTotal,
+    }) {
       steps.add(
         RosaryStep(
           index: steps.length,
           prayer: prayer,
-          decadeIndex: 0,
-          beadNumber: 1,
-          beadTotal: 1,
+          decadeIndex: decade + 1,
+          beadNumber: beadNumber,
+          beadTotal: beadTotal,
+          mysteryTitle: mysteryTitle,
+          mysteryVirtue: mysteryVirtue,
         ),
       );
-      continue;
     }
 
-    for (var decade = 0; decade < mystery.mysteries.length; decade += 1) {
-      for (var repeat = 0; repeat < prayerRef.repeatCount; repeat += 1) {
-        steps.add(
-          RosaryStep(
-            index: steps.length,
-            prayer: prayer,
-            decadeIndex: decade + 1,
-            beadNumber: repeat + 1,
-            beadTotal: prayerRef.repeatCount,
-            mysteryTitle: mystery.mysteries[decade],
-          ),
-        );
+    if (ourFather != null) {
+      addDecadeStep(prayer: ourFather, beadNumber: 1, beadTotal: 12);
+    }
+    if (hailMary != null) {
+      for (var repeat = 0; repeat < 10; repeat += 1) {
+        addDecadeStep(prayer: hailMary, beadNumber: repeat + 2, beadTotal: 12);
       }
     }
+    if (gloryBe != null) {
+      addDecadeStep(prayer: gloryBe, beadNumber: 12, beadTotal: 12);
+    }
+  }
+
+  if (litany != null) {
+    steps.add(
+      RosaryStep(
+        index: steps.length,
+        prayer: litany,
+        decadeIndex: 6,
+        beadNumber: 1,
+        beadTotal: 1,
+      ),
+    );
   }
 
   return steps;
