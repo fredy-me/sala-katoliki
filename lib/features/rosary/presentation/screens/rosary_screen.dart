@@ -33,84 +33,88 @@ class RosaryScreen extends ConsumerWidget {
 
         _goBack(context);
       },
-      child: mysteriesState.when(
-        loading: () => AppLoading(label: strings.loading),
-        error: (error, stackTrace) => AppErrorState(
-          title: strings.loadErrorTitle,
-          message: strings.loadErrorMessage,
-          actionLabel: strings.retry,
-          onAction: () {
-            ref.invalidate(rosaryMysteriesProvider);
-            ref.invalidate(suggestedRosaryMysteryProvider);
+      child: ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: mysteriesState.when(
+          loading: () => AppLoading(label: strings.loading),
+          error: (error, stackTrace) => AppErrorState(
+            title: strings.loadErrorTitle,
+            message: strings.loadErrorMessage,
+            actionLabel: strings.retry,
+            onAction: () {
+              ref.invalidate(rosaryMysteriesProvider);
+              ref.invalidate(suggestedRosaryMysteryProvider);
+            },
+          ),
+          data: (mysteries) {
+            if (mysteries.isEmpty) {
+              return AppEmptyState(
+                title: strings.emptyTitle,
+                message: strings.emptyMessage,
+                icon: Icons.radio_button_checked,
+              );
+            }
+
+            final suggested = suggestedState.asData?.value ?? mysteries.first;
+            final activeSession = activeSessionState.asData?.value;
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenHorizontal,
+                AppSpacing.screenTop,
+                AppSpacing.screenHorizontal,
+                AppSpacing.screenBottom,
+              ),
+              children: [
+                Text(
+                  strings.title,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  strings.subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                _TodayMysteryCard(
+                  mystery: suggested,
+                  strings: strings,
+                  onStart: () => _startRosary(context, ref, suggested.id),
+                  onSelect: () => context.push('/rosary/select'),
+                ),
+                if (activeSession != null) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  _ContinueCard(
+                    mystery: activeSession.mystery,
+                    progress: activeSession.progress,
+                    stepLabel: strings.stepLabel(
+                      activeSession.stepIndex + 1,
+                      activeSession.steps.length,
+                    ),
+                    strings: strings,
+                    onContinue: () => context.push(
+                      '/rosary/step/${activeSession.mystery.id}',
+                    ),
+                    onRestart: () =>
+                        _startRosary(context, ref, activeSession.mystery.id),
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.section),
+                SectionHeader(title: strings.allMysteries),
+                const SizedBox(height: AppSpacing.md),
+                for (final mystery in mysteries) ...[
+                  _MysteryRow(
+                    mystery: mystery,
+                    isSuggested: mystery.id == suggested.id,
+                    strings: strings,
+                    onTap: () => _startRosary(context, ref, mystery.id),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
+              ],
+            );
           },
         ),
-        data: (mysteries) {
-          if (mysteries.isEmpty) {
-            return AppEmptyState(
-              title: strings.emptyTitle,
-              message: strings.emptyMessage,
-              icon: Icons.radio_button_checked,
-            );
-          }
-
-          final suggested = suggestedState.asData?.value ?? mysteries.first;
-          final activeSession = activeSessionState.asData?.value;
-
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenTop,
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenBottom,
-            ),
-            children: [
-              Text(
-                strings.title,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                strings.subtitle,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _TodayMysteryCard(
-                mystery: suggested,
-                strings: strings,
-                onStart: () => _startRosary(context, ref, suggested.id),
-                onSelect: () => context.push('/rosary/select'),
-              ),
-              if (activeSession != null) ...[
-                const SizedBox(height: AppSpacing.lg),
-                _ContinueCard(
-                  mystery: activeSession.mystery,
-                  progress: activeSession.progress,
-                  stepLabel: strings.stepLabel(
-                    activeSession.stepIndex + 1,
-                    activeSession.steps.length,
-                  ),
-                  strings: strings,
-                  onContinue: () =>
-                      context.push('/rosary/step/${activeSession.mystery.id}'),
-                  onRestart: () =>
-                      _startRosary(context, ref, activeSession.mystery.id),
-                ),
-              ],
-              const SizedBox(height: AppSpacing.section),
-              SectionHeader(title: strings.allMysteries),
-              const SizedBox(height: AppSpacing.md),
-              for (final mystery in mysteries) ...[
-                _MysteryRow(
-                  mystery: mystery,
-                  isSuggested: mystery.id == suggested.id,
-                  strings: strings,
-                  onTap: () => _startRosary(context, ref, mystery.id),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-            ],
-          );
-        },
       ),
     );
   }
