@@ -8,6 +8,7 @@ class NovenaModel {
     this.source,
     this.version,
     this.lastUpdated,
+    this.closingPrayer,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class NovenaModel {
   final String? source;
   final int? version;
   final DateTime? lastUpdated;
+  final NovenaClosingPrayerModel? closingPrayer;
 
   factory NovenaModel.fromJson(Map<String, dynamic> json) {
     return NovenaModel(
@@ -30,10 +32,35 @@ class NovenaModel {
       lastUpdated: json['last_updated'] == null
           ? null
           : DateTime.parse(json['last_updated'] as String),
+      closingPrayer: json['closing_prayer'] == null
+          ? null
+          : NovenaClosingPrayerModel.fromJson(
+              json['closing_prayer'] as Map<String, dynamic>,
+            ),
       days: (json['days'] as List<dynamic>)
           .cast<Map<String, dynamic>>()
           .map(NovenaDayModel.fromJson)
           .toList(growable: false),
+    );
+  }
+}
+
+class NovenaClosingPrayerModel {
+  const NovenaClosingPrayerModel({
+    required this.title,
+    required this.description,
+    required this.body,
+  });
+
+  final String title;
+  final String description;
+  final String body;
+
+  factory NovenaClosingPrayerModel.fromJson(Map<String, dynamic> json) {
+    return NovenaClosingPrayerModel(
+      title: json['title'] as String,
+      description: json['description'] as String,
+      body: json['body'] as String,
     );
   }
 }
