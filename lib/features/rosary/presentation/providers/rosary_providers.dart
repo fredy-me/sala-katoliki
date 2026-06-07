@@ -164,6 +164,7 @@ final rosaryStepsProvider = FutureProvider.family<List<RosaryStep>, String>((
       required PrayerEntity prayer,
       required int beadNumber,
       required int beadTotal,
+      required bool showMystery,
     }) {
       steps.add(
         RosaryStep(
@@ -172,22 +173,37 @@ final rosaryStepsProvider = FutureProvider.family<List<RosaryStep>, String>((
           decadeIndex: decade + 1,
           beadNumber: beadNumber,
           beadTotal: beadTotal,
-          mysteryTitle: mysteryTitle,
-          mysteryVirtue: mysteryVirtue,
+          mysteryTitle: showMystery ? mysteryTitle : null,
+          mysteryVirtue: showMystery ? mysteryVirtue : null,
         ),
       );
     }
 
     if (ourFather != null) {
-      addDecadeStep(prayer: ourFather, beadNumber: 1, beadTotal: 12);
+      addDecadeStep(
+        prayer: ourFather,
+        beadNumber: 1,
+        beadTotal: 12,
+        showMystery: true,
+      );
     }
     if (hailMary != null) {
       for (var repeat = 0; repeat < 10; repeat += 1) {
-        addDecadeStep(prayer: hailMary, beadNumber: repeat + 2, beadTotal: 12);
+        addDecadeStep(
+          prayer: hailMary,
+          beadNumber: repeat + 2,
+          beadTotal: 12,
+          showMystery: false,
+        );
       }
     }
     if (gloryBe != null) {
-      addDecadeStep(prayer: gloryBe, beadNumber: 12, beadTotal: 12);
+      addDecadeStep(
+        prayer: gloryBe,
+        beadNumber: 12,
+        beadTotal: 12,
+        showMystery: false,
+      );
     }
   }
 
