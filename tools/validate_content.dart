@@ -121,6 +121,16 @@ class _ContentValidator {
         if (days.length != 9) {
           _errors.add('Novena $id must contain exactly 9 days.');
         }
+        final closingPrayer = novena['closing_prayer'];
+        if (closingPrayer != null) {
+          if (closingPrayer is! Map<String, dynamic>) {
+            _errors.add('Novena $id closing_prayer must be a JSON object.');
+          } else {
+            _string(closingPrayer, 'title', 'novena $id closing_prayer');
+            _string(closingPrayer, 'description', 'novena $id closing_prayer');
+            _string(closingPrayer, 'body', 'novena $id closing_prayer');
+          }
+        }
         final seenDays = <int>{};
         for (final day in days) {
           if (day is! Map<String, dynamic>) {
