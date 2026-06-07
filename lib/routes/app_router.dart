@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/novenas/presentation/screens/novena_day_screen.dart';
+import '../features/novenas/presentation/screens/novena_closing_prayer_screen.dart';
 import '../features/novenas/presentation/screens/novena_detail_screen.dart';
 import '../features/library/presentation/screens/favorites_screen.dart';
 import '../features/library/presentation/screens/library_screen.dart';
@@ -104,6 +105,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return NovenaDayScreen(
             novenaId: state.pathParameters['novenaId']!,
             day: int.tryParse(state.pathParameters['day'] ?? '') ?? -1,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/novenas/:novenaId/closing-prayer',
+        builder: (context, state) {
+          return NovenaClosingPrayerScreen(
+            novenaId: state.pathParameters['novenaId']!,
           );
         },
       ),
