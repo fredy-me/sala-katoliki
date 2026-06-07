@@ -2,57 +2,85 @@
   {
     "id": "joyful_mysteries",
     "language": "sw",
-    "title": "Mafumbo ya Furaha",
-    "description": "Matukio ya furaha katika maisha ya awali ya Kristo.",
+    "title": "Matendo ya Furaha",
+    "description": "Jumatatu na Jumamosi.",
     "days": ["monday", "saturday"],
     "mysteries": [
-      "Kupashwa Habari",
-      "Kutembelea Elisabeti",
-      "Kuzaliwa kwa Yesu",
-      "Kutolewa Hekaluni",
-      "Kupatikana Hekaluni"
+      "Tendo la kwanza: Malaika Gabrieli anampasha habari Maria kuwa atakuwa Mama wa Mungu.",
+      "Tendo la pili: Maria Mtakatifu anakwenda kumtembelea Elizabeti.",
+      "Tendo la tatu: Yesu anazaliwa Betlehemu.",
+      "Tendo la nne: Yesu anatolewa hekaluni.",
+      "Tendo la tano: Maria anamkuta Yesu hekaluni."
+    ],
+    "virtues": [
+      "Fadhila: Tumwombe Mungu atujalie unyenyekevu.",
+      "Fadhila: Tumwombe Mungu atujalie mapendo ya jirani.",
+      "Fadhila: Tumwombe Mungu atujalie moyo wa ufukara.",
+      "Fadhila: Tumwombe Mungu atujalie usafi wa moyo.",
+      "Fadhila: Tumwombe Mungu atujalie kuwatii wakubwa wetu."
     ]
   },
   {
     "id": "sorrowful_mysteries",
     "language": "sw",
-    "title": "Mafumbo ya Uchungu",
-    "description": "Mateso ya Bwana wetu.",
+    "title": "Matendo ya Uchungu",
+    "description": "Jumanne na Ijumaa.",
     "days": ["tuesday", "friday"],
     "mysteries": [
-      "Yesu Bustanini",
-      "Kupigwa Mijeledi",
-      "Kuvikwa Taji ya Miiba",
-      "Kubeba Msalaba",
-      "Kusulubiwa"
+      "Tendo la kwanza: Yesu anatoka jasho la damu kwa ajili yetu.",
+      "Tendo la pili: Yesu anapigwa kwa mijeledi kwa ajili yetu.",
+      "Tendo la tatu: Yesu anatiwa miiba kichwani kwa ajili yetu.",
+      "Tendo la nne: Yesu anachukua Msalaba kwa ajili yetu.",
+      "Tendo la tano: Yesu anakufa Msalabani."
+    ],
+    "virtues": [
+      "Fadhila: Tumwombe Mungu atujalie sikitiko la dhambi.",
+      "Fadhila: Tumwombe Mungu atujalie kuacha dhambi za uchafu.",
+      "Fadhila: Tumwombe Mungu atujalie kushinda kiburi.",
+      "Fadhila: Tumwombe Mungu atujalie kuvumilia taabu.",
+      "Fadhila: Tumwombe Mungu atujalie kuwapenda Yesu na Maria."
     ]
   },
   {
     "id": "glorious_mysteries",
     "language": "sw",
-    "title": "Mafumbo ya Utukufu",
-    "description": "Ufufuko na utukufu wa Kristo.",
+    "title": "Matendo ya Utukufu",
+    "description": "Jumatano na Jumapili.",
     "days": ["wednesday", "sunday"],
     "mysteries": [
-      "Ufufuko",
-      "Kupaa Mbinguni",
-      "Kushuka kwa Roho Mtakatifu",
-      "Kupazwa kwa Maria",
-      "Kutawazwa kwa Maria"
+      "Tendo la kwanza: Yesu anafufuka.",
+      "Tendo la pili: Yesu anapaa mbinguni.",
+      "Tendo la tatu: Roho Mtakatifu anawashukia Mitume.",
+      "Tendo la nne: Bikira Maria anapalizwa mbinguni.",
+      "Tendo la tano: Bikira Maria anawekwa Malkia mbinguni."
+    ],
+    "virtues": [
+      "Fadhila: Tumwombe Mungu atujalie kugeuka watakatifu.",
+      "Fadhila: Tumwombe Mungu atujalie kwenda mbinguni.",
+      "Fadhila: Tumwombe Mungu atujalie bidii katika dini yetu.",
+      "Fadhila: Tumwombe Mungu atujalie kufa vizuri.",
+      "Fadhila: Tumwombe Mungu atujalie kudumu katika njia njema."
     ]
   },
   {
     "id": "luminous_mysteries",
     "language": "sw",
-    "title": "Mafumbo ya Mwanga",
-    "description": "Huduma ya hadharani ya Yesu.",
+    "title": "Matendo ya Mwanga",
+    "description": "Alhamisi.",
     "days": ["thursday"],
     "mysteries": [
-      "Ubatizo wa Yesu",
-      "Harusi ya Kana",
-      "Kutangazwa kwa Ufalme",
-      "Kugeuka Sura",
-      "Kuanzishwa kwa Ekaristi"
+      "Tendo la kwanza: Yesu anabatizwa Mto Jordani.",
+      "Tendo la pili: Yesu anageuza maji kuwa divai huko Kana.",
+      "Tendo la tatu: Yesu anatangaza Ufalme wa Mungu.",
+      "Tendo la nne: Yesu anageuka sura.",
+      "Tendo la tano: Yesu anaweka Sakramenti ya Ekaristia."
+    ],
+    "virtues": [
+      "Fadhila: Tumwombe Mungu atujalie uaminifu kwa ahadi zetu za ubatizo.",
+      "Fadhila: Tumwombe Mungu atujalie kuukoleza ulimwengu kwa chachu ya enjili.",
+      "Fadhila: Tumwombe Mungu atujalie kupokea Ufalme wake kwa toba ya kweli.",
+      "Fadhila: Tumwombe Mungu atujalie neema ya kuung'arisha ulimwengu kwa uso wa Yesu.",
+      "Fadhila: Tumwombe Mungu atujalie neema ya kujitoa sadaka kwa ajili ya wengine."
     ]
   }
 ]
