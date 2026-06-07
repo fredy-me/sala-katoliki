@@ -6,9 +6,9 @@
     "language": "en",
     "title": "The Apostles' Creed",
     "description": "A profession of Christian faith.",
-    "body": "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, his only Son, our Lord. He was conceived by the Holy Spirit and born of the Virgin Mary.",
+    "body": "I believe in God the Father Almighty, Creator of Heaven and earth. And in Jesus Christ, his only Son, our Lord. He was conceived by the power of the Holy Spirit and born of the Virgin Mary. He suffered under Pontius Pilate. He was crucified, died, and was buried. He descended into hell. On the third day he rose again from the dead. He ascended into Heaven and is seated at the right hand of God the Father Almighty. From there he will come again to judge the living and the dead.\n\nI believe in the Holy Spirit, the holy Catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
     "tags": ["creed", "mass", "faith"],
-    "source": "Traditional Catholic prayer",
+    "source": "Rozary.txt",
     "version": 1,
     "last_updated": "2026-06-02",
     "is_offline_available": true
