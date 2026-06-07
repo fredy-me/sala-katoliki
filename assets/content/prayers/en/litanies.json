@@ -12,5 +12,33 @@
     "version": 1,
     "last_updated": "2026-06-07",
     "is_offline_available": true
+  },
+  {
+    "id": "bikira_maria_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "en",
+    "title": "Litany of the Blessed Virgin Mary",
+    "description": "A litany asking the Blessed Virgin Mary, Holy Mother of God, to intercede for us.",
+    "body": "LITANY OF THE BLESSED VIRGIN MARY\n\nLord, have mercy.\nLord, have mercy.\nChrist, have mercy.\nChrist, have mercy.\nLord, have mercy.\nLord, have mercy.\nChrist, hear us.\nChrist, graciously hear us.\nGod the Father of Heaven, have mercy on us.\nGod the Son, Redeemer of the world, have mercy on us.\nGod the Holy Spirit, have mercy on us.\nHoly Trinity, one God, have mercy on us.\n\nResponse: Pray for us\n\nHoly Mary,\nHoly Mother of God,\nHoly Virgin, greatest of virgins,\nMother of Christ,\nMother of divine grace,\nMost holy Mother,\nMother most pure,\nMother without stain,\nMother without sin,\nBeloved Mother,\nAdmirable Mother,\nMother of good counsel,\nMother of the Creator,\nMother of the Redeemer,\nVirgin most orderly,\nVirgin most honorable,\nVirgin most praised,\nVirgin most powerful,\nVirgin most merciful,\nFaithful Virgin,\nSeat of justice,\nSeat of wisdom,\nCause of our joy,\nVessel of grace,\nVessel of honor,\nExcellent vessel of devotion,\nMystical rose,\nTower of David,\nTower of ivory,\nHouse of gold,\nArk of the Covenant,\nGate of Heaven,\nMorning Star,\nHealth of the sick,\nRefuge of sinners,\nComforter of the afflicted,\nHelp of Christians,\nQueen of Angels,\nQueen of Patriarchs,\nQueen of Prophets,\nQueen of Apostles,\nQueen of Martyrs,\nQueen of Confessors,\nQueen of Virgins,\nQueen of all Saints,\nQueen conceived without original sin,\nQueen assumed into Heaven,\nQueen of the holy Rosary,\nQueen of peace.\n\nLamb of God, who takes away the sins of the world, spare us, O Lord.\nLamb of God, who takes away the sins of the world, graciously hear us, O Lord.\nLamb of God, who takes away the sins of the world, have mercy on us.\n\nV. Pray for us, O Holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLET US PRAY:\n\nO Lord God, grant us your servants lasting health of soul and body. Through the intercession of holy Mary, ever Virgin, deliver us from the troubles of this present life, so that we may obtain eternal joy.\nWe ask this through Christ our Lord. Amen.",
+    "tags": ["litany", "mary", "blessed virgin mary", "mother of god"],
+    "source": "Novenas.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
+  },
+  {
+    "id": "divine_mercy_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "en",
+    "title": "Litany of Divine Mercy",
+    "description": "A litany responding to the mercy of God with trust and prayer.",
+    "body": "LITANY OF DIVINE MERCY\n\nLord, have mercy - Lord, have mercy.\nChrist, have mercy - Christ, have mercy.\nLord, have mercy - Lord, have mercy.\nChrist, hear us - Christ, graciously hear us.\nGod the Father of Heaven - have mercy on us.\nGod the Son, Redeemer of the world - have mercy on us.\nGod the Holy Spirit - have mercy on us.\nHoly Trinity, one God - have mercy on us.\n\nResponse: We trust in you\n\nDivine Mercy, highest attribute of our Creator.\nDivine Mercy, summit of the perfection of our Savior.\nDivine Mercy, immeasurable love of the Sanctifying Spirit.\nDivine Mercy, unfathomable mystery of the Holy Trinity.\nDivine Mercy, sign of the supreme power of Almighty God.\nDivine Mercy, revealed in the creation of the angelic spirits in Heaven.\nDivine Mercy, which created us and commanded us to exist from nothing.\nDivine Mercy, which grants us immortal life.\nDivine Mercy, which shields us from the punishment we deserve.\nDivine Mercy, which raises us from the hardship, weakness, and pain of our sins.\nDivine Mercy, which makes us righteous in the Word made Man.\nDivine Mercy, which overflows from the wounds of Christ.\nDivine Mercy, which flows from within the Sacred Heart of Jesus.\nDivine Mercy, which gave us the Blessed Virgin Mary as Mother of Mercy.\nDivine Mercy, shown in the founding of the Catholic Church.\nDivine Mercy, found in the mysteries of the Holy Sacraments.\nDivine Mercy, given to all humanity through the Sacraments of Baptism and Penance.\nDivine Mercy, given in the Sacraments of the Eucharist and Holy Orders.\nDivine Mercy, shown to us when it calls and leads us into sanctifying the righteous.\nDivine Mercy, fulfilled in the perfection of holy people.\nDivine Mercy, fountain of health for the sick and all who suffer.\nDivine Mercy, comfort of all those with sorrowful hearts.\nDivine Mercy, hope of souls troubled by despair.\nDivine Mercy, constant companion everywhere for all people.\nDivine Mercy, which hastens to bring us its graces.\nDivine Mercy, peace of those who are dying.\nDivine Mercy, refreshment and comfort of the faithful departed in purgatory.\nDivine Mercy, heavenly joy for all the saints.\nDivine Mercy, crown of all the saints.\nDivine Mercy, unfailing fountain of miracles.\n\nLamb of God, who showed us your great mercy by redeeming the world through your holy cross, spare us, O Lord.\nLamb of God, who offers yourself to us with love and mercy in every celebration of the Holy Sacrifice of the Mass, graciously hear us, O Lord.\nLamb of God, who takes away the sins of the world through your infinite mercy, have mercy on us.\n\nLeader: Lord, have mercy.\nAll: Christ, have mercy, Lord, have mercy.\nLeader: The tender mercies of the Lord are over all his works.\nAll: I will sing of the mercies of the Lord forever.\n\nLet us pray:\n\nO God of infinite mercy, whose treasures of goodness and love have no limit, we beg you to look upon your people here on earth and increase your mercy upon us again and again, so that it may help us never to despair, no matter how great the trials we meet, but always to turn toward and keep your commandments with hope and fulfill your holy will, which is mercy itself. We ask this through our Lord Jesus Christ, your Son, King of Peace and Mercy, who lives and reigns with you and the Holy Spirit, together showing us mercy, forever and ever. Amen.",
+    "tags": ["litany", "divine mercy", "mercy", "jesus"],
+    "source": "Novenas.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
   }
 ]
