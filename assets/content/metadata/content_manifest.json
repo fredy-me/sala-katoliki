@@ -30,7 +30,13 @@
     ]
   },
   "novenas": {
-    "en": ["assets/content/novenas/en/divine_mercy_novena.json"],
-    "sw": ["assets/content/novenas/sw/divine_mercy_novena.json"]
+    "en": [
+      "assets/content/novenas/en/divine_mercy_novena.json",
+      "assets/content/novenas/en/st_rita_novena.json"
+    ],
+    "sw": [
+      "assets/content/novenas/sw/divine_mercy_novena.json",
+      "assets/content/novenas/sw/st_rita_novena.json"
+    ]
   }
 }
