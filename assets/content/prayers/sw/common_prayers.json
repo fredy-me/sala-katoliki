@@ -70,6 +70,34 @@
     "is_offline_available": true
   },
   {
+    "id": "commandments_of_god",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Amri za Mungu",
+    "description": "Amri kumi za Mungu kwa maisha ya Kikristo.",
+    "body": "AMRI ZA MUNGU.\n\n1. Ndimi Bwana Mungu wako, usiabudu Miungu wengine.\n2. Usilitaje bure jina la Mungu wako.\n3. Shika kitakatifu siku ya Mungu.\n4. Waheshimu Baba na Mama upate miaka mingi na heri duniani.\n5. Usiue.\n6. Usizini.\n7. Usiibe.\n8. Usiseme uongo.\n9. Usitamani mwanamke asiye mke wako.\n10. Usitamani mali ya mtu mwingine.",
+    "tags": ["amri", "amri za mungu", "katekisimu", "mafundisho"],
+    "source": "Sala za Kawaida.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
+  },
+  {
+    "id": "commandments_of_the_church",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Amri za Kanisa",
+    "description": "Amri za Kanisa Katoliki kwa waamini.",
+    "body": "AMRI ZA KANISA.\n\n1. Hudhuria misa takatifu, dominika na sikukuu zilizoamriwa.\n2. Funga siku ya jumatano ya majivu; usile nyama siku ya ijumaa kuu.\n3. Ungama dhambi zako walau mara moja kila mwaka.\n4. Pokea Ekaristi takatifu hasa wakati wa Paska.\n5. Saidia kanisa katoliki kwa zaka.\n6. Shika sheria katoliki za ndoa.",
+    "tags": ["amri", "amri za kanisa", "kanisa katoliki", "mafundisho"],
+    "source": "Sala za Kawaida.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
+  },
+  {
     "id": "evening_prayer",
     "type": "prayer",
     "category": "common_prayers",
