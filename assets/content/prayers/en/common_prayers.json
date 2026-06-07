@@ -70,6 +70,34 @@
     "is_offline_available": true
   },
   {
+    "id": "commandments_of_god",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Commandments of God",
+    "description": "The Ten Commandments of God for Christian life.",
+    "body": "THE COMMANDMENTS OF GOD.\n\n1. I am the Lord your God; you shall not worship other gods.\n2. You shall not take the name of your God in vain.\n3. Keep holy the day of God.\n4. Honor your father and mother, that you may have many years and blessings on earth.\n5. You shall not kill.\n6. You shall not commit adultery.\n7. You shall not steal.\n8. You shall not lie.\n9. You shall not covet a woman who is not your wife.\n10. You shall not covet another person's goods.",
+    "tags": ["commandments", "ten commandments", "catechism", "teaching"],
+    "source": "Sala za Kawaida.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
+  },
+  {
+    "id": "commandments_of_the_church",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Commandments of the Church",
+    "description": "The commandments of the Catholic Church for the faithful.",
+    "body": "THE COMMANDMENTS OF THE CHURCH.\n\n1. Attend Holy Mass on Sundays and holy days of obligation.\n2. Fast on Ash Wednesday; do not eat meat on Good Friday.\n3. Confess your sins at least once each year.\n4. Receive the Holy Eucharist especially during Easter.\n5. Support the Catholic Church with offerings.\n6. Observe Catholic marriage law.",
+    "tags": ["commandments", "church commandments", "catholic church", "teaching"],
+    "source": "Sala za Kawaida.txt",
+    "version": 1,
+    "last_updated": "2026-06-07",
+    "is_offline_available": true
+  },
+  {
     "id": "evening_prayer",
     "type": "prayer",
     "category": "common_prayers",
