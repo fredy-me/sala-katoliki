@@ -9,6 +9,7 @@ class RosaryStep {
     required this.beadNumber,
     required this.beadTotal,
     this.mysteryTitle,
+    this.mysteryVirtue,
   });
 
   final int index;
@@ -17,6 +18,7 @@ class RosaryStep {
   final int beadNumber;
   final int beadTotal;
   final String? mysteryTitle;
+  final String? mysteryVirtue;
 
   bool get isIntro => decadeIndex == 0;
 }
