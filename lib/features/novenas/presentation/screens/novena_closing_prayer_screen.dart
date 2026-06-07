@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/localization/localization_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/litany_text_view.dart';
 import '../providers/novena_providers.dart';
 
 class NovenaClosingPrayerScreen extends ConsumerWidget {
@@ -75,7 +75,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                _LitanyPrayerCard(text: closingPrayer.body),
+                LitanyTextView(text: closingPrayer.body),
                 if (novena.source != null) ...[
                   const SizedBox(height: AppSpacing.lg),
                   AppCard(
@@ -101,89 +101,6 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class _LitanyPrayerCard extends StatelessWidget {
-  const _LitanyPrayerCard({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final paragraphs = text
-        .split(RegExp(r'\n\s*\n'))
-        .map((paragraph) => paragraph.trim())
-        .where((paragraph) => paragraph.isNotEmpty)
-        .toList(growable: false);
-
-    return AppCard(
-      radius: AppSpacing.radiusXl,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var index = 0; index < paragraphs.length; index += 1) ...[
-            _LitanyLine(text: paragraphs[index]),
-            if (index != paragraphs.length - 1)
-              const SizedBox(height: AppSpacing.md),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _LitanyLine extends StatelessWidget {
-  const _LitanyLine({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final normalized = text.replaceAll('*', '').replaceAll('"', '').trim();
-    final isResponse =
-        normalized.startsWith('Kiitikio') ||
-        normalized.startsWith('Response') ||
-        normalized.startsWith('R:') ||
-        normalized.startsWith('V:') ||
-        normalized.startsWith('K:') ||
-        normalized.startsWith('W:') ||
-        normalized.startsWith('TUOMBE') ||
-        normalized.startsWith('LET US PRAY');
-    final isLambOfGod =
-        normalized.startsWith('Mwanakondoo') ||
-        normalized.startsWith('Lamb of God');
-
-    if (isResponse || isLambOfGod) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          border: Border.all(
-            color: isResponse
-                ? AppColors.gold
-                : Theme.of(context).colorScheme.outlineVariant,
-          ),
-        ),
-        child: Text(
-          normalized,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            height: 1.45,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      );
-    }
-
-    return Text(
-      normalized,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(height: 1.5, fontWeight: FontWeight.w400),
     );
   }
 }
