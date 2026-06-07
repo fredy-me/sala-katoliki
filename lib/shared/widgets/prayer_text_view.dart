@@ -24,11 +24,21 @@ class PrayerTextView extends StatelessWidget {
       fontWeight: FontWeight.w800,
       color: Theme.of(context).colorScheme.primary,
     );
+    final sectionStyle = effectiveStyle?.copyWith(
+      fontWeight: FontWeight.w800,
+      color: Theme.of(context).colorScheme.primary,
+      letterSpacing: 0.4,
+    );
 
     return Text.rich(
       TextSpan(
         style: effectiveStyle,
-        children: _buildSpans(text, effectiveStyle, responseStyle),
+        children: _buildSpans(
+          text,
+          effectiveStyle,
+          responseStyle,
+          sectionStyle,
+        ),
       ),
       textAlign: textAlign,
     );
@@ -38,6 +48,7 @@ class PrayerTextView extends StatelessWidget {
     String value,
     TextStyle? baseStyle,
     TextStyle? responseStyle,
+    TextStyle? sectionStyle,
   ) {
     final lines = value.split('\n');
     final spans = <TextSpan>[];
@@ -47,7 +58,12 @@ class PrayerTextView extends StatelessWidget {
       spans.add(
         TextSpan(
           text: line,
-          style: _isResponseLine(line) ? responseStyle : baseStyle,
+          style: _styleForLine(
+            line,
+            baseStyle: baseStyle,
+            responseStyle: responseStyle,
+            sectionStyle: sectionStyle,
+          ),
         ),
       );
       if (index != lines.length - 1) {
@@ -56,6 +72,21 @@ class PrayerTextView extends StatelessWidget {
     }
 
     return spans;
+  }
+
+  TextStyle? _styleForLine(
+    String line, {
+    required TextStyle? baseStyle,
+    required TextStyle? responseStyle,
+    required TextStyle? sectionStyle,
+  }) {
+    if (_isResponseLine(line)) {
+      return responseStyle;
+    }
+    if (_isSectionHeadingLine(line)) {
+      return sectionStyle;
+    }
+    return baseStyle;
   }
 
   bool _isResponseLine(String line) {
@@ -79,5 +110,21 @@ class PrayerTextView extends StatelessWidget {
         normalized.startsWith('wote:') ||
         normalized.startsWith('tuombe') ||
         normalized.startsWith('let us pray');
+  }
+
+  bool _isSectionHeadingLine(String line) {
+    final normalized = line.trim();
+    if (normalized.length < 4 || normalized.length > 48) {
+      return false;
+    }
+    final hasLetter = RegExp(r'[A-Za-zÀ-ÿ]').hasMatch(normalized);
+    if (!hasLetter) {
+      return false;
+    }
+    final lettersOnly = normalized.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
+    if (lettersOnly.isEmpty) {
+      return false;
+    }
+    return lettersOnly == lettersOnly.toUpperCase();
   }
 }
