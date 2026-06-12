@@ -72,7 +72,8 @@ class NotificationService {
     required String body,
     required tz.TZDateTime scheduledDate,
   }) async {
-    const scheduleModes = [
+    final scheduleModes = <AndroidScheduleMode>[
+      if (await _canUseExactAlarms()) AndroidScheduleMode.exactAllowWhileIdle,
       AndroidScheduleMode.inexactAllowWhileIdle,
       AndroidScheduleMode.inexact,
     ];
@@ -101,7 +102,9 @@ class NotificationService {
           androidScheduleMode: scheduleMode,
           matchDateTimeComponents: DateTimeComponents.time,
         );
-        return true;
+        if (await _hasPendingDailyReminder()) {
+          return true;
+        }
       } catch (_) {
         // Some Android devices reject one alarm mode even after notification
         // permission is granted. Try the next compatible mode before failing.
@@ -134,9 +137,19 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
-    final androidAllowed = await android?.requestNotificationsPermission();
-    if (androidAllowed == false) {
-      return false;
+    if (android != null) {
+      final enabled = await android.areNotificationsEnabled();
+      if (enabled == false) {
+        final granted = await android.requestNotificationsPermission();
+        if (granted != true) {
+          return false;
+        }
+      } else {
+        final granted = await android.requestNotificationsPermission();
+        if (granted == false) {
+          return false;
+        }
+      }
     }
 
     final ios = _plugin
@@ -162,6 +175,33 @@ class NotificationService {
       sound: true,
     );
     return macAllowed != false;
+  }
+
+  Future<bool> _canUseExactAlarms() async {
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) {
+      return true;
+    }
+
+    try {
+      final canSchedule = await android.canScheduleExactNotifications();
+      if (canSchedule == true) {
+        return true;
+      }
+
+      final granted = await android.requestExactAlarmsPermission();
+      return granted == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> _hasPendingDailyReminder() async {
+    final pending = await _plugin.pendingNotificationRequests();
+    return pending.any((request) => request.id == _dailyReminderId);
   }
 
   tz.TZDateTime _nextReminderTime({required int hour, required int minute}) {
