@@ -12,6 +12,12 @@ import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
 
+const _commonPrayerCategoryIds = {
+  'common_prayers',
+  'mass_prayers',
+  'confession_prayers',
+};
+
 class PrayerListScreen extends ConsumerWidget {
   const PrayerListScreen({required this.categoryId, super.key});
 
@@ -41,7 +47,7 @@ class PrayerListScreen extends ConsumerWidget {
           ),
           data: (prayers) {
             final categoryPrayers = prayers
-                .where((prayer) => prayer.categoryId == categoryId)
+                .where((prayer) => _includesPrayer(prayer.categoryId))
                 .toList(growable: false);
             final categoryTitle =
                 categoriesState.asData?.value
@@ -113,5 +119,13 @@ class PrayerListScreen extends ConsumerWidget {
     }
 
     return prayers.first.categoryLabel(languageCode);
+  }
+
+  bool _includesPrayer(String prayerCategoryId) {
+    if (categoryId == 'common_prayers') {
+      return _commonPrayerCategoryIds.contains(prayerCategoryId);
+    }
+
+    return prayerCategoryId == categoryId;
   }
 }
