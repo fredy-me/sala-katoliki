@@ -7,7 +7,6 @@ import 'package:salakatoliki/core/localization/localization_providers.dart';
 import 'package:salakatoliki/data/models/novena_model.dart';
 import 'package:salakatoliki/data/models/rosary_model.dart';
 import 'package:salakatoliki/features/library/presentation/screens/favorites_screen.dart';
-import 'package:salakatoliki/features/library/presentation/screens/library_screen.dart';
 import 'package:salakatoliki/features/novenas/presentation/providers/novena_providers.dart';
 import 'package:salakatoliki/features/novenas/presentation/screens/novena_day_screen.dart';
 import 'package:salakatoliki/features/novenas/presentation/screens/novena_detail_screen.dart';
@@ -54,10 +53,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
-    expect(find.text('Sala za Kawaida'), findsOneWidget);
-
-    await tester.tap(find.text('Sala za Kawaida').first);
-    await tester.pumpAndSettle();
+    expect(find.text('SALA ZOTE'), findsOneWidget);
 
     await tester.tap(find.text('Baba Yetu').first);
     await tester.pumpAndSettle();
@@ -109,13 +105,8 @@ void main() {
         ],
         child: MaterialApp.router(
           routerConfig: GoRouter(
-            initialLocation: '/library',
+            initialLocation: '/favorites',
             routes: [
-              GoRoute(
-                path: '/library',
-                builder: (context, state) =>
-                    const Scaffold(body: LibraryScreen()),
-              ),
               GoRoute(
                 path: '/favorites',
                 builder: (context, state) => const FavoritesScreen(),
@@ -137,8 +128,6 @@ void main() {
     expect(find.text('missing_prayer'), findsNothing);
     expect(find.text('1 saved prayers'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Favorites').last);
-    await tester.tap(find.text('Favorites').last);
     await _pumpUntilFound(tester, find.byTooltip('Remove favorite'));
     await tester.tap(find.byTooltip('Remove favorite').first);
     await tester.pump(const Duration(milliseconds: 300));
@@ -361,7 +350,7 @@ void main() {
     expect(find.text('Text Size'), findsOneWidget);
     expect(find.text('Theme'), findsOneWidget);
 
-    expect(find.text('About'), findsOneWidget);
+    expect(find.text('About App'), findsOneWidget);
 
     await tester.binding.setSurfaceSize(const Size(800, 2000));
     await tester.pumpWidget(const SizedBox.shrink());
