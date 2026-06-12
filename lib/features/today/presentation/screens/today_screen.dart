@@ -21,17 +21,21 @@ class TodayScreen extends ConsumerWidget {
     final strings = _TodayStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final localState = ref.watch(todayLocalStateProvider).asData?.value;
+    final recentIds =
+        ref.watch(recentPrayerIdsProvider).asData?.value ?? const <String>[];
 
     return prayersState.when(
       loading: () => AppLoading(label: strings.loading),
       error: (error, stackTrace) => _TodayContent(
         strings: strings,
         dailyPrayer: null,
+        recentPrayer: null,
         localState: localState,
       ),
       data: (prayers) => _TodayContent(
         strings: strings,
         dailyPrayer: _selectDailyPrayer(prayers),
+        recentPrayer: _selectRecentPrayer(prayers, recentIds),
         localState: localState,
       ),
     );
@@ -45,17 +49,38 @@ class TodayScreen extends ConsumerWidget {
     final dayIndex = DateTime.now().day % prayers.length;
     return prayers[dayIndex];
   }
+
+  PrayerEntity? _selectRecentPrayer(
+    List<PrayerEntity> prayers,
+    List<String> recentIds,
+  ) {
+    if (recentIds.isEmpty) {
+      return null;
+    }
+
+    final prayersById = {for (final prayer in prayers) prayer.id: prayer};
+    for (final id in recentIds) {
+      final prayer = prayersById[id];
+      if (prayer != null) {
+        return prayer;
+      }
+    }
+
+    return null;
+  }
 }
 
 class _TodayContent extends StatelessWidget {
   const _TodayContent({
     required this.strings,
     required this.dailyPrayer,
+    required this.recentPrayer,
     required this.localState,
   });
 
   final _TodayStrings strings;
   final PrayerEntity? dailyPrayer;
+  final PrayerEntity? recentPrayer;
   final TodayLocalState? localState;
 
   @override
@@ -91,7 +116,7 @@ class _TodayContent extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         SectionHeader(title: strings.quickActions),
         const SizedBox(height: AppSpacing.md),
-        _QuickActionGrid(strings: strings),
+        _QuickActionGrid(strings: strings, recentPrayer: recentPrayer),
         const SizedBox(height: AppSpacing.lg),
         _ReminderStatusCard(strings: strings, state: state),
       ],
@@ -308,17 +333,29 @@ class _RosaryTodayCard extends StatelessWidget {
 }
 
 class _QuickActionGrid extends StatelessWidget {
-  const _QuickActionGrid({required this.strings});
+  const _QuickActionGrid({required this.strings, required this.recentPrayer});
 
   final _TodayStrings strings;
+  final PrayerEntity? recentPrayer;
 
   @override
   Widget build(BuildContext context) {
     final actions = [
       _QuickAction(Icons.menu_book_outlined, strings.commonPrayers, '/prayers'),
-      _QuickAction(Icons.radio_button_checked, strings.rosary, '/rosary'),
-      _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
+      _QuickAction(
+        Icons.history,
+        strings.recentlyOpened,
+        recentPrayer == null ? null : '/prayers/${recentPrayer!.id}',
+        usePush: true,
+      ),
       _QuickAction(Icons.favorite_border, strings.favorites, '/favorites'),
+      _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
+      _QuickAction(
+        Icons.radio_button_checked,
+        strings.rosary,
+        '/rosary',
+        usePush: true,
+      ),
     ];
 
     return GridView.count(
@@ -331,29 +368,41 @@ class _QuickActionGrid extends StatelessWidget {
       children: [
         for (final action in actions)
           AppCard(
-            onTap: () {
-              if (action.path == '/rosary') {
-                context.push(action.path);
-                return;
-              }
-
-              context.go(action.path);
-            },
+            onTap: action.path == null
+                ? null
+                : () => _openAction(context, action),
             padding: const EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _IconBadge(icon: action.icon, compact: true),
-                Text(
-                  action.label,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
+            child: Opacity(
+              opacity: action.path == null ? 0.55 : 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _IconBadge(icon: action.icon, compact: true),
+                  Text(
+                    action.label,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
             ),
           ),
       ],
     );
+  }
+
+  void _openAction(BuildContext context, _QuickAction action) {
+    final path = action.path;
+    if (path == null) {
+      return;
+    }
+
+    if (action.usePush) {
+      context.push(path);
+      return;
+    }
+
+    context.go(path);
   }
 }
 
@@ -422,11 +471,12 @@ class _IconBadge extends StatelessWidget {
 }
 
 class _QuickAction {
-  const _QuickAction(this.icon, this.label, this.path);
+  const _QuickAction(this.icon, this.label, this.path, {this.usePush = false});
 
   final IconData icon;
   final String label;
-  final String path;
+  final String? path;
+  final bool usePush;
 }
 
 class _TodayStrings {
@@ -459,6 +509,8 @@ class _TodayStrings {
   String get todayDay => _sw ? 'Kulingana na siku ya leo' : 'Based on today';
   String get startRosary => _sw ? 'Anza Rozari' : 'Start Rosary';
   String get commonPrayers => _sw ? 'Sala za Kawaida' : 'Common Prayers';
+  String get recentlyOpened =>
+      _sw ? 'Zilizofunguliwa Karibuni' : 'Recently Opened';
   String get rosary => _sw ? 'Rozari' : 'Rosary';
   String get favorites => _sw ? 'Vipendwa' : 'Favorites';
   String reminderEnabled(String time) =>
