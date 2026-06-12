@@ -31,9 +31,9 @@ class AppShell extends ConsumerWidget {
             Icons.calendar_month_outlined,
           ),
           AppBottomNavDestination(
-            '/library',
-            strings.library,
-            Icons.auto_stories_outlined,
+            '/settings',
+            strings.settings,
+            Icons.settings_outlined,
           ),
         ],
       ),
@@ -51,5 +51,5 @@ class _BottomNavStrings {
   String get today => _sw ? 'Leo' : 'Today';
   String get pray => _sw ? 'Sala' : 'Pray';
   String get novenas => _sw ? 'Novenas' : 'Novenas';
-  String get library => _sw ? 'Maktaba' : 'Library';
+  String get settings => _sw ? 'Mipangilio' : 'Settings';
 }
