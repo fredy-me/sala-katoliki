@@ -200,8 +200,12 @@ class NotificationService {
   }
 
   Future<bool> _hasPendingDailyReminder() async {
-    final pending = await _plugin.pendingNotificationRequests();
-    return pending.any((request) => request.id == _dailyReminderId);
+    try {
+      final pending = await _plugin.pendingNotificationRequests();
+      return pending.any((request) => request.id == _dailyReminderId);
+    } catch (_) {
+      return true;
+    }
   }
 
   tz.TZDateTime _nextReminderTime({required int hour, required int minute}) {
