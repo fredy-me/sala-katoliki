@@ -46,7 +46,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             title: strings.loadErrorTitle,
             message: strings.loadErrorMessage,
             actionLabel: strings.back,
-            onAction: () => context.popOrGo('/library'),
+            onAction: () => context.popOrGo('/today'),
           ),
           data: (prayers) {
             final favorites = _favoritePrayers(prayers, favoriteIds);
@@ -66,7 +66,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                   children: [
                     IconButton(
                       tooltip: strings.back,
-                      onPressed: () => context.popOrGo('/library'),
+                      onPressed: () => context.popOrGo('/today'),
                       icon: const Icon(Icons.arrow_back),
                     ),
                     const SizedBox(width: AppSpacing.sm),
