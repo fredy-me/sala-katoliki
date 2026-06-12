@@ -5,7 +5,6 @@ import '../features/novenas/presentation/screens/novena_day_screen.dart';
 import '../features/novenas/presentation/screens/novena_closing_prayer_screen.dart';
 import '../features/novenas/presentation/screens/novena_detail_screen.dart';
 import '../features/library/presentation/screens/favorites_screen.dart';
-import '../features/library/presentation/screens/library_screen.dart';
 import '../features/novenas/presentation/screens/novenas_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/prayers/presentation/screens/prayer_detail_screen.dart';
@@ -44,10 +43,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/novenas',
             builder: (context, state) => const NovenasScreen(),
           ),
-          GoRoute(
-            path: '/library',
-            builder: (context, state) => const LibraryScreen(),
-          ),
+          GoRoute(path: '/library', redirect: (context, state) => '/settings'),
           GoRoute(
             path: '/settings',
             builder: (context, state) => const SettingsScreen(),
