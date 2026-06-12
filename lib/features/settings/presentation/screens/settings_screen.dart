@@ -98,12 +98,6 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: strings.aboutSubtitle,
                 onTap: () => context.push('/about'),
               ),
-              _InfoRow(
-                icon: Icons.source_outlined,
-                title: strings.contentSources,
-                subtitle: strings.contentSourcesSubtitle,
-                onTap: () => context.push('/about'),
-              ),
             ],
           ),
         ],
@@ -473,11 +467,7 @@ class _SettingsStrings {
   String get light => _sw ? 'Mwanga' : 'Light';
   String get dark => _sw ? 'Giza' : 'Dark';
   String get information => _sw ? 'Taarifa' : 'Information';
-  String get about => _sw ? 'Kuhusu' : 'About';
+  String get about => _sw ? 'Kuhusu Programu' : 'About App';
   String get aboutSubtitle =>
       _sw ? 'Toleo, msanidi, na maelezo' : 'Version, developer, and notes';
-  String get contentSources => _sw ? 'Vyanzo vya Maudhui' : 'Content Sources';
-  String get contentSourcesSubtitle => _sw
-      ? 'Sala za kimapokeo na ibada zilizoidhinishwa'
-      : 'Traditional prayers and approved devotions';
 }
