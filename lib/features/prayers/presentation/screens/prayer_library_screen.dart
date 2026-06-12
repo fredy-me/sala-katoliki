@@ -15,6 +15,12 @@ import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
 
+const _commonPrayerCategoryIds = {
+  'common_prayers',
+  'mass_prayers',
+  'confession_prayers',
+};
+
 class PrayerLibraryScreen extends ConsumerStatefulWidget {
   const PrayerLibraryScreen({super.key});
 
@@ -165,8 +171,11 @@ class _CategoryGrid extends StatelessWidget {
     };
     final countsByCategory = <String, int>{};
     for (final prayer in prayers) {
+      final categoryId = _commonPrayerCategoryIds.contains(prayer.categoryId)
+          ? 'common_prayers'
+          : prayer.categoryId;
       countsByCategory.update(
-        prayer.categoryId,
+        categoryId,
         (count) => count + 1,
         ifAbsent: () => 1,
       );
@@ -178,16 +187,11 @@ class _CategoryGrid extends StatelessWidget {
         _PrayerSection(
           title: strings.corePrayers,
           entries: [
-            for (final id in const [
-              'common_prayers',
-              'mass_prayers',
-              'confession_prayers',
-            ])
-              if (categoriesById[id] != null)
-                _PrayerCategoryEntry(
-                  category: categoriesById[id]!,
-                  count: countsByCategory[id] ?? 0,
-                ),
+            if (categoriesById['common_prayers'] != null)
+              _PrayerCategoryEntry(
+                category: categoriesById['common_prayers']!,
+                count: countsByCategory['common_prayers'] ?? 0,
+              ),
           ],
           languageCode: languageCode,
           strings: strings,
