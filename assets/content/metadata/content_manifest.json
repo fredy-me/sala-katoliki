@@ -33,11 +33,25 @@
   },
   "novenas": {
     "en": [
+      "assets/content/novenas/en/all_saints_day_novena.json",
       "assets/content/novenas/en/divine_mercy_novena.json",
+      "assets/content/novenas/en/holy_family_novena.json",
+      "assets/content/novenas/en/holy_spirit_novena.json",
+      "assets/content/novenas/en/litany_of_trust_novena.json",
+      "assets/content/novenas/en/sacred_heart_of_jesus_novena.json",
+      "assets/content/novenas/en/st_aloysius_gonzaga_novena.json",
+      "assets/content/novenas/en/st_jude_novena.json",
       "assets/content/novenas/en/st_rita_novena.json"
     ],
     "sw": [
+      "assets/content/novenas/sw/all_saints_day_novena.json",
       "assets/content/novenas/sw/divine_mercy_novena.json",
+      "assets/content/novenas/sw/holy_family_novena.json",
+      "assets/content/novenas/sw/holy_spirit_novena.json",
+      "assets/content/novenas/sw/litany_of_trust_novena.json",
+      "assets/content/novenas/sw/sacred_heart_of_jesus_novena.json",
+      "assets/content/novenas/sw/st_aloysius_gonzaga_novena.json",
+      "assets/content/novenas/sw/st_jude_novena.json",
       "assets/content/novenas/sw/st_rita_novena.json"
     ]
   }
