@@ -8,6 +8,7 @@ import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/app_search_bar.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
@@ -16,15 +17,30 @@ const _commonPrayerCategoryIds = {
   'common_prayers',
   'mass_prayers',
   'confession_prayers',
+  'divine_mercy',
 };
 
-class PrayerListScreen extends ConsumerWidget {
+class PrayerListScreen extends ConsumerStatefulWidget {
   const PrayerListScreen({required this.categoryId, super.key});
 
   final String categoryId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PrayerListScreen> createState() => _PrayerListScreenState();
+}
+
+class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
@@ -49,9 +65,12 @@ class PrayerListScreen extends ConsumerWidget {
             final categoryPrayers = prayers
                 .where((prayer) => _includesPrayer(prayer.categoryId))
                 .toList(growable: false);
+            final visiblePrayers = categoryPrayers
+                .where((prayer) => prayer.matches(_query))
+                .toList(growable: false);
             final categoryTitle =
                 categoriesState.asData?.value
-                    .where((category) => category.id == categoryId)
+                    .where((category) => category.id == widget.categoryId)
                     .map(
                       (category) =>
                           category.title[languageCode] ??
@@ -86,6 +105,14 @@ class PrayerListScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
+                AppSearchBar(
+                  controller: _searchController,
+                  hintText: languageCode == 'sw'
+                      ? 'Tafuta ndani ya $categoryTitle...'
+                      : 'Search in $categoryTitle...',
+                  onChanged: (value) => setState(() => _query = value),
+                ),
+                const SizedBox(height: AppSpacing.lg),
                 if (categoryPrayers.isEmpty)
                   AppEmptyState(
                     message: languageCode == 'sw'
@@ -93,8 +120,15 @@ class PrayerListScreen extends ConsumerWidget {
                         : 'No prayers are available in this category yet.',
                     icon: Icons.menu_book_outlined,
                   )
+                else if (visiblePrayers.isEmpty)
+                  AppEmptyState(
+                    message: languageCode == 'sw'
+                        ? 'Hakuna sala inayolingana na utafutaji huu.'
+                        : 'No prayers match this search.',
+                    icon: Icons.search_off_outlined,
+                  )
                 else
-                  for (final prayer in categoryPrayers) ...[
+                  for (final prayer in visiblePrayers) ...[
                     PrayerCard(
                       prayer: prayer,
                       isFavorite: favoriteIds.contains(prayer.id),
@@ -115,17 +149,17 @@ class PrayerListScreen extends ConsumerWidget {
 
   String _fallbackTitle(List<PrayerEntity> prayers, String languageCode) {
     if (prayers.isEmpty) {
-      return categoryId.replaceAll('_', ' ');
+      return widget.categoryId.replaceAll('_', ' ');
     }
 
     return prayers.first.categoryLabel(languageCode);
   }
 
   bool _includesPrayer(String prayerCategoryId) {
-    if (categoryId == 'common_prayers') {
+    if (widget.categoryId == 'common_prayers') {
       return _commonPrayerCategoryIds.contains(prayerCategoryId);
     }
 
-    return prayerCategoryId == categoryId;
+    return prayerCategoryId == widget.categoryId;
   }
 }
