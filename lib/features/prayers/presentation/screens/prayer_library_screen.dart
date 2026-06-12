@@ -19,6 +19,7 @@ const _commonPrayerCategoryIds = {
   'common_prayers',
   'mass_prayers',
   'confession_prayers',
+  'divine_mercy',
 };
 
 class PrayerLibraryScreen extends ConsumerStatefulWidget {
@@ -223,17 +224,6 @@ class _CategoryGrid extends StatelessWidget {
               _PrayerCategoryEntry(
                 category: categoriesById['litanies']!,
                 count: countsByCategory['litanies'] ?? 0,
-              ),
-            _PrayerFeatureEntry(
-              title: strings.novenas,
-              description: strings.novenasDescription,
-              iconName: 'calendar',
-              route: '/novenas',
-            ),
-            if (categoriesById['divine_mercy'] != null)
-              _PrayerCategoryEntry(
-                category: categoriesById['divine_mercy']!,
-                count: countsByCategory['divine_mercy'] ?? 0,
               ),
           ],
           languageCode: languageCode,
@@ -490,10 +480,6 @@ class _PrayerLibraryStrings {
   String get rosaryAndMysteriesDescription => _sw
       ? 'Sali rozari kwa hatua na mafumbo ya siku.'
       : 'Pray the rosary step by step with the mysteries of the day.';
-  String get novenas => _sw ? 'Novena' : 'Novenas';
-  String get novenasDescription => _sw
-      ? 'Ibada za siku tisa na ufuatiliaji wa maendeleo.'
-      : 'Nine-day devotions with progress tracking.';
   String get comingSoon => _sw ? 'Inaandaliwa' : 'Coming soon';
   String countLabel(int count) {
     if (_sw) {
