@@ -50,6 +50,12 @@ class _AppBackGuard extends StatefulWidget {
 
 class _AppBackGuardState extends State<_AppBackGuard> {
   static const _homePath = '/today';
+  static const _mainNavigationPaths = {
+    _homePath,
+    '/prayers',
+    '/novenas',
+    '/settings',
+  };
   static const _exitWindow = Duration(seconds: 2);
 
   DateTime? _lastExitRequestAt;
@@ -76,7 +82,7 @@ class _AppBackGuardState extends State<_AppBackGuard> {
     }
 
     final path = widget.router.routerDelegate.currentConfiguration.uri.path;
-    if (path != _homePath) {
+    if (!_mainNavigationPaths.contains(path)) {
       widget.router.go(_homePath);
       return;
     }
