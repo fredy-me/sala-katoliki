@@ -5,9 +5,10 @@ import '../../core/theme/app_spacing.dart';
 import 'app_card.dart';
 
 class LitanyTextView extends StatelessWidget {
-  const LitanyTextView({required this.text, super.key});
+  const LitanyTextView({required this.text, this.fontScale = 1, super.key});
 
   final String text;
+  final double fontScale;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class LitanyTextView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var index = 0; index < lines.length; index += 1) ...[
-            _LitanyLine(text: lines[index]),
+            _LitanyLine(text: lines[index], fontScale: fontScale),
             if (index != lines.length - 1)
               const SizedBox(height: AppSpacing.md),
           ],
@@ -35,9 +36,10 @@ class LitanyTextView extends StatelessWidget {
 }
 
 class _LitanyLine extends StatelessWidget {
-  const _LitanyLine({required this.text});
+  const _LitanyLine({required this.text, required this.fontScale});
 
   final String text;
+  final double fontScale;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,10 @@ class _LitanyLine extends StatelessWidget {
     final isLambOfGod =
         normalized.startsWith('Mwanakondoo') ||
         normalized.startsWith('Lamb of God');
+    final baseStyle = Theme.of(context).textTheme.bodyLarge;
+    final scaledStyle = baseStyle?.copyWith(
+      fontSize: (baseStyle.fontSize ?? 16) * fontScale,
+    );
 
     if (isHighlighted || isLambOfGod) {
       return Container(
@@ -67,7 +73,7 @@ class _LitanyLine extends StatelessWidget {
         ),
         child: Text(
           normalized,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: scaledStyle?.copyWith(
             height: 1.45,
             fontWeight: FontWeight.w800,
           ),
@@ -77,9 +83,7 @@ class _LitanyLine extends StatelessWidget {
 
     return Text(
       normalized,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(height: 1.5, fontWeight: FontWeight.w400),
+      style: scaledStyle?.copyWith(height: 1.5, fontWeight: FontWeight.w400),
     );
   }
 
