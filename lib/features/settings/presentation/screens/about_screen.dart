@@ -74,10 +74,7 @@ class AboutScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.section),
             SectionHeader(title: strings.developer),
             const SizedBox(height: AppSpacing.md),
-            _AboutCard(
-              title: 'Kilimanjaro Technology',
-              body: strings.developerBody,
-            ),
+            _AboutCard(title: 'Busara Digital', body: strings.developerBody),
             const SizedBox(height: AppSpacing.lg),
             SectionHeader(title: strings.openSource),
             const SizedBox(height: AppSpacing.md),
@@ -143,8 +140,8 @@ class _AboutStrings {
   String get version => _sw ? 'Toleo 1.0.0' : 'Version 1.0.0';
   String get developer => _sw ? 'Msanidi' : 'Developer';
   String get developerBody => _sw
-      ? 'Programu hii imetengenezwa kwa Sala Katoliki MVP na Kilimanjaro Technology.'
-      : 'This app is developed for the Sala Katoliki MVP by Kilimanjaro Technology.';
+      ? 'Programu hii imetengenezwa kwa Sala Katoliki MVP na Busara Digital.'
+      : 'This app is developed for the Sala Katoliki MVP by Busara Digital.';
   String get openSource => _sw ? 'Chanzo Wazi' : 'Open Source';
   String get openSourceTitle =>
       _sw ? 'Mchango wa Baadaye' : 'Future Contributions';
@@ -164,7 +161,7 @@ class _AboutStrings {
       ? 'Programu hii ni msaada wa sala binafsi na haibadilishi mwongozo wa kichungaji au maandiko rasmi ya Kanisa.'
       : 'This app supports personal prayer and does not replace pastoral guidance or official Church texts.';
   String get contact => _sw ? 'Mawasiliano' : 'Contact';
-  String get contactTitle => 'Kilimanjaro Technology';
+  String get contactTitle => 'Busara Digital';
   String get contactBody => _sw
       ? 'Tovuti na maelezo ya msaada yataongezwa kabla ya toleo la uzalishaji.'
       : 'Website and support contact details will be added before production release.';
