@@ -36,12 +36,12 @@ class NovenaSession {
   bool get isActive => progress.activeNovenaId == novena.id;
 
   NovenaDayStatus statusForDay(int day) {
-    if (progress.completedDays.contains(day)) {
-      return NovenaDayStatus.completed;
-    }
-
     if (!isActive) {
       return day == 1 ? NovenaDayStatus.open : NovenaDayStatus.notStarted;
+    }
+
+    if (progress.completedDays.contains(day)) {
+      return NovenaDayStatus.completed;
     }
 
     if (day == progress.nextDay) {
