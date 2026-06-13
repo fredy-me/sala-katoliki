@@ -136,7 +136,10 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                       ),
                       const SizedBox(height: 24),
                       if (prayer.categoryId == 'litanies')
-                        LitanyTextView(text: prayer.text())
+                        LitanyTextView(
+                          text: prayer.text(),
+                          fontScale: _textScale,
+                        )
                       else
                         PrayerTextView(
                           text: prayer.text(),
