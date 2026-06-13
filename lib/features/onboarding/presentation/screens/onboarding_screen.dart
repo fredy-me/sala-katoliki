@@ -7,6 +7,7 @@ import '../../../../core/localization/supported_languages.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/legal_links.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -123,6 +124,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
+                const SizedBox(height: AppSpacing.lg),
+                LegalLinks(languageCode: _selectedLanguageCode, centered: true),
               ],
             ),
           ),
