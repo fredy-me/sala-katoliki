@@ -11,6 +11,32 @@ class NotificationService {
   static const String _dailyReminderChannelName = 'Daily prayer reminder';
   static const String _dailyReminderChannelDescription =
       'Daily reminder to pray with Sala Katoliki';
+  static const Map<String, String> _timeZoneNameByAbbreviation = {
+    'EAT': 'Africa/Dar_es_Salaam',
+    'UTC': 'UTC',
+    'GMT': 'Etc/UTC',
+    'BST': 'Europe/London',
+    'CET': 'Europe/Paris',
+    'CEST': 'Europe/Paris',
+    'EST': 'America/New_York',
+    'EDT': 'America/New_York',
+    'CST': 'America/Chicago',
+    'CDT': 'America/Chicago',
+    'MST': 'America/Denver',
+    'MDT': 'America/Denver',
+    'PST': 'America/Los_Angeles',
+    'PDT': 'America/Los_Angeles',
+  };
+  static const Map<int, String> _timeZoneNameByOffsetMinutes = {
+    180: 'Africa/Dar_es_Salaam',
+    0: 'UTC',
+    60: 'Europe/London',
+    120: 'Europe/Paris',
+    -300: 'America/New_York',
+    -360: 'America/Chicago',
+    -420: 'America/Denver',
+    -480: 'America/Los_Angeles',
+  };
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
@@ -120,16 +146,31 @@ class NotificationService {
     }
 
     tz_data.initializeTimeZones();
-    final now = DateTime.now();
-    final localZone = tz.Location('device_local', [tz.minTime], [0], [
-      tz.TimeZone(
-        now.timeZoneOffset,
-        isDst: false,
-        abbreviation: now.timeZoneName,
-      ),
-    ]);
-    tz.setLocalLocation(localZone);
+    tz.setLocalLocation(_resolveLocalTimeZone());
     _timeZonesInitialized = true;
+  }
+
+  tz.Location _resolveLocalTimeZone() {
+    final now = DateTime.now();
+    final candidates = <String>[
+      now.timeZoneName,
+      _timeZoneNameByAbbreviation[now.timeZoneName] ?? '',
+      _timeZoneNameByOffsetMinutes[now.timeZoneOffset.inMinutes] ?? '',
+      'UTC',
+    ];
+
+    for (final candidate in candidates) {
+      if (candidate.isEmpty) {
+        continue;
+      }
+      try {
+        return tz.getLocation(candidate);
+      } catch (_) {
+        // Keep trying until a valid native time-zone ID is found.
+      }
+    }
+
+    return tz.UTC;
   }
 
   Future<bool> _requestPermissionIfNeeded() async {
