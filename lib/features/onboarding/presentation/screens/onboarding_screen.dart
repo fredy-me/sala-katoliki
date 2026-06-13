@@ -51,9 +51,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 AppSpacing.xl,
               ),
               children: [
-                const Align(
+                Align(
                   alignment: Alignment.centerRight,
-                  child: Icon(Icons.more_horiz, color: AppColors.mutedText),
+                  child: Icon(
+                    Icons.more_horiz,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
                 ),
                 const SizedBox(height: 34),
                 const _AppMark(),
@@ -134,15 +137,17 @@ class _AppMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 66,
       height: 66,
       decoration: BoxDecoration(
-        color: AppColors.surfaceWarm,
+        color: colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.45)),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.45)),
       ),
-      child: const Icon(Icons.local_florist, color: AppColors.navy, size: 30),
+      child: Icon(Icons.local_florist, color: colorScheme.primary, size: 30),
     );
   }
 }
@@ -160,10 +165,20 @@ class _LanguageOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final selectedBackground = theme.brightness == Brightness.dark
+        ? colorScheme.primary.withValues(alpha: 0.16)
+        : AppColors.goldSoft;
+    final background = selected ? selectedBackground : colorScheme.surface;
+    final borderColor = selected
+        ? colorScheme.primary
+        : theme.dividerTheme.color ?? colorScheme.outlineVariant;
+
     return AppCard(
       onTap: onTap,
-      backgroundColor: selected ? AppColors.goldSoft : AppColors.surface,
-      borderColor: selected ? AppColors.gold : AppColors.border,
+      backgroundColor: background,
+      borderColor: borderColor,
       radius: AppSpacing.radiusLg,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
@@ -177,12 +192,16 @@ class _LanguageOptionCard extends StatelessWidget {
               children: [
                 Text(
                   language.name,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   language.nativeName,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -202,7 +221,7 @@ class _LanguageOptionCard extends StatelessWidget {
                     height: 26,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.border, width: 2),
+                      border: Border.all(color: borderColor, width: 2),
                     ),
                   ),
           ),
