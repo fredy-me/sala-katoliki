@@ -170,6 +170,21 @@ void main() {
       expect(session.canOpenDay(4), isFalse);
     },
   );
+
+  test('novena completed days do not leak into inactive novenas', () {
+    final progress = NovenaProgress(
+      activeNovenaId: 'another_novena',
+      completedDays: {1, 2, 3},
+    );
+    final session = NovenaSession(novena: _testNovena, progress: progress);
+
+    expect(session.isActive, isFalse);
+    expect(session.statusForDay(1), NovenaDayStatus.open);
+    expect(session.statusForDay(2), NovenaDayStatus.notStarted);
+    expect(session.statusForDay(3), NovenaDayStatus.notStarted);
+    expect(session.canOpenDay(1), isTrue);
+    expect(session.canOpenDay(2), isFalse);
+  });
 }
 
 const _testNovena = NovenaModel(
