@@ -363,7 +363,7 @@ void main() {
         child: const MaterialApp(home: AboutScreen()),
       ),
     );
-    await _pumpUntilFound(tester, find.text('Kilimanjaro Technology'));
+    await _pumpUntilFound(tester, find.text('Busara Digital'));
     expect(find.text('CONTENT SOURCES'), findsOneWidget);
     expect(find.text('DISCLAIMER'), findsOneWidget);
   });
