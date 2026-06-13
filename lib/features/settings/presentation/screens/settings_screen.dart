@@ -307,30 +307,83 @@ class _ThemeRow extends ConsumerWidget {
         children: [
           Text(strings.theme, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.md),
-          SegmentedButton<ThemeMode>(
-            segments: [
-              ButtonSegment(
-                value: ThemeMode.system,
-                icon: const Icon(Icons.phone_android),
-                label: Text(strings.system),
-              ),
-              ButtonSegment(
-                value: ThemeMode.light,
-                icon: const Icon(Icons.light_mode),
-                label: Text(strings.light),
-              ),
-              ButtonSegment(
-                value: ThemeMode.dark,
-                icon: const Icon(Icons.dark_mode),
-                label: Text(strings.dark),
-              ),
-            ],
-            selected: {settings.themeMode},
-            onSelectionChanged: (selection) => ref
+          _ThemeOptionRow(
+            icon: Icons.phone_android,
+            label: strings.system,
+            selected: settings.themeMode == ThemeMode.system,
+            onTap: () => ref
                 .read(userSettingsProvider.notifier)
-                .setThemeMode(selection.first),
+                .setThemeMode(ThemeMode.system),
+          ),
+          _ThemeOptionRow(
+            icon: Icons.light_mode,
+            label: strings.light,
+            selected: settings.themeMode == ThemeMode.light,
+            onTap: () => ref
+                .read(userSettingsProvider.notifier)
+                .setThemeMode(ThemeMode.light),
+          ),
+          _ThemeOptionRow(
+            icon: Icons.dark_mode,
+            label: strings.dark,
+            selected: settings.themeMode == ThemeMode.dark,
+            onTap: () => ref
+                .read(userSettingsProvider.notifier)
+                .setThemeMode(ThemeMode.dark),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ThemeOptionRow extends StatelessWidget {
+  const _ThemeOptionRow({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final foreground = selected
+        ? colorScheme.primary
+        : Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.mutedText;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Row(
+          children: [
+            Icon(icon, color: foreground, size: 22),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: selected ? colorScheme.onSurface : null,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            AnimatedOpacity(
+              opacity: selected ? 1 : 0,
+              duration: const Duration(milliseconds: 160),
+              child: Icon(Icons.check_circle, color: colorScheme.primary),
+            ),
+          ],
+        ),
       ),
     );
   }
