@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/legal_links.dart';
 import '../../../../shared/widgets/section_header.dart';
 import '../providers/settings_providers.dart';
 
@@ -97,6 +98,16 @@ class SettingsScreen extends ConsumerWidget {
                 title: strings.about,
                 subtitle: strings.aboutSubtitle,
                 onTap: () => context.push('/about'),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _SettingsGroup(
+            title: strings.legal,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: LegalLinks(languageCode: selectedLanguage),
               ),
             ],
           ),
@@ -523,4 +534,5 @@ class _SettingsStrings {
   String get about => _sw ? 'Kuhusu Programu' : 'About App';
   String get aboutSubtitle =>
       _sw ? 'Toleo, msanidi, na maelezo' : 'Version, developer, and notes';
+  String get legal => _sw ? 'Sheria na Faragha' : 'Legal and Privacy';
 }
