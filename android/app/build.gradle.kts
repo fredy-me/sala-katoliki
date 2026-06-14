@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "tech.kilimanjaro.salakatoliki"
+    namespace = "com.busaradigital.salakatoliki"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "tech.kilimanjaro.salakatoliki"
+        applicationId = "com.busaradigital.salakatoliki"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutter.versionCode
