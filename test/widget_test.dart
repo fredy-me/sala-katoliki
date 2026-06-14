@@ -31,7 +31,10 @@ void main() {
   });
 
   testWidgets('shows Sala Katoliki language selection', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: SalaKatolikiApp()));
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
+    await tester.pumpWidget(
+      ProviderScope(key: UniqueKey(), child: const SalaKatolikiApp()),
+    );
 
     await tester.pumpAndSettle();
 
@@ -41,16 +44,24 @@ void main() {
   });
 
   testWidgets('opens offline prayer library and detail', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: SalaKatolikiApp()));
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
+    await tester.pumpWidget(
+      ProviderScope(key: UniqueKey(), child: const SalaKatolikiApp()),
+    );
 
     await tester.pumpAndSettle();
     await tester.tap(find.text('Kiswahili'));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Endelea'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Endelea'));
-    await tester.pumpAndSettle();
+    await _pumpUntilFound(tester, find.text('Leo'));
 
-    await tester.tap(find.text('Sala'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Sala'));
+    await _pumpUntilFound(tester, find.text('Tafuta sala...'));
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
     expect(find.text('Sala za Kawaida'), findsOneWidget);
@@ -63,7 +74,7 @@ void main() {
 
     expect(find.text('SALA ZA KAWAIDA'), findsOneWidget);
     expect(find.textContaining('Baba yetu uliye mbinguni'), findsOneWidget);
-    expect(find.text('Source'), findsOneWidget);
+    expect(find.text('Chanzo'), findsOneWidget);
   });
 
   testWidgets('persists favorite prayers and shows favorites screen', (
