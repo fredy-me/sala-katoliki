@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
@@ -21,23 +20,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(selectedLanguageProvider, (previous, next) {
-      final languageCode = next.asData?.value;
-      if (languageCode != null && mounted) {
-        context.go('/today');
-      }
-    });
-
     final isKiswahili =
         _selectedLanguageCode == SupportedLanguages.kiswahili.code;
     final languageState = ref.watch(selectedLanguageProvider);
-    if (languageState.asData?.value != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          context.go('/today');
-        }
-      });
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -102,18 +87,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 FilledButton(
                   onPressed: languageState.isLoading
                       ? null
-                      : () => ref
-                            .read(selectedLanguageProvider.notifier)
-                            .selectLanguage(_selectedLanguageCode),
+                      : () => _selectLanguage(_selectedLanguageCode),
                   child: Text(isKiswahili ? 'Endelea' : 'Continue'),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextButton(
                   onPressed: languageState.isLoading
                       ? null
-                      : () => ref
-                            .read(selectedLanguageProvider.notifier)
-                            .selectLanguage(SupportedLanguages.english.code),
+                      : () => _selectLanguage(SupportedLanguages.english.code),
                   child: Text(isKiswahili ? 'Ruka' : 'Skip'),
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -132,6 +113,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectLanguage(String languageCode) async {
+    await ref
+        .read(selectedLanguageProvider.notifier)
+        .selectLanguage(languageCode);
   }
 }
 
