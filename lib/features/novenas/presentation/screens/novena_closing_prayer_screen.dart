@@ -76,26 +76,6 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 LitanyTextView(text: closingPrayer.body),
-                if (novena.source != null) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.source,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          novena.source!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             );
           },
@@ -114,7 +94,6 @@ class _ClosingPrayerStrings {
 
   String get loading => _sw ? 'Inapakia sala...' : 'Loading prayer...';
   String get back => _sw ? 'Rudi' : 'Back';
-  String get source => _sw ? 'Chanzo' : 'Source';
   String get errorTitle => _sw ? 'Sala haijapakia' : 'Prayer did not load';
   String get errorMessage => _sw
       ? 'Kuna tatizo kusoma sala hii.'
