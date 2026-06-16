@@ -79,26 +79,6 @@ class NovenaDayScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       _NovenaPrayerCard(text: dayContent.body),
-                      if (novena.source != null) ...[
-                        const SizedBox(height: AppSpacing.lg),
-                        AppCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                strings.source,
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                novena.source!,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -284,7 +264,6 @@ class _NovenaDayStrings {
   String get back => _sw ? 'Rudi' : 'Back';
   String get markComplete => _sw ? 'Weka Imekamilika' : 'Mark Complete';
   String get completed => _sw ? 'Imekamilika' : 'Completed';
-  String get source => _sw ? 'Chanzo' : 'Source';
   String dayLabel(int day) => _sw ? 'Siku ya $day' : 'Day $day';
   String get errorTitle => _sw ? 'Siku haijapakia' : 'Day did not load';
   String get errorMessage => _sw
