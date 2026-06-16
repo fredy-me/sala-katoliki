@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/localization/localization_providers.dart';
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
-import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/litany_text_view.dart';
@@ -151,27 +149,6 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                           text: prayer.text(activeLanguageCode),
                           fontScale: _textScale,
                         ),
-                      const SizedBox(height: AppSpacing.xl),
-                      AppCard(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              strings.source,
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              prayer.source?.trim().isNotEmpty == true
-                                  ? prayer.source!
-                                  : strings.defaultSource,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
