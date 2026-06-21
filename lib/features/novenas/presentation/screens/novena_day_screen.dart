@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../data/models/novena_model.dart';
@@ -149,9 +150,14 @@ class _NovenaParagraph extends StatelessWidget {
   Widget build(BuildContext context) {
     final isRequestPlaceholder =
         text.contains('mention request here') || text.contains('taja ombi');
+    final highlightedText = _highlightedText(text);
     final style = Theme.of(
       context,
     ).textTheme.bodyLarge?.copyWith(height: 1.55, fontWeight: FontWeight.w400);
+
+    if (highlightedText != null) {
+      return _HighlightedParagraph(text: highlightedText, style: style);
+    }
 
     if (!isRequestPlaceholder) {
       return Text(text, style: style);
@@ -170,6 +176,35 @@ class _NovenaParagraph extends StatelessWidget {
         textAlign: TextAlign.center,
         style: style?.copyWith(fontWeight: FontWeight.w700),
       ),
+    );
+  }
+
+  String? _highlightedText(String value) {
+    if (!value.contains('*')) {
+      return null;
+    }
+
+    return value.replaceAll('*', '').trim();
+  }
+}
+
+class _HighlightedParagraph extends StatelessWidget {
+  const _HighlightedParagraph({required this.text, required this.style});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: AppColors.gold),
+      ),
+      child: Text(text, style: style?.copyWith(fontWeight: FontWeight.w800)),
     );
   }
 }
