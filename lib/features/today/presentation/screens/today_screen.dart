@@ -251,7 +251,10 @@ class _ContinueNovenaCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
-                      strings.dayProgress(state.nextNovenaDay),
+                      strings.dayProgress(
+                        state.nextNovenaDay,
+                        state.totalNovenaDays,
+                      ),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -502,8 +505,8 @@ class _TodayStrings {
   String get noActiveNovena =>
       _sw ? 'Hakuna novena inayoendelea kwa sasa.' : 'No active novena yet.';
   String get browse => _sw ? 'Fungua' : 'Browse';
-  String dayProgress(int day) =>
-      _sw ? 'Siku ya $day kati ya 9' : 'Day $day of 9';
+  String dayProgress(int day, int totalDays) =>
+      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
   String get rosaryToday => _sw ? 'Rozari Leo' : 'Rosary Today';
   String get suggestedMystery => _sw ? 'Mafumbo ya Leo' : "Today's Mysteries";
   String get todayDay => _sw ? 'Kulingana na siku ya leo' : 'Based on today';
