@@ -11,16 +11,17 @@ class NovenaProgress {
 
   bool get hasActiveNovena => activeNovenaId != null;
 
-  int get nextDay {
+  int nextDayFor(int totalDays) {
     if (completedDays.isEmpty) {
       return 1;
     }
 
     final maxCompleted = completedDays.reduce((a, b) => a > b ? a : b);
-    return (maxCompleted + 1).clamp(1, 9);
+    return (maxCompleted + 1).clamp(1, totalDays);
   }
 
-  double get completionRatio => (completedDays.length / 9).clamp(0, 1);
+  double completionRatioFor(int totalDays) =>
+      (completedDays.length / totalDays).clamp(0, 1);
 
   bool isCompleted(int day) => completedDays.contains(day);
 }
@@ -35,6 +36,12 @@ class NovenaSession {
 
   bool get isActive => progress.activeNovenaId == novena.id;
 
+  int get totalDays => novena.days.length;
+
+  int get nextDay => progress.nextDayFor(totalDays);
+
+  double get completionRatio => progress.completionRatioFor(totalDays);
+
   NovenaDayStatus statusForDay(int day) {
     if (!isActive) {
       return day == 1 ? NovenaDayStatus.open : NovenaDayStatus.notStarted;
@@ -44,11 +51,11 @@ class NovenaSession {
       return NovenaDayStatus.completed;
     }
 
-    if (day == progress.nextDay) {
+    if (day == nextDay) {
       return NovenaDayStatus.current;
     }
 
-    if (day < progress.nextDay) {
+    if (day < nextDay) {
       return NovenaDayStatus.open;
     }
 
