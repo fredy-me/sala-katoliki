@@ -14,7 +14,7 @@ final todayLocalStateProvider = FutureProvider<TodayLocalState>((ref) async {
     completedNovenaDays: completedDays
         .map(int.tryParse)
         .whereType<int>()
-        .where((day) => day >= 1 && day <= 9)
+        .where((day) => day >= 1 && day <= 12)
         .toSet(),
     reminderEnabled: preferences.getBool(StorageKeys.reminderEnabled) ?? false,
     reminderTime: preferences.getString(StorageKeys.reminderTime),
@@ -34,16 +34,18 @@ class TodayLocalState {
   final bool reminderEnabled;
   final String? reminderTime;
 
+  int get totalNovenaDays => activeNovenaId == 'st_rita_novena' ? 12 : 9;
+
   int get nextNovenaDay {
     if (completedNovenaDays.isEmpty) {
       return 1;
     }
 
     final nextDay = completedNovenaDays.reduce((a, b) => a > b ? a : b) + 1;
-    return nextDay.clamp(1, 9);
+    return nextDay.clamp(1, totalNovenaDays);
   }
 
   double get novenaProgress {
-    return (completedNovenaDays.length / 9).clamp(0, 1);
+    return (completedNovenaDays.length / totalNovenaDays).clamp(0, 1);
   }
 }
