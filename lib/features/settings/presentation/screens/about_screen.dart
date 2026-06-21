@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -99,7 +100,7 @@ class AboutScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.lg),
             SectionHeader(title: strings.contact),
             const SizedBox(height: AppSpacing.md),
-            _AboutCard(title: strings.contactTitle, body: strings.contactBody),
+            _ContactCard(strings: strings),
           ],
         ),
       ),
@@ -128,6 +129,135 @@ class _AboutCard extends StatelessWidget {
   }
 }
 
+class _ContactCard extends StatelessWidget {
+  const _ContactCard({required this.strings});
+
+  static const _whatsappNumber = '255696189401';
+  static const _displayWhatsappNumber = '+255696189401';
+  static const _email = 'busaraplatform@gmail.com';
+
+  final _AboutStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.sm,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  strings.contactTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  strings.contactBody,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          _ContactActionTile(
+            icon: Icons.chat_outlined,
+            title: 'WhatsApp',
+            subtitle: _displayWhatsappNumber,
+            onTap: () => _openWhatsApp(context, strings),
+          ),
+          const Divider(height: 1),
+          _ContactActionTile(
+            icon: Icons.email_outlined,
+            title: strings.emailLabel,
+            subtitle: _email,
+            onTap: () => _openEmail(context, strings),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openWhatsApp(
+    BuildContext context,
+    _AboutStrings strings,
+  ) async {
+    final appUri = Uri.parse('whatsapp://send?phone=$_whatsappNumber');
+    final webUri = Uri.parse('https://wa.me/$_whatsappNumber');
+
+    if (await _tryLaunch(appUri) || await _tryLaunch(webUri)) {
+      return;
+    }
+
+    if (context.mounted) {
+      _showLaunchError(context, strings.contactOpenError);
+    }
+  }
+
+  Future<void> _openEmail(BuildContext context, _AboutStrings strings) async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: _email,
+      queryParameters: {'subject': 'Sala Katoliki Support'},
+    );
+
+    if (await _tryLaunch(uri)) {
+      return;
+    }
+
+    if (context.mounted) {
+      _showLaunchError(context, strings.contactOpenError);
+    }
+  }
+
+  Future<bool> _tryLaunch(Uri uri) async {
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  void _showLaunchError(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _ContactActionTile extends StatelessWidget {
+  const _ContactActionTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.navy),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.open_in_new),
+      onTap: onTap,
+    );
+  }
+}
+
 class _AboutStrings {
   const _AboutStrings(this.languageCode);
 
@@ -137,23 +267,22 @@ class _AboutStrings {
 
   String get title => _sw ? 'Kuhusu Programu' : 'About App';
   String get back => _sw ? 'Rudi' : 'Back';
-  String get version => _sw ? 'Toleo 1.0.0' : 'Version 1.0.0';
+  String get version => _sw ? 'Toleo 1.0.1' : 'Version 1.0.1';
   String get developer => _sw ? 'Msanidi' : 'Developer';
   String get developerBody => _sw
-      ? 'Programu hii imetengenezwa kwa Sala Katoliki MVP na Busara Digital.'
-      : 'This app is developed for the Sala Katoliki MVP by Busara Digital.';
-  String get openSource => _sw ? 'Chanzo Wazi' : 'Open Source';
-  String get openSourceTitle =>
-      _sw ? 'Mchango wa Baadaye' : 'Future Contributions';
+      ? 'Sala Katoliki imetengenezwa na Busara Digital ili kusaidia waamini kupata sala za Kikatoliki kwa Kiswahili na Kiingereza kwa urahisi.'
+      : 'Sala Katoliki is developed by Busara Digital to help the faithful access Catholic prayers in Kiswahili and English with ease.';
+  String get openSource => _sw ? 'Thamani ya Programu' : 'App Value';
+  String get openSourceTitle => _sw ? 'Sala Popote' : 'Prayer Anywhere';
   String get openSourceBody => _sw
-      ? 'Muundo wa maudhui umeandaliwa ili kurahisisha ukaguzi, tafsiri, na michango ya baadaye.'
-      : 'The content structure is prepared for future review, translation, and contribution workflows.';
+      ? 'Programu hii imeundwa kufanya kazi nje ya mtandao, kuhifadhi sala muhimu, novena, rozari, na ibada za kila siku katika kifaa chako.'
+      : 'This app is designed for offline use, keeping essential prayers, novenas, rosary content, and daily devotions available on your device.';
   String get contentSources => _sw ? 'Vyanzo vya Maudhui' : 'Content Sources';
   String get contentSourcesTitle =>
       _sw ? 'Sala za Kimapokeo' : 'Traditional Catholic Content';
   String get contentSourcesBody => _sw
-      ? 'Maudhui ya MVP yanatoka kwenye sala za kimapokeo za Kikatoliki na ibada zilizoidhinishwa. Maudhui mapya yanahitaji ukaguzi wa haki na chanzo.'
-      : 'MVP content comes from traditional Catholic prayers and approved devotions. New content requires rights and source review.';
+      ? 'Maudhui yanakusanywa kutoka sala za kimapokeo za Kikatoliki na ibada zinazotumika na waamini. Tunapokea marekebisho na mapendekezo ya kuboresha usahihi wa sala.'
+      : 'Content is collected from traditional Catholic prayers and devotions used by the faithful. Corrections and suggestions are welcome to improve prayer accuracy.';
   String get disclaimer => _sw ? 'Tahadhari' : 'Disclaimer';
   String get disclaimerTitle =>
       _sw ? 'Kwa Ibada Binafsi' : 'For Personal Devotion';
@@ -163,6 +292,10 @@ class _AboutStrings {
   String get contact => _sw ? 'Mawasiliano' : 'Contact';
   String get contactTitle => 'Busara Digital';
   String get contactBody => _sw
-      ? 'Tovuti na maelezo ya msaada yataongezwa kabla ya toleo la uzalishaji.'
-      : 'Website and support contact details will be added before production release.';
+      ? 'Kwa msaada, marekebisho ya maudhui, au maoni kuhusu programu, tumia njia mojawapo hapa chini.'
+      : 'For support, content corrections, or app feedback, use either option below.';
+  String get emailLabel => _sw ? 'Barua pepe' : 'Email';
+  String get contactOpenError => _sw
+      ? 'Imeshindikana kufungua programu ya mawasiliano.'
+      : 'Could not open a contact app.';
 }
