@@ -118,8 +118,38 @@ class _ContentValidator {
           _errors.add('Novena $id must include days array.');
           continue;
         }
-        if (days.length != 9) {
-          _errors.add('Novena $id must contain exactly 9 days.');
+        final expectedDays = id == 'st_rita_novena' ? 12 : 9;
+        if (days.length != expectedDays) {
+          _errors.add('Novena $id must contain exactly $expectedDays days.');
+        }
+        final thanksgivingSection = novena['thanksgiving_section'];
+        if (thanksgivingSection != null) {
+          if (thanksgivingSection is! Map<String, dynamic>) {
+            _errors.add(
+              'Novena $id thanksgiving_section must be a JSON object.',
+            );
+          } else {
+            _requiredInt(
+              thanksgivingSection,
+              'after_day',
+              'novena $id thanksgiving_section',
+            );
+            _string(
+              thanksgivingSection,
+              'title',
+              'novena $id thanksgiving_section',
+            );
+            _string(
+              thanksgivingSection,
+              'description',
+              'novena $id thanksgiving_section',
+            );
+            _string(
+              thanksgivingSection,
+              'body',
+              'novena $id thanksgiving_section',
+            );
+          }
         }
         final closingPrayer = novena['closing_prayer'];
         if (closingPrayer != null) {
@@ -143,11 +173,12 @@ class _ContentValidator {
           if (dayNumber != null && !seenDays.add(dayNumber)) {
             _errors.add('Novena $id has duplicate day: $dayNumber');
           }
-          if (dayNumber != null && (dayNumber < 1 || dayNumber > 9)) {
+          if (dayNumber != null &&
+              (dayNumber < 1 || dayNumber > expectedDays)) {
             _errors.add('Novena $id has out-of-range day: $dayNumber');
           }
         }
-        for (var day = 1; day <= 9; day += 1) {
+        for (var day = 1; day <= expectedDays; day += 1) {
           if (!seenDays.contains(day)) {
             _errors.add('Novena $id is missing day: $day');
           }
