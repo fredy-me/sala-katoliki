@@ -88,7 +88,7 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
   }
 
   Future<void> completeDay(String novenaId, int day) async {
-    if (day < 1 || day > 9) {
+    if (day < 1 || day > 12) {
       return;
     }
 
@@ -121,7 +121,7 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
     }
 
     final completed =
-        progress.completedDays.where((day) => day >= 1 && day <= 9).toList()
+        progress.completedDays.where((day) => day >= 1 && day <= 12).toList()
           ..sort();
     await preferences.setStringList(
       StorageKeys.completedNovenaDays,
@@ -141,7 +141,7 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
     return rawDays
         .map(int.tryParse)
         .whereType<int>()
-        .where((day) => day >= 1 && day <= 9)
+        .where((day) => day >= 1 && day <= 12)
         .toSet();
   }
 }
