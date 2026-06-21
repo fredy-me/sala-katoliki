@@ -82,6 +82,16 @@ class NovenaDetailScreen extends ConsumerWidget {
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.sm),
+                  if (session.novena.thanksgivingSection?.afterDay ==
+                      day.day) ...[
+                    _ThanksgivingSectionRow(
+                      section: session.novena.thanksgivingSection!,
+                      onTap: () => context.push(
+                        '/novenas/${session.novena.id}/thanksgiving',
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
                 ],
                 if (session.novena.closingPrayer != null) ...[
                   const SizedBox(height: AppSpacing.lg),
@@ -238,13 +248,13 @@ class _ProgressPanel extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             active
-                ? strings.dayProgress(session.progress.nextDay)
+                ? strings.dayProgress(session.nextDay, session.totalDays)
                 : strings.startPrompt,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: AppSpacing.md),
           LinearProgressIndicator(
-            value: active ? session.progress.completionRatio : 0,
+            value: active ? session.completionRatio : 0,
             minHeight: 8,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           ),
@@ -330,6 +340,56 @@ class _DayRow extends StatelessWidget {
   }
 }
 
+class _ThanksgivingSectionRow extends StatelessWidget {
+  const _ThanksgivingSectionRow({required this.section, required this.onTap});
+
+  final NovenaThanksgivingSectionModel section;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: onTap,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      borderColor: AppColors.gold,
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.gold.withValues(alpha: 0.14),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.volunteer_activism, color: AppColors.navy),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  section.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  section.description,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _NovenaDetailStrings {
   const _NovenaDetailStrings(this.languageCode);
 
@@ -345,8 +405,8 @@ class _NovenaDetailStrings {
   String get start => _sw ? 'Anza Novena' : 'Start Novena';
   String get restart => _sw ? 'Anza Upya' : 'Restart';
   String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
-  String dayProgress(int day) =>
-      _sw ? 'Siku ya $day kati ya 9' : 'Day $day of 9';
+  String dayProgress(int day, int totalDays) =>
+      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
   String get errorTitle => _sw ? 'Novena haijapakia' : 'Novena did not load';
   String get errorMessage => _sw
       ? 'Kuna tatizo kusoma novena hii.'
