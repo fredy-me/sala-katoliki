@@ -44,15 +44,16 @@ class _LitanyLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final normalized = text
-        .replaceAll('*', '')
         .replaceAll('"', '')
         .replaceAll('“', '')
         .replaceAll('”', '')
         .trim();
-    final isHighlighted = _isHighlightedLine(normalized);
+    final isMarked = normalized.contains('*');
+    final plainText = normalized.replaceAll('*', '');
+    final isHighlighted = isMarked || _isHighlightedLine(normalized);
     final isLambOfGod =
-        normalized.startsWith('Mwanakondoo') ||
-        normalized.startsWith('Lamb of God');
+        plainText.startsWith('Mwanakondoo') ||
+        plainText.startsWith('Lamb of God');
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final scaledStyle = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
@@ -72,7 +73,7 @@ class _LitanyLine extends StatelessWidget {
           ),
         ),
         child: Text(
-          normalized,
+          plainText,
           style: scaledStyle?.copyWith(
             height: 1.45,
             fontWeight: FontWeight.w800,
@@ -82,13 +83,13 @@ class _LitanyLine extends StatelessWidget {
     }
 
     return Text(
-      normalized,
+      plainText,
       style: scaledStyle?.copyWith(height: 1.5, fontWeight: FontWeight.w400),
     );
   }
 
   bool _isHighlightedLine(String line) {
-    final normalized = line.toLowerCase();
+    final normalized = line.replaceAll('*', '').toLowerCase();
     return normalized.startsWith('kiitikio') ||
         normalized.startsWith('response') ||
         normalized.startsWith('r:') ||
