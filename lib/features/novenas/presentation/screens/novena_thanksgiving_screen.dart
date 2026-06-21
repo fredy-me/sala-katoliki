@@ -7,7 +7,7 @@ import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
-import '../../../../shared/widgets/litany_text_view.dart';
+import '../../../../shared/widgets/novena_text_view.dart';
 import '../providers/novena_providers.dart';
 
 class NovenaThanksgivingScreen extends ConsumerWidget {
@@ -75,7 +75,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                LitanyTextView(text: section.body),
+                NovenaTextView(text: section.body),
               ],
             );
           },
