@@ -64,7 +64,7 @@ class NovenasScreen extends ConsumerWidget {
                 session: activeSession,
                 strings: strings,
                 onContinue: () => context.push(
-                  '/novenas/${activeSession.novena.id}/day/${activeSession.progress.nextDay}',
+                  '/novenas/${activeSession.novena.id}/day/${activeSession.nextDay}',
                 ),
                 onView: () =>
                     context.push('/novenas/${activeSession.novena.id}'),
@@ -127,14 +127,14 @@ class _ActiveNovenaHero extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            strings.dayProgress(session.progress.nextDay),
+            strings.dayProgress(session.nextDay, session.totalDays),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.white.withValues(alpha: 0.78),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
           LinearProgressIndicator(
-            value: session.progress.completionRatio,
+            value: session.completionRatio,
             minHeight: 8,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           ),
@@ -235,8 +235,8 @@ class _NovenasStrings {
   String get view => _sw ? 'Tazama' : 'View';
   String get inProgress => _sw ? 'Inaendelea' : 'In progress';
   String get retry => _sw ? 'Jaribu tena' : 'Retry';
-  String dayProgress(int day) =>
-      _sw ? 'Siku ya $day kati ya 9' : 'Day $day of 9';
+  String dayProgress(int day, int totalDays) =>
+      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
   String get errorTitle => _sw ? 'Novenas hazijapakia' : 'Novenas did not load';
   String get errorMessage => _sw
       ? 'Kuna tatizo kusoma novenas za ndani.'
