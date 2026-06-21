@@ -5,6 +5,7 @@ import '../core/localization/localization_providers.dart';
 import '../features/novenas/presentation/screens/novena_day_screen.dart';
 import '../features/novenas/presentation/screens/novena_closing_prayer_screen.dart';
 import '../features/novenas/presentation/screens/novena_detail_screen.dart';
+import '../features/novenas/presentation/screens/novena_thanksgiving_screen.dart';
 import '../features/library/presentation/screens/favorites_screen.dart';
 import '../features/novenas/presentation/screens/novenas_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -145,6 +146,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return NovenaDayScreen(
             novenaId: state.pathParameters['novenaId']!,
             day: int.tryParse(state.pathParameters['day'] ?? '') ?? -1,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/novenas/:novenaId/thanksgiving',
+        builder: (context, state) {
+          return NovenaThanksgivingScreen(
+            novenaId: state.pathParameters['novenaId']!,
           );
         },
       ),
