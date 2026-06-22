@@ -27,6 +27,7 @@ class AppBottomNav extends StatelessWidget {
         border: Border(top: BorderSide(color: borderColor)),
       ),
       child: NavigationBar(
+        maintainBottomViewPadding: true,
         selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
         onDestinationSelected: (index) {
           context.go(destinations[index].path);
