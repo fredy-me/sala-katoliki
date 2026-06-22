@@ -328,42 +328,47 @@ class _StepControls extends StatelessWidget {
         Theme.of(context).dividerTheme.color ??
         Theme.of(context).colorScheme.outlineVariant;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(top: BorderSide(color: borderColor)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.lg,
+    return SafeArea(
+      top: false,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(top: BorderSide(color: borderColor)),
         ),
-        child: Row(
-          children: [
-            IconButton(
-              tooltip: strings.previous,
-              onPressed: session.canGoPrevious ? onPrevious : null,
-              icon: const Icon(Icons.chevron_left),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            IconButton(
-              tooltip: strings.pause,
-              onPressed: onPause,
-              icon: const Icon(Icons.pause),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: FilledButton.icon(
-                onPressed: onNext,
-                icon: Icon(
-                  session.canGoNext ? Icons.chevron_right : Icons.check,
-                ),
-                label: Text(session.canGoNext ? strings.next : strings.finish),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                tooltip: strings.previous,
+                onPressed: session.canGoPrevious ? onPrevious : null,
+                icon: const Icon(Icons.chevron_left),
               ),
-            ),
-          ],
+              const SizedBox(width: AppSpacing.sm),
+              IconButton(
+                tooltip: strings.pause,
+                onPressed: onPause,
+                icon: const Icon(Icons.pause),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: onNext,
+                  icon: Icon(
+                    session.canGoNext ? Icons.chevron_right : Icons.check,
+                  ),
+                  label: Text(
+                    session.canGoNext ? strings.next : strings.finish,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
