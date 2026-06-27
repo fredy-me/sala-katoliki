@@ -6,6 +6,7 @@ import '../../../../core/localization/supported_languages.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/sala_logo_mark.dart';
 import '../../../../shared/widgets/legal_links.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -129,15 +130,10 @@ class _AppMark extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      width: 66,
-      height: 66,
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        shape: BoxShape.circle,
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.45)),
-      ),
-      child: Icon(Icons.local_florist, color: colorScheme.primary, size: 30),
+    return SalaLogoMark(
+      size: 66,
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      borderColor: colorScheme.primary.withValues(alpha: 0.45),
     );
   }
 }
