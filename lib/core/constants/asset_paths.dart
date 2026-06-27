@@ -3,6 +3,7 @@ abstract final class AssetPaths {
 
   static const images = 'assets/images/';
   static const logo = 'assets/images/logo/';
+  static const appLogo = 'assets/images/logo/logo.png';
   static const icons = 'assets/images/icons/';
   static const illustrations = 'assets/images/illustrations/';
 
