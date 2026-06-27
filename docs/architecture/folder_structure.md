@@ -17,7 +17,7 @@ sala_katoliki/
 ├── assets/
 │   ├── images/
 │   │   ├── logo/
-│   │   │   └── app_logo.png
+│   │   │   └── logo.png
 │   │   ├── icons/
 │   │   └── illustrations/
 │   ├── fonts/
