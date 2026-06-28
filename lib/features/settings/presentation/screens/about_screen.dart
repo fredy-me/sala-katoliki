@@ -80,6 +80,8 @@ class AboutScreen extends ConsumerWidget {
               _SectionLabel(strings.contact),
               const SizedBox(height: AppSpacing.md),
               _ContactCard(strings: strings),
+              const SizedBox(height: AppSpacing.md),
+              _DeveloperCard(strings: strings),
               const SizedBox(height: AppSpacing.xl),
               Text(
                 strings.copyright,
@@ -154,6 +156,66 @@ class _InfoCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _DeveloperCard extends StatelessWidget {
+  const _DeveloperCard({required this.strings});
+
+  static final _websiteUri = Uri.parse(
+    'https://busaradigital.ebuild.workers.dev/',
+  );
+
+  final _AboutStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    return _AboutPanel(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        onTap: () => _openWebsite(context),
+        child: Row(
+          children: [
+            const _IconBadge(icon: Icons.public),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    strings.developerTitle,
+                    style: _AboutText.title(context),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    strings.developerBody,
+                    style: _AboutText.bodySmall(context),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            const Icon(Icons.open_in_new, color: AppColors.gold),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openWebsite(BuildContext context) async {
+    try {
+      if (await launchUrl(_websiteUri, mode: LaunchMode.externalApplication)) {
+        return;
+      }
+    } catch (_) {
+      // The snackbar below is enough for a failed external launch.
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(strings.contactOpenError)));
+    }
   }
 }
 
@@ -391,6 +453,11 @@ class _AboutStrings {
   String get aboutBody => _sw
       ? 'Imetengenezwa na Busara Digital kusaidia waamini kukua katika sala.'
       : 'Developed by Busara Digital to help the faithful grow in prayer.';
+  String get developerTitle =>
+      _sw ? 'Jifunze Kuhusu Busara Digital' : 'Learn About Busara Digital';
+  String get developerBody => _sw
+      ? 'Jifunze zaidi kuhusu msanidi wa Sala Katoliki.'
+      : 'Learn more about the developer behind Sala Katoliki.';
   String get contentSourcesTitle =>
       _sw ? 'Vyanzo vya Maudhui' : 'Content Sources';
   String get contentSourcesBody => _sw
