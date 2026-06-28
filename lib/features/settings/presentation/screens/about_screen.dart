@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/sala_logo_mark.dart';
 import '../../../../shared/widgets/section_header.dart';
 
 class AboutScreen extends ConsumerWidget {
@@ -44,22 +45,7 @@ class AboutScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.section),
-            Center(
-              child: Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: AppColors.goldSoft,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.gold),
-                ),
-                child: const Icon(
-                  Icons.local_florist,
-                  color: AppColors.navy,
-                  size: 34,
-                ),
-              ),
-            ),
+            const Center(child: SalaLogoMark()),
             const SizedBox(height: AppSpacing.lg),
             Text(
               'Sala Katoliki',
