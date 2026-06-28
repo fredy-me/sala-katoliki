@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/localization/localization_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/sala_logo_mark.dart';
@@ -18,9 +17,9 @@ class AboutScreen extends ConsumerWidget {
     final strings = _AboutStrings(languageCode);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: _systemOverlayStyle(context),
       child: Scaffold(
-        backgroundColor: _AboutColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
@@ -36,8 +35,8 @@ class AboutScreen extends ConsumerWidget {
                 child: SalaLogoMark(
                   size: 116,
                   padding: 4,
-                  backgroundColor: Colors.white,
-                  borderColor: AppColors.gold,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  borderColor: _AboutColors.accent(context),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -96,6 +95,12 @@ class AboutScreen extends ConsumerWidget {
   }
 }
 
+SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.dark
+      ? SystemUiOverlayStyle.light
+      : SystemUiOverlayStyle.dark;
+}
+
 class _AboutHeader extends StatelessWidget {
   const _AboutHeader({required this.strings});
 
@@ -108,7 +113,7 @@ class _AboutHeader extends StatelessWidget {
         IconButton(
           tooltip: strings.back,
           onPressed: () => context.popOrGo('/settings'),
-          icon: const Icon(Icons.arrow_back, color: AppColors.gold),
+          icon: Icon(Icons.arrow_back, color: _AboutColors.accent(context)),
         ),
         Expanded(
           child: Text(
@@ -152,7 +157,7 @@ class _InfoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          const Icon(Icons.chevron_right, color: _AboutColors.mutedText),
+          Icon(Icons.chevron_right, color: _AboutColors.mutedText(context)),
         ],
       ),
     );
@@ -195,7 +200,7 @@ class _DeveloperCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            const Icon(Icons.open_in_new, color: AppColors.gold),
+            Icon(Icons.open_in_new, color: _AboutColors.accent(context)),
           ],
         ),
       ),
@@ -244,7 +249,7 @@ class _ContactCard extends StatelessWidget {
             subtitle: _displayWhatsappNumber,
             onTap: () => _openWhatsApp(context, strings),
           ),
-          const Divider(height: AppSpacing.xl, color: _AboutColors.border),
+          Divider(height: AppSpacing.xl, color: _AboutColors.border(context)),
           _ContactAction(
             icon: Icons.email_outlined,
             title: strings.emailLabel,
@@ -325,7 +330,7 @@ class _ContactAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            _IconBadge(icon: icon, foreground: _AboutColors.text),
+            _IconBadge(icon: icon, foreground: _AboutColors.text(context)),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -337,7 +342,7 @@ class _ContactAction extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.open_in_new, color: AppColors.gold),
+            Icon(Icons.open_in_new, color: _AboutColors.accent(context)),
           ],
         ),
       ),
@@ -354,12 +359,12 @@ class _AboutPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: _AboutColors.panel,
+        color: _AboutColors.panel(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: _AboutColors.border),
+        border: Border.all(color: _AboutColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.16),
+            color: _AboutColors.shadow(context),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -374,10 +379,10 @@ class _AboutPanel extends StatelessWidget {
 }
 
 class _IconBadge extends StatelessWidget {
-  const _IconBadge({required this.icon, this.foreground = AppColors.gold});
+  const _IconBadge({required this.icon, this.foreground});
 
   final IconData icon;
-  final Color foreground;
+  final Color? foreground;
 
   @override
   Widget build(BuildContext context) {
@@ -385,10 +390,14 @@ class _IconBadge extends StatelessWidget {
       width: 58,
       height: 58,
       decoration: BoxDecoration(
-        color: _AboutColors.iconBackground,
+        color: _AboutColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
-      child: Icon(icon, color: foreground, size: 30),
+      child: Icon(
+        icon,
+        color: foreground ?? _AboutColors.accent(context),
+        size: 30,
+      ),
     );
   }
 }
@@ -405,35 +414,46 @@ class _SectionLabel extends StatelessWidget {
 }
 
 abstract final class _AboutColors {
-  static const background = AppColors.darkBackground;
-  static const panel = AppColors.darkSurface;
-  static const iconBackground = AppColors.darkSurfaceElevated;
-  static const border = AppColors.darkBorder;
-  static const text = AppColors.darkText;
-  static const mutedText = AppColors.darkMutedText;
+  static Color panel(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  static Color iconBackground(BuildContext context) =>
+      Theme.of(context).colorScheme.surfaceContainerHighest;
+
+  static Color border(BuildContext context) =>
+      Theme.of(context).dividerTheme.color ??
+      Theme.of(context).colorScheme.outlineVariant;
+
+  static Color text(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  static Color mutedText(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+
+  static Color accent(BuildContext context) =>
+      Theme.of(context).colorScheme.secondary;
+
+  static Color shadow(BuildContext context) =>
+      Theme.of(context).shadowColor.withValues(alpha: 0.16);
 }
 
 abstract final class _AboutText {
-  static TextStyle? display(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.headlineLarge?.copyWith(color: _AboutColors.text);
+  static TextStyle? display(BuildContext context) =>
+      Theme.of(context).textTheme.headlineLarge;
 
-  static TextStyle? heading(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.headlineMedium?.copyWith(color: _AboutColors.text);
+  static TextStyle? heading(BuildContext context) =>
+      Theme.of(context).textTheme.headlineMedium;
 
-  static TextStyle? title(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.titleMedium?.copyWith(color: _AboutColors.text);
+  static TextStyle? title(BuildContext context) =>
+      Theme.of(context).textTheme.titleMedium;
 
-  static TextStyle? body(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.bodyMedium?.copyWith(color: _AboutColors.mutedText);
+  static TextStyle? body(BuildContext context) =>
+      Theme.of(context).textTheme.bodyMedium;
 
   static TextStyle? bodySmall(BuildContext context) => body(context);
 
   static TextStyle? section(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.gold);
+      Theme.of(context).textTheme.labelSmall;
 }
 
 class _AboutStrings {
