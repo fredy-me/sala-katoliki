@@ -11,7 +11,7 @@ class AppLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.background,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
