@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/legal_links.dart';
@@ -23,9 +22,9 @@ class SettingsScreen extends ConsumerWidget {
     final strings = _SettingsStrings(selectedLanguage);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: _systemOverlayStyle(context),
       child: Scaffold(
-        backgroundColor: _SettingsColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: settingsState.when(
             loading: () => AppLoading(label: strings.loading),
@@ -96,7 +95,7 @@ class SettingsScreen extends ConsumerWidget {
   ) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: _SettingsColors.panel,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       builder: (context) => SafeArea(
         child: Padding(
@@ -114,12 +113,12 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.lg),
               Theme(
                 data: Theme.of(context).copyWith(
-                  colorScheme: Theme.of(
-                    context,
-                  ).colorScheme.copyWith(primary: AppColors.gold),
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: _SettingsColors.accent(context),
+                  ),
                   textTheme: Theme.of(context).textTheme.apply(
-                    bodyColor: _SettingsColors.mutedText,
-                    displayColor: _SettingsColors.text,
+                    bodyColor: _SettingsColors.mutedText(context),
+                    displayColor: _SettingsColors.text(context),
                   ),
                 ),
                 child: LegalLinks(languageCode: languageCode),
@@ -130,6 +129,12 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.dark
+      ? SystemUiOverlayStyle.light
+      : SystemUiOverlayStyle.dark;
 }
 
 class _SettingsHeader extends StatelessWidget {
@@ -243,15 +248,15 @@ class _ReminderCard extends ConsumerWidget {
               subtitle: strings.reminderSubtitle,
               trailing: Switch(
                 value: settings.reminderEnabled,
-                activeThumbColor: Colors.white,
-                activeTrackColor: AppColors.gold,
+                activeThumbColor: _SettingsColors.selectedText(context),
+                activeTrackColor: _SettingsColors.accent(context),
                 onChanged: (value) => ref
                     .read(userSettingsProvider.notifier)
                     .setReminderEnabled(value),
               ),
             ),
           ),
-          const Divider(height: 1, color: _SettingsColors.border),
+          Divider(height: 1, color: _SettingsColors.border(context)),
           InkWell(
             onTap: () => _pickTime(context, ref, settings.reminderTime),
             child: Padding(
@@ -273,9 +278,9 @@ class _ReminderCard extends ConsumerWidget {
                     style: _SettingsText.body(context),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  const Icon(
+                  Icon(
                     Icons.chevron_right,
-                    color: _SettingsColors.mutedText,
+                    color: _SettingsColors.mutedText(context),
                   ),
                 ],
               ),
@@ -473,7 +478,10 @@ class _NavigationCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              const Icon(Icons.chevron_right, color: _SettingsColors.mutedText),
+              Icon(
+                Icons.chevron_right,
+                color: _SettingsColors.mutedText(context),
+              ),
             ],
           ),
         ),
@@ -530,12 +538,12 @@ class _SettingsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: _SettingsColors.panel,
+        color: _SettingsColors.panel(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: _SettingsColors.border),
+        border: Border.all(color: _SettingsColors.border(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.16),
+            color: _SettingsColors.shadow(context),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -573,10 +581,10 @@ class _IconBadge extends StatelessWidget {
       width: 54,
       height: 54,
       decoration: BoxDecoration(
-        color: _SettingsColors.iconBackground,
+        color: _SettingsColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
-      child: Icon(icon, color: AppColors.gold, size: 28),
+      child: Icon(icon, color: _SettingsColors.accent(context), size: 28),
     );
   }
 }
@@ -608,7 +616,7 @@ class _SegmentedControl<T> extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: _SettingsColors.border),
+        border: Border.all(color: _SettingsColors.border(context)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Row(
@@ -622,12 +630,12 @@ class _SegmentedControl<T> extends StatelessWidget {
               ),
             ),
             if (index != options.length - 1)
-              const SizedBox(
+              SizedBox(
                 height: 64,
                 child: VerticalDivider(
                   width: 1,
                   thickness: 1,
-                  color: _SettingsColors.border,
+                  color: _SettingsColors.border(context),
                 ),
               ),
           ],
@@ -656,7 +664,7 @@ class _SegmentButton<T> extends StatelessWidget {
         duration: const Duration(milliseconds: 160),
         height: 64,
         decoration: BoxDecoration(
-          color: selected ? AppColors.gold : Colors.transparent,
+          color: selected ? _SettingsColors.accent(context) : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -664,8 +672,8 @@ class _SegmentButton<T> extends StatelessWidget {
             Icon(
               option.icon,
               color: selected
-                  ? _SettingsColors.selectedText
-                  : _SettingsColors.text,
+                  ? _SettingsColors.selectedText(context)
+                  : _SettingsColors.text(context),
               size: 24,
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -697,47 +705,63 @@ class _SegmentOption<T> {
 enum _TextSizeValue { small, medium, large }
 
 abstract final class _SettingsColors {
-  static const background = AppColors.darkBackground;
-  static const panel = AppColors.darkSurface;
-  static const iconBackground = AppColors.darkSurfaceElevated;
-  static const border = AppColors.darkBorder;
-  static const text = AppColors.darkText;
-  static const mutedText = AppColors.darkMutedText;
-  static const selectedText = AppColors.darkBackground;
+  static Color panel(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  static Color iconBackground(BuildContext context) =>
+      Theme.of(context).colorScheme.surfaceContainerHighest;
+
+  static Color border(BuildContext context) =>
+      Theme.of(context).dividerTheme.color ??
+      Theme.of(context).colorScheme.outlineVariant;
+
+  static Color text(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  static Color mutedText(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+
+  static Color accent(BuildContext context) =>
+      Theme.of(context).colorScheme.secondary;
+
+  static Color selectedText(BuildContext context) =>
+      Theme.of(context).colorScheme.onSecondary;
+
+  static Color shadow(BuildContext context) =>
+      Theme.of(context).shadowColor.withValues(alpha: 0.16);
 }
 
 abstract final class _SettingsText {
-  static TextStyle? display(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.headlineLarge?.copyWith(color: _SettingsColors.text);
+  static TextStyle? display(BuildContext context) =>
+      Theme.of(context).textTheme.headlineLarge;
 
-  static TextStyle? title(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.titleLarge?.copyWith(color: _SettingsColors.text);
+  static TextStyle? title(BuildContext context) =>
+      Theme.of(context).textTheme.titleLarge;
 
-  static TextStyle? titleSmall(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.titleMedium?.copyWith(color: _SettingsColors.text);
+  static TextStyle? titleSmall(BuildContext context) =>
+      Theme.of(context).textTheme.titleMedium;
 
-  static TextStyle? body(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.bodyMedium?.copyWith(color: _SettingsColors.mutedText);
+  static TextStyle? body(BuildContext context) =>
+      Theme.of(context).textTheme.bodyMedium;
 
   static TextStyle? bodySmall(BuildContext context) => body(context);
 
   static TextStyle? section(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.gold);
+      Theme.of(context).textTheme.labelSmall;
 
-  static TextStyle? value(BuildContext context) => Theme.of(context)
-      .textTheme
-      .bodyMedium
-      ?.copyWith(color: AppColors.gold, fontWeight: FontWeight.w700);
+  static TextStyle? value(BuildContext context) =>
+      Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: _SettingsColors.accent(context),
+        fontWeight: FontWeight.w700,
+      );
 
   static TextStyle? segmentLabel(
     BuildContext context, {
     required bool selected,
   }) => Theme.of(context).textTheme.labelSmall?.copyWith(
-    color: selected ? _SettingsColors.selectedText : _SettingsColors.text,
+    color: selected
+        ? _SettingsColors.selectedText(context)
+        : _SettingsColors.text(context),
     fontWeight: FontWeight.w700,
   );
 }
