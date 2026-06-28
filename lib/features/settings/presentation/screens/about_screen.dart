@@ -44,19 +44,19 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 'Sala Katoliki',
                 textAlign: TextAlign.center,
-                style: _AboutText.display,
+                style: _AboutText.display(context),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 strings.version,
                 textAlign: TextAlign.center,
-                style: _AboutText.body,
+                style: _AboutText.body(context),
               ),
               const SizedBox(height: AppSpacing.xl),
               Text(
                 strings.introduction,
                 textAlign: TextAlign.center,
-                style: _AboutText.body,
+                style: _AboutText.body(context),
               ),
               const SizedBox(height: AppSpacing.section),
               _InfoCard(
@@ -84,7 +84,7 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 strings.copyright,
                 textAlign: TextAlign.center,
-                style: _AboutText.bodySmall,
+                style: _AboutText.bodySmall(context),
               ),
             ],
           ),
@@ -112,7 +112,7 @@ class _AboutHeader extends StatelessWidget {
           child: Text(
             strings.title,
             textAlign: TextAlign.center,
-            style: _AboutText.heading,
+            style: _AboutText.heading(context),
           ),
         ),
         const SizedBox(width: AppSpacing.minTouchTarget),
@@ -143,9 +143,9 @@ class _InfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: _AboutText.title),
+                Text(title, style: _AboutText.title(context)),
                 const SizedBox(height: AppSpacing.xs),
-                Text(body, style: _AboutText.bodySmall),
+                Text(body, style: _AboutText.bodySmall(context)),
               ],
             ),
           ),
@@ -172,9 +172,9 @@ class _ContactCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(strings.contactTitle, style: _AboutText.title),
+          Text(strings.contactTitle, style: _AboutText.title(context)),
           const SizedBox(height: AppSpacing.xs),
-          Text(strings.contactBody, style: _AboutText.bodySmall),
+          Text(strings.contactBody, style: _AboutText.bodySmall(context)),
           const SizedBox(height: AppSpacing.lg),
           _ContactAction(
             icon: Icons.chat_outlined,
@@ -269,9 +269,9 @@ class _ContactAction extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: _AboutText.title),
+                  Text(title, style: _AboutText.title(context)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(subtitle, style: _AboutText.bodySmall),
+                  Text(subtitle, style: _AboutText.bodySmall(context)),
                 ],
               ),
             ),
@@ -338,7 +338,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: _AboutText.section);
+    return Text(label.toUpperCase(), style: _AboutText.section(context));
   }
 }
 
@@ -352,50 +352,26 @@ abstract final class _AboutColors {
 }
 
 abstract final class _AboutText {
-  static const display = TextStyle(
-    color: _AboutColors.text,
-    fontFamily: 'serif',
-    fontSize: 34,
-    height: 1.1,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? display(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.headlineLarge?.copyWith(color: _AboutColors.text);
 
-  static const heading = TextStyle(
-    color: _AboutColors.text,
-    fontFamily: 'serif',
-    fontSize: 27,
-    height: 1.16,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? heading(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.headlineMedium?.copyWith(color: _AboutColors.text);
 
-  static const title = TextStyle(
-    color: _AboutColors.text,
-    fontSize: 18,
-    height: 1.25,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? title(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.titleMedium?.copyWith(color: _AboutColors.text);
 
-  static const body = TextStyle(
-    color: _AboutColors.mutedText,
-    fontSize: 16,
-    height: 1.45,
-    fontWeight: FontWeight.w400,
-  );
+  static TextStyle? body(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.bodyMedium?.copyWith(color: _AboutColors.mutedText);
 
-  static const bodySmall = TextStyle(
-    color: _AboutColors.mutedText,
-    fontSize: 14,
-    height: 1.38,
-    fontWeight: FontWeight.w400,
-  );
+  static TextStyle? bodySmall(BuildContext context) => body(context);
 
-  static const section = TextStyle(
-    color: AppColors.gold,
-    fontSize: 13,
-    height: 1.2,
-    fontWeight: FontWeight.w800,
-    letterSpacing: 1.1,
-  );
+  static TextStyle? section(BuildContext context) =>
+      Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.gold);
 }
 
 class _AboutStrings {
