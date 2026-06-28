@@ -10,18 +10,21 @@ class AppLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(color: AppColors.gold),
-            if (label != null) ...[
-              const SizedBox(height: AppSpacing.lg),
-              Text(label!, style: Theme.of(context).textTheme.bodyMedium),
+    return ColoredBox(
+      color: AppColors.background,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: AppColors.gold),
+              if (label != null) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Text(label!, style: Theme.of(context).textTheme.bodyMedium),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
