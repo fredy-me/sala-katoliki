@@ -431,6 +431,7 @@ abstract final class _AboutColors {
       Theme.of(context).colorScheme.onSurfaceVariant;
 
   static Color accent(BuildContext context) =>
+      Theme.of(context).textTheme.labelSmall?.color ??
       Theme.of(context).colorScheme.secondary;
 
   static Color shadow(BuildContext context) =>

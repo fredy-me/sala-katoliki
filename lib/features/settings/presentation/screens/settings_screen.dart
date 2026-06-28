@@ -722,6 +722,7 @@ abstract final class _SettingsColors {
       Theme.of(context).colorScheme.onSurfaceVariant;
 
   static Color accent(BuildContext context) =>
+      Theme.of(context).textTheme.labelSmall?.color ??
       Theme.of(context).colorScheme.secondary;
 
   static Color selectedText(BuildContext context) =>
