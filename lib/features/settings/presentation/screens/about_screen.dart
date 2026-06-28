@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/localization/localization_providers.dart';
@@ -16,74 +17,77 @@ class AboutScreen extends ConsumerWidget {
     final languageCode = ref.watch(activeLanguageProvider);
     final strings = _AboutStrings(languageCode);
 
-    return Scaffold(
-      backgroundColor: _AboutColors.background,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.screenHorizontal,
-            AppSpacing.lg,
-            AppSpacing.screenHorizontal,
-            AppSpacing.screenBottom,
-          ),
-          children: [
-            _AboutHeader(strings: strings),
-            const SizedBox(height: AppSpacing.section),
-            Center(
-              child: SalaLogoMark(
-                size: 116,
-                padding: 4,
-                backgroundColor: Colors.white,
-                borderColor: AppColors.gold,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: _AboutColors.background,
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.screenHorizontal,
+              AppSpacing.lg,
+              AppSpacing.screenHorizontal,
+              AppSpacing.screenBottom,
+            ),
+            children: [
+              _AboutHeader(strings: strings),
+              const SizedBox(height: AppSpacing.section),
+              Center(
+                child: SalaLogoMark(
+                  size: 116,
+                  padding: 4,
+                  backgroundColor: Colors.white,
+                  borderColor: AppColors.gold,
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            Text(
-              'Sala Katoliki',
-              textAlign: TextAlign.center,
-              style: _AboutText.display,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              strings.version,
-              textAlign: TextAlign.center,
-              style: _AboutText.body,
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            Text(
-              strings.introduction,
-              textAlign: TextAlign.center,
-              style: _AboutText.body,
-            ),
-            const SizedBox(height: AppSpacing.section),
-            _InfoCard(
-              icon: Icons.star_border,
-              title: strings.aboutTitle,
-              body: strings.aboutBody,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _InfoCard(
-              icon: Icons.menu_book_outlined,
-              title: strings.contentSourcesTitle,
-              body: strings.contentSourcesBody,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _InfoCard(
-              icon: Icons.verified_user_outlined,
-              title: strings.disclaimerTitle,
-              body: strings.disclaimerBody,
-            ),
-            const SizedBox(height: AppSpacing.section),
-            _SectionLabel(strings.contact),
-            const SizedBox(height: AppSpacing.md),
-            _ContactCard(strings: strings),
-            const SizedBox(height: AppSpacing.xl),
-            Text(
-              strings.copyright,
-              textAlign: TextAlign.center,
-              style: _AboutText.bodySmall,
-            ),
-          ],
+              const SizedBox(height: AppSpacing.xl),
+              Text(
+                'Sala Katoliki',
+                textAlign: TextAlign.center,
+                style: _AboutText.display,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                strings.version,
+                textAlign: TextAlign.center,
+                style: _AboutText.body,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Text(
+                strings.introduction,
+                textAlign: TextAlign.center,
+                style: _AboutText.body,
+              ),
+              const SizedBox(height: AppSpacing.section),
+              _InfoCard(
+                icon: Icons.star_border,
+                title: strings.aboutTitle,
+                body: strings.aboutBody,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _InfoCard(
+                icon: Icons.menu_book_outlined,
+                title: strings.contentSourcesTitle,
+                body: strings.contentSourcesBody,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _InfoCard(
+                icon: Icons.verified_user_outlined,
+                title: strings.disclaimerTitle,
+                body: strings.disclaimerBody,
+              ),
+              const SizedBox(height: AppSpacing.section),
+              _SectionLabel(strings.contact),
+              const SizedBox(height: AppSpacing.md),
+              _ContactCard(strings: strings),
+              const SizedBox(height: AppSpacing.xl),
+              Text(
+                strings.copyright,
+                textAlign: TextAlign.center,
+                style: _AboutText.bodySmall,
+              ),
+            ],
+          ),
         ),
       ),
     );
