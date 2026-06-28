@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
@@ -21,64 +22,67 @@ class SettingsScreen extends ConsumerWidget {
     final settingsState = ref.watch(userSettingsProvider);
     final strings = _SettingsStrings(selectedLanguage);
 
-    return Scaffold(
-      backgroundColor: _SettingsColors.background,
-      body: SafeArea(
-        child: settingsState.when(
-          loading: () => AppLoading(label: strings.loading),
-          error: (error, stackTrace) => _SettingsError(strings: strings),
-          data: (settings) => ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenTop,
-              AppSpacing.screenHorizontal,
-              AppSpacing.screenBottom,
-            ),
-            children: [
-              _SettingsHeader(strings: strings),
-              const SizedBox(height: AppSpacing.section),
-              _SectionLabel(strings.preferences),
-              const SizedBox(height: AppSpacing.md),
-              _LanguageCard(
-                selectedLanguage: selectedLanguage,
-                strings: strings,
-                onSelected: (languageCode) => ref
-                    .read(selectedLanguageProvider.notifier)
-                    .selectLanguage(languageCode),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: _SettingsColors.background,
+        body: SafeArea(
+          child: settingsState.when(
+            loading: () => AppLoading(label: strings.loading),
+            error: (error, stackTrace) => _SettingsError(strings: strings),
+            data: (settings) => ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenHorizontal,
+                AppSpacing.screenTop,
+                AppSpacing.screenHorizontal,
+                AppSpacing.screenBottom,
               ),
-              const SizedBox(height: AppSpacing.md),
-              _ReminderCard(settings: settings, strings: strings),
-              if (settings.permissionDenied) ...[
+              children: [
+                _SettingsHeader(strings: strings),
+                const SizedBox(height: AppSpacing.section),
+                _SectionLabel(strings.preferences),
                 const SizedBox(height: AppSpacing.md),
-                _NoticeCard(message: strings.permissionDenied),
-              ],
-              const SizedBox(height: AppSpacing.md),
-              _TextSizeCard(settings: settings, strings: strings),
-              const SizedBox(height: AppSpacing.section),
-              _SectionLabel(strings.appearance),
-              const SizedBox(height: AppSpacing.md),
-              _ThemeCard(settings: settings, strings: strings),
-              const SizedBox(height: AppSpacing.section),
-              _SectionLabel(strings.supportInfo),
-              const SizedBox(height: AppSpacing.md),
-              _NavigationCard(
-                icon: Icons.info_outline,
-                title: strings.about,
-                subtitle: strings.aboutSubtitle,
-                onTap: () => context.push('/about'),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _NavigationCard(
-                icon: Icons.verified_user_outlined,
-                title: strings.privacyTitle,
-                subtitle: strings.privacySubtitle,
-                onTap: () => _showLegalSheet(
-                  context,
-                  selectedLanguage,
-                  strings.privacyTitle,
+                _LanguageCard(
+                  selectedLanguage: selectedLanguage,
+                  strings: strings,
+                  onSelected: (languageCode) => ref
+                      .read(selectedLanguageProvider.notifier)
+                      .selectLanguage(languageCode),
                 ),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.md),
+                _ReminderCard(settings: settings, strings: strings),
+                if (settings.permissionDenied) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _NoticeCard(message: strings.permissionDenied),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                _TextSizeCard(settings: settings, strings: strings),
+                const SizedBox(height: AppSpacing.section),
+                _SectionLabel(strings.appearance),
+                const SizedBox(height: AppSpacing.md),
+                _ThemeCard(settings: settings, strings: strings),
+                const SizedBox(height: AppSpacing.section),
+                _SectionLabel(strings.supportInfo),
+                const SizedBox(height: AppSpacing.md),
+                _NavigationCard(
+                  icon: Icons.info_outline,
+                  title: strings.about,
+                  subtitle: strings.aboutSubtitle,
+                  onTap: () => context.push('/about'),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                _NavigationCard(
+                  icon: Icons.verified_user_outlined,
+                  title: strings.privacyTitle,
+                  subtitle: strings.privacySubtitle,
+                  onTap: () => _showLegalSheet(
+                    context,
+                    selectedLanguage,
+                    strings.privacyTitle,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -108,7 +112,18 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               Text(title, style: _SettingsText.title),
               const SizedBox(height: AppSpacing.lg),
-              LegalLinks(languageCode: languageCode),
+              Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: Theme.of(
+                    context,
+                  ).colorScheme.copyWith(primary: AppColors.gold),
+                  textTheme: Theme.of(context).textTheme.apply(
+                    bodyColor: _SettingsColors.mutedText,
+                    displayColor: _SettingsColors.text,
+                  ),
+                ),
+                child: LegalLinks(languageCode: languageCode),
+              ),
             ],
           ),
         ),
