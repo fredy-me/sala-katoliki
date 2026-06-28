@@ -28,31 +28,32 @@ abstract final class AppTheme {
   }
 
   static ThemeData get dark {
-    const background = Color(0xFF151927);
-    const surface = Color(0xFF202945);
-    const inputFill = Color(0xFF252F4C);
-    const text = Color(0xFFF8F3EA);
-    const mutedText = Color(0xFFC7CDDA);
-    const border = Color(0xFF394467);
-
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.navy,
-      brightness: Brightness.dark,
-      primary: AppColors.gold,
-      secondary: AppColors.gold,
-      surface: surface,
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.navy,
+          brightness: Brightness.dark,
+          primary: AppColors.gold,
+          secondary: AppColors.gold,
+          surface: AppColors.darkSurface,
+        ).copyWith(
+          surfaceContainer: AppColors.darkSurface,
+          surfaceContainerHigh: AppColors.darkSurfaceElevated,
+          surfaceContainerHighest: AppColors.darkSurfaceElevated,
+          onSurface: AppColors.darkText,
+          onSurfaceVariant: AppColors.darkMutedText,
+          outlineVariant: AppColors.darkBorder,
+        );
 
     return _baseTheme(
       scheme: scheme,
-      background: background,
-      surface: surface,
-      inputFill: inputFill,
+      background: AppColors.darkBackground,
+      surface: AppColors.darkSurface,
+      inputFill: AppColors.darkSurfaceElevated,
       primary: AppColors.gold,
-      text: text,
-      mutedText: mutedText,
+      text: AppColors.darkText,
+      mutedText: AppColors.darkMutedText,
       buttonText: AppColors.text,
-      border: border,
+      border: AppColors.darkBorder,
     );
   }
 
