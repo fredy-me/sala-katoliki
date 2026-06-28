@@ -15,6 +15,13 @@ abstract final class AppColors {
   static const success = Color(0xFF5E7F4F);
   static const danger = Color(0xFF8E2F3A);
 
+  static const darkBackground = Color(0xFF071326);
+  static const darkSurface = Color(0xFF101D33);
+  static const darkSurfaceElevated = Color(0xFF172A46);
+  static const darkBorder = Color(0xFF263A59);
+  static const darkText = Color(0xFFF8F3EA);
+  static const darkMutedText = Color(0xFFC3CAD6);
+
   // Legacy names retained during the staged screen refactor.
   static const night = background;
   static const nightPanel = surface;
