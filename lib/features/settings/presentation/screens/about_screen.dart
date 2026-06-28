@@ -405,12 +405,12 @@ class _SectionLabel extends StatelessWidget {
 }
 
 abstract final class _AboutColors {
-  static const background = Color(0xFF071326);
-  static const panel = Color(0xFF101D33);
-  static const iconBackground = Color(0xFF172A46);
-  static const border = Color(0xFF263A59);
-  static const text = Color(0xFFF8F3EA);
-  static const mutedText = Color(0xFFC3CAD6);
+  static const background = AppColors.darkBackground;
+  static const panel = AppColors.darkSurface;
+  static const iconBackground = AppColors.darkSurfaceElevated;
+  static const border = AppColors.darkBorder;
+  static const text = AppColors.darkText;
+  static const mutedText = AppColors.darkMutedText;
 }
 
 abstract final class _AboutText {
