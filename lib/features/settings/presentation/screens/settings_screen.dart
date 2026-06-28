@@ -110,7 +110,7 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: _SettingsText.title),
+              Text(title, style: _SettingsText.title(context)),
               const SizedBox(height: AppSpacing.lg),
               Theme(
                 data: Theme.of(context).copyWith(
@@ -139,28 +139,12 @@ class _SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(strings.title, style: _SettingsText.display),
-              const SizedBox(height: AppSpacing.md),
-              Text(strings.subtitle, style: _SettingsText.body),
-            ],
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        const Padding(
-          padding: EdgeInsets.only(top: AppSpacing.sm),
-          child: Icon(
-            Icons.notifications_none,
-            color: AppColors.gold,
-            size: 30,
-          ),
-        ),
+        Text(strings.title, style: _SettingsText.display(context)),
+        const SizedBox(height: AppSpacing.md),
+        Text(strings.subtitle, style: _SettingsText.body(context)),
       ],
     );
   }
@@ -176,7 +160,7 @@ class _SettingsError extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
       children: [
-        Text(strings.title, style: _SettingsText.display),
+        Text(strings.title, style: _SettingsText.display(context)),
         const SizedBox(height: AppSpacing.lg),
         _NoticeCard(message: strings.loadError),
       ],
@@ -206,7 +190,7 @@ class _LanguageCard extends StatelessWidget {
             subtitle: strings.languageSubtitle,
             trailing: Text(
               _languageLabel(selectedLanguage),
-              style: _SettingsText.value,
+              style: _SettingsText.value(context),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -281,12 +265,12 @@ class _ReminderCard extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       strings.changeTime,
-                      style: _SettingsText.titleSmall,
+                      style: _SettingsText.titleSmall(context),
                     ),
                   ),
                   Text(
                     _formatDisplayTime(settings.reminderTime),
-                    style: _SettingsText.body,
+                    style: _SettingsText.body(context),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   const Icon(
@@ -356,7 +340,7 @@ class _TextSizeCard extends ConsumerWidget {
             subtitle: strings.fontSizeSubtitle,
             trailing: Text(
               strings.textSizeLabel(selected),
-              style: _SettingsText.value,
+              style: _SettingsText.value(context),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -482,9 +466,9 @@ class _NavigationCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: _SettingsText.titleSmall),
+                    Text(title, style: _SettingsText.titleSmall(context)),
                     const SizedBox(height: AppSpacing.xs),
-                    Text(subtitle, style: _SettingsText.bodySmall),
+                    Text(subtitle, style: _SettingsText.bodySmall(context)),
                   ],
                 ),
               ),
@@ -521,9 +505,9 @@ class _CardHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: _SettingsText.titleSmall),
+              Text(title, style: _SettingsText.titleSmall(context)),
               const SizedBox(height: AppSpacing.xs),
-              Text(subtitle, style: _SettingsText.bodySmall),
+              Text(subtitle, style: _SettingsText.bodySmall(context)),
             ],
           ),
         ),
@@ -572,7 +556,9 @@ class _NoticeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SettingsPanel(child: Text(message, style: _SettingsText.body));
+    return _SettingsPanel(
+      child: Text(message, style: _SettingsText.body(context)),
+    );
   }
 }
 
@@ -602,7 +588,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: _SettingsText.section);
+    return Text(label.toUpperCase(), style: _SettingsText.section(context));
   }
 }
 
@@ -687,13 +673,7 @@ class _SegmentButton<T> extends StatelessWidget {
               option.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: selected
-                    ? _SettingsColors.selectedText
-                    : _SettingsColors.text,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-              ),
+              style: _SettingsText.segmentLabel(context, selected: selected),
             ),
           ],
         ),
@@ -727,54 +707,37 @@ abstract final class _SettingsColors {
 }
 
 abstract final class _SettingsText {
-  static const display = TextStyle(
-    color: _SettingsColors.text,
-    fontFamily: 'serif',
-    fontSize: 36,
-    height: 1.1,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? display(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.headlineLarge?.copyWith(color: _SettingsColors.text);
 
-  static const title = TextStyle(
-    color: _SettingsColors.text,
-    fontFamily: 'serif',
-    fontSize: 24,
-    height: 1.2,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? title(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.titleLarge?.copyWith(color: _SettingsColors.text);
 
-  static const titleSmall = TextStyle(
-    color: _SettingsColors.text,
-    fontSize: 18,
-    height: 1.25,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle? titleSmall(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.titleMedium?.copyWith(color: _SettingsColors.text);
 
-  static const body = TextStyle(
-    color: _SettingsColors.mutedText,
-    fontSize: 16,
-    height: 1.45,
-    fontWeight: FontWeight.w400,
-  );
+  static TextStyle? body(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.bodyMedium?.copyWith(color: _SettingsColors.mutedText);
 
-  static const bodySmall = TextStyle(
-    color: _SettingsColors.mutedText,
-    fontSize: 14,
-    height: 1.35,
-    fontWeight: FontWeight.w400,
-  );
+  static TextStyle? bodySmall(BuildContext context) => body(context);
 
-  static const section = TextStyle(
-    color: AppColors.gold,
-    fontSize: 13,
-    height: 1.2,
-    fontWeight: FontWeight.w800,
-    letterSpacing: 1.1,
-  );
+  static TextStyle? section(BuildContext context) =>
+      Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.gold);
 
-  static const value = TextStyle(
-    color: AppColors.gold,
-    fontSize: 15,
+  static TextStyle? value(BuildContext context) => Theme.of(context)
+      .textTheme
+      .bodyMedium
+      ?.copyWith(color: AppColors.gold, fontWeight: FontWeight.w700);
+
+  static TextStyle? segmentLabel(
+    BuildContext context, {
+    required bool selected,
+  }) => Theme.of(context).textTheme.labelSmall?.copyWith(
+    color: selected ? _SettingsColors.selectedText : _SettingsColors.text,
     fontWeight: FontWeight.w700,
   );
 }
