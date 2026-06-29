@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -21,64 +22,73 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
     final strings = _ThanksgivingStrings(languageCode);
     final novenaState = ref.watch(novenaByIdProvider(novenaId));
 
-    return Scaffold(
-      body: SafeArea(
-        child: novenaState.when(
-          loading: () => AppLoading(label: strings.loading),
-          error: (error, stackTrace) => AppErrorState(
-            title: strings.errorTitle,
-            message: strings.errorMessage,
-            actionLabel: strings.back,
-            onAction: () => context.popOrGo('/novenas/$novenaId'),
-          ),
-          data: (novena) {
-            final section = novena?.thanksgivingSection;
-            if (novena == null || section == null) {
-              return AppErrorState(
-                title: strings.missingTitle,
-                message: strings.missingMessage,
-                actionLabel: strings.back,
-                onAction: () => context.popOrGo('/novenas/$novenaId'),
-              );
-            }
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        context.popOrGo('/novenas/$novenaId');
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: novenaState.when(
+            loading: () => AppLoading(label: strings.loading),
+            error: (error, stackTrace) => AppErrorState(
+              title: strings.errorTitle,
+              message: strings.errorMessage,
+              actionLabel: strings.back,
+              onAction: () => context.popOrGo('/novenas/$novenaId'),
+            ),
+            data: (novena) {
+              final section = novena?.thanksgivingSection;
+              if (novena == null || section == null) {
+                return AppErrorState(
+                  title: strings.missingTitle,
+                  message: strings.missingMessage,
+                  actionLabel: strings.back,
+                  onAction: () => context.popOrGo('/novenas/$novenaId'),
+                );
+              }
 
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenHorizontal,
-                AppSpacing.lg,
-                AppSpacing.screenHorizontal,
-                AppSpacing.screenBottom,
-              ),
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      tooltip: strings.back,
-                      onPressed: () => context.popOrGo('/novenas/$novenaId'),
-                      icon: const Icon(Icons.arrow_back),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        section.title,
-                        style: Theme.of(context).textTheme.headlineMedium,
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.lg,
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.screenBottom,
+                ),
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        tooltip: strings.back,
+                        onPressed: () => context.popOrGo('/novenas/$novenaId'),
+                        icon: const Icon(Icons.arrow_back),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppCard(
-                  radius: AppSpacing.radiusXl,
-                  child: Text(
-                    section.description,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          section.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                NovenaTextView(text: section.body),
-              ],
-            );
-          },
+                  const SizedBox(height: AppSpacing.lg),
+                  AppCard(
+                    radius: AppSpacing.radiusXl,
+                    child: Text(
+                      section.description,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  NovenaTextView(text: section.body),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
