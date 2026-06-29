@@ -33,7 +33,7 @@ class AboutScreen extends ConsumerWidget {
               _AboutHeader(strings: strings),
 
               const SizedBox(height: AppSpacing.section),
-              
+
               Center(
                 child: SalaLogoMark(
                   size: 116,
@@ -92,12 +92,19 @@ class AboutScreen extends ConsumerWidget {
               ),
 
               const SizedBox(height: AppSpacing.section),
+
               _SectionLabel(strings.contact),
+
               const SizedBox(height: AppSpacing.md),
+
               _ContactCard(strings: strings),
+
               const SizedBox(height: AppSpacing.md),
+
               _DeveloperCard(strings: strings),
+
               const SizedBox(height: AppSpacing.xl),
+              
               Text(
                 strings.copyright,
                 textAlign: TextAlign.center,
