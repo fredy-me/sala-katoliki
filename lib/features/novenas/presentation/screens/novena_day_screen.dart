@@ -24,74 +24,86 @@ class NovenaDayScreen extends ConsumerWidget {
     final novenaState = ref.watch(novenaByIdProvider(novenaId));
     final progress = ref.watch(novenaProgressProvider).asData?.value;
 
-    return Scaffold(
-      body: SafeArea(
-        child: novenaState.when(
-          loading: () => AppLoading(label: strings.loading),
-          error: (error, stackTrace) => AppErrorState(
-            title: strings.errorTitle,
-            message: strings.errorMessage,
-            actionLabel: strings.back,
-            onAction: () => context.popOrGo('/novenas/$novenaId'),
-          ),
-          data: (novena) {
-            if (novena == null || day < 1 || day > novena.days.length) {
-              return AppErrorState(
-                title: strings.missingTitle,
-                message: strings.missingMessage,
-                actionLabel: strings.back,
-                onAction: () => context.popOrGo('/novenas/$novenaId'),
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        context.popOrGo('/novenas/$novenaId');
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: novenaState.when(
+            loading: () => AppLoading(label: strings.loading),
+            error: (error, stackTrace) => AppErrorState(
+              title: strings.errorTitle,
+              message: strings.errorMessage,
+              actionLabel: strings.back,
+              onAction: () => context.popOrGo('/novenas/$novenaId'),
+            ),
+            data: (novena) {
+              if (novena == null || day < 1 || day > novena.days.length) {
+                return AppErrorState(
+                  title: strings.missingTitle,
+                  message: strings.missingMessage,
+                  actionLabel: strings.back,
+                  onAction: () => context.popOrGo('/novenas/$novenaId'),
+                );
+              }
+
+              final dayContent = novena.days.firstWhere(
+                (item) => item.day == day,
               );
-            }
+              final completed =
+                  progress?.activeNovenaId == novenaId &&
+                  (progress?.completedDays.contains(day) ?? false);
 
-            final dayContent = novena.days.firstWhere(
-              (item) => item.day == day,
-            );
-            final completed =
-                progress?.activeNovenaId == novenaId &&
-                (progress?.completedDays.contains(day) ?? false);
-
-            return Column(
-              children: [
-                _TopBar(
-                  title: novena.title,
-                  backLabel: strings.back,
-                  onBack: () => context.popOrGo('/novenas/$novenaId'),
-                ),
-                Divider(height: 1, color: Theme.of(context).dividerTheme.color),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.screenHorizontal,
-                      AppSpacing.xl,
-                      AppSpacing.screenHorizontal,
-                      AppSpacing.screenBottom,
-                    ),
-                    children: [
-                      Text(
-                        strings.dayLabel(day),
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        dayContent.title,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-                      NovenaTextView(text: dayContent.body),
-                    ],
+              return Column(
+                children: [
+                  _TopBar(
+                    title: novena.title,
+                    backLabel: strings.back,
+                    onBack: () => context.popOrGo('/novenas/$novenaId'),
                   ),
-                ),
-                _CompleteBar(
-                  completed: completed,
-                  strings: strings,
-                  onComplete: completed
-                      ? null
-                      : () => _complete(context, ref, novena, dayContent.day),
-                ),
-              ],
-            );
-          },
+                  Divider(
+                    height: 1,
+                    color: Theme.of(context).dividerTheme.color,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.screenHorizontal,
+                        AppSpacing.xl,
+                        AppSpacing.screenHorizontal,
+                        AppSpacing.screenBottom,
+                      ),
+                      children: [
+                        Text(
+                          strings.dayLabel(day),
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          dayContent.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: AppSpacing.xl),
+                        NovenaTextView(text: dayContent.body),
+                      ],
+                    ),
+                  ),
+                  _CompleteBar(
+                    completed: completed,
+                    strings: strings,
+                    onComplete: completed
+                        ? null
+                        : () => _complete(context, ref, novena, dayContent.day),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
