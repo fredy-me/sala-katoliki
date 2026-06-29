@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/legal_links.dart';
 import '../providers/settings_providers.dart';
@@ -536,23 +537,9 @@ class _SettingsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: _SettingsColors.panel(context),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: _SettingsColors.border(context)),
-        boxShadow: [
-          BoxShadow(
-            color: _SettingsColors.shadow(context),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
-        child: child,
-      ),
+    return AppCard(
+      padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
+      child: child,
     );
   }
 }
@@ -705,9 +692,6 @@ class _SegmentOption<T> {
 enum _TextSizeValue { small, medium, large }
 
 abstract final class _SettingsColors {
-  static Color panel(BuildContext context) =>
-      Theme.of(context).colorScheme.surface;
-
   static Color iconBackground(BuildContext context) =>
       Theme.of(context).colorScheme.surfaceContainerHighest;
 
@@ -727,9 +711,6 @@ abstract final class _SettingsColors {
 
   static Color selectedText(BuildContext context) =>
       Theme.of(context).colorScheme.onSecondary;
-
-  static Color shadow(BuildContext context) =>
-      Theme.of(context).shadowColor.withValues(alpha: 0.16);
 }
 
 abstract final class _SettingsText {
