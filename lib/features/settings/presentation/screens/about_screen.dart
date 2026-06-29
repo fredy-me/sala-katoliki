@@ -31,7 +31,9 @@ class AboutScreen extends ConsumerWidget {
             ),
             children: [
               _AboutHeader(strings: strings),
+
               const SizedBox(height: AppSpacing.section),
+              
               Center(
                 child: SalaLogoMark(
                   size: 116,
@@ -40,25 +42,33 @@ class AboutScreen extends ConsumerWidget {
                   borderColor: _AboutColors.accent(context),
                 ),
               ),
+
               const SizedBox(height: AppSpacing.xl),
+
               Text(
                 'Sala Katoliki',
                 textAlign: TextAlign.center,
                 style: _AboutText.display(context),
               ),
+
               const SizedBox(height: AppSpacing.xs),
+
               Text(
                 strings.version,
                 textAlign: TextAlign.center,
                 style: _AboutText.body(context),
               ),
+
               const SizedBox(height: AppSpacing.xl),
+
               Text(
                 strings.introduction,
                 textAlign: TextAlign.center,
                 style: _AboutText.body(context),
               ),
+
               const SizedBox(height: AppSpacing.section),
+
               _InfoCard(
                 icon: Icons.star_border,
                 title: strings.aboutTitle,
@@ -72,7 +82,7 @@ class AboutScreen extends ConsumerWidget {
                 title: strings.contentSourcesTitle,
                 body: strings.contentSourcesBody,
               ),
-              
+
               const SizedBox(height: AppSpacing.md),
 
               _InfoCard(
