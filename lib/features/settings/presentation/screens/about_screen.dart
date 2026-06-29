@@ -82,6 +82,7 @@ class AboutScreen extends ConsumerWidget {
                 icon: Icons.menu_book_outlined,
                 title: strings.contentSourcesTitle,
                 body: strings.contentSourcesBody,
+                onTap: () => _showContentSources(context, strings),
               ),
 
               const SizedBox(height: AppSpacing.md),
@@ -119,6 +120,26 @@ class AboutScreen extends ConsumerWidget {
   }
 
   void _showAboutDetails(BuildContext context, _AboutStrings strings) {
+    _showDetailsSheet(
+      context,
+      title: strings.aboutDetailsTitle,
+      body: strings.aboutDetailsBody,
+    );
+  }
+
+  void _showContentSources(BuildContext context, _AboutStrings strings) {
+    _showDetailsSheet(
+      context,
+      title: strings.contentSourcesTitle,
+      body: strings.contentSourcesDetailsBody,
+    );
+  }
+
+  void _showDetailsSheet(
+    BuildContext context, {
+    required String title,
+    required String body,
+  }) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -138,12 +159,9 @@ class AboutScreen extends ConsumerWidget {
                 AppSpacing.xl,
               ),
               children: [
-                Text(
-                  strings.aboutDetailsTitle,
-                  style: _AboutText.heading(context),
-                ),
+                Text(title, style: _AboutText.heading(context)),
                 const SizedBox(height: AppSpacing.lg),
-                Text(strings.aboutDetailsBody, style: _AboutText.body(context)),
+                Text(body, style: _AboutText.body(context)),
               ],
             ),
           ),
@@ -560,6 +578,10 @@ class _AboutStrings {
   String get contentSourcesBody => _sw
       ? 'Maudhui yanatokana na sala na ibada za kimapokeo za Kikatoliki zinazotumiwa na waamini.'
       : 'Content is based on traditional Catholic prayers and devotions used by the faithful.';
+
+  String get contentSourcesDetailsBody => _sw
+      ? 'Maudhui yaliyomo kwenye Sala Katoliki yanatokana na sala za kimapokeo za Kikatoliki, vitabu vya sala, maandiko ya ibada, na rasilimali za Kikatoliki zinazopatikana kwa umma.\n\nNyenzo hizi zinajumuisha sala na ibada zinazotumiwa kwa kawaida katika maisha ya Kikatoliki, kama sala za kila siku, sala za Rozari, litania, na novena. Maudhui huchaguliwa na kupangwa ili kufuata mafundisho ya Kikatoliki, mapokeo, na utaratibu wa ibada.\n\nBaadhi ya maudhui yanaweza kutoka kwenye vitabu vya sala vya kimapokeo na marejeo ya ibada za Kikatoliki. Maudhui mengine yanaweza kurekebishwa kutoka kwenye rasilimali za Kikatoliki za wazi au zinazopatikana kwa umma mtandaoni. Inapohitajika, maudhui hupitiwa na kurekebishwa kwa ajili ya uwazi, lugha, na ulinganifu na imani na mwenendo wa Kikatoliki.\n\nSala Katoliki inalenga kufanya sala za Kikatoliki zipatikane na kueleweka kwa urahisi zaidi kwa Wakatoliki na kwa watu ambao ni wapya katika ibada za Kikatoliki. Programu hii haidai kuchukua nafasi ya nyaraka rasmi za Kanisa, Biblia, Katekisimu, au mwongozo kutoka kwa mapadre na viongozi wa Kanisa.\n\nMaudhui yote hutolewa kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho.'
+      : 'The content in Sala Katoliki is based on traditional Catholic prayers, prayer books, devotional texts, and publicly available Catholic resources.\n\nThese materials include prayers and devotions that are commonly used in Catholic life, such as daily prayers, Rosary prayers, litanies, and novenas. The content is selected and organized to follow Catholic teaching, tradition, and devotional practice.\n\nSome content may come from traditional prayer books and Catholic devotional references. Other content may be adapted from open-source or publicly available online Catholic resources. Where needed, the content is reviewed and adjusted for clarity, language, and consistency with Catholic faith and practice.\n\nSala Katoliki aims to make Catholic prayer easier to access and understand for both Catholics and people who are new to Catholic devotion. The app does not claim to replace official Church documents, the Bible, the Catechism, or guidance from priests and Church leaders.\n\nAll content is provided for personal prayer, reflection, and spiritual growth.';
 
   String get disclaimerTitle => _sw ? 'Tahadhari' : 'Disclaimer';
 
