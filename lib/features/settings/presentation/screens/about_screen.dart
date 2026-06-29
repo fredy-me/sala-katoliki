@@ -230,7 +230,7 @@ class _AboutHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             style: _AboutText.heading(context),
           ),
-          
+
         ),
         const SizedBox(width: AppSpacing.minTouchTarget),
       ],
@@ -505,6 +505,7 @@ class _IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       width: 58,
       height: 58,
