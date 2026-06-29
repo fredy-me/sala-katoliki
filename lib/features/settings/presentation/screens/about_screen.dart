@@ -7,6 +7,7 @@ import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/legal_links.dart';
 import '../../../../shared/widgets/sala_logo_mark.dart';
 
 class AboutScreen extends ConsumerWidget {
@@ -91,6 +92,8 @@ class AboutScreen extends ConsumerWidget {
                 icon: Icons.verified_user_outlined,
                 title: strings.disclaimerTitle,
                 body: strings.disclaimerBody,
+                actionIcon: Icons.open_in_new,
+                onTap: () => _openDisclaimer(context, strings),
               ),
 
               const SizedBox(height: AppSpacing.section),
@@ -169,6 +172,28 @@ class AboutScreen extends ConsumerWidget {
       },
     );
   }
+
+  Future<void> _openDisclaimer(
+    BuildContext context,
+    _AboutStrings strings,
+  ) async {
+    try {
+      if (await launchUrl(
+        LegalLinks.contentDisclaimerUrl,
+        mode: LaunchMode.externalApplication,
+      )) {
+        return;
+      }
+    } catch (_) {
+      // The snackbar below is enough for a failed external launch.
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(strings.contactOpenError)));
+    }
+  }
 }
 
 SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
@@ -209,12 +234,14 @@ class _InfoCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.body,
+    this.actionIcon = Icons.chevron_right,
     this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String body;
+  final IconData actionIcon;
   final VoidCallback? onTap;
 
   @override
@@ -239,7 +266,7 @@ class _InfoCard extends StatelessWidget {
 
           if (onTap != null) ...[
             const SizedBox(width: AppSpacing.sm),
-            Icon(Icons.chevron_right, color: _AboutColors.mutedText(context)),
+            Icon(actionIcon, color: _AboutColors.mutedText(context)),
           ],
         ],
       ),
