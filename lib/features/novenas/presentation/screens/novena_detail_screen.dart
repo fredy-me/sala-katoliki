@@ -24,89 +24,98 @@ class NovenaDetailScreen extends ConsumerWidget {
     final strings = _NovenaDetailStrings(languageCode);
     final sessionState = ref.watch(novenaSessionProvider(novenaId));
 
-    return Scaffold(
-      body: SafeArea(
-        child: sessionState.when(
-          loading: () => AppLoading(label: strings.loading),
-          error: (error, stackTrace) => AppErrorState(
-            title: strings.errorTitle,
-            message: strings.errorMessage,
-            actionLabel: strings.back,
-            onAction: () => context.popOrGo('/novenas'),
-          ),
-          data: (session) {
-            if (session == null) {
-              return AppErrorState(
-                title: strings.missingTitle,
-                message: strings.missingMessage,
-                actionLabel: strings.back,
-                onAction: () => context.popOrGo('/novenas'),
-              );
-            }
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        context.popOrGo('/novenas');
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: sessionState.when(
+            loading: () => AppLoading(label: strings.loading),
+            error: (error, stackTrace) => AppErrorState(
+              title: strings.errorTitle,
+              message: strings.errorMessage,
+              actionLabel: strings.back,
+              onAction: () => context.popOrGo('/novenas'),
+            ),
+            data: (session) {
+              if (session == null) {
+                return AppErrorState(
+                  title: strings.missingTitle,
+                  message: strings.missingMessage,
+                  actionLabel: strings.back,
+                  onAction: () => context.popOrGo('/novenas'),
+                );
+              }
 
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenHorizontal,
-                AppSpacing.lg,
-                AppSpacing.screenHorizontal,
-                AppSpacing.screenBottom,
-              ),
-              children: [
-                _Header(
-                  title: session.novena.title,
-                  backLabel: strings.back,
-                  onBack: () => context.popOrGo('/novenas'),
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.lg,
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.screenBottom,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                _ProgressPanel(
-                  session: session,
-                  strings: strings,
-                  onStart: () => _start(context, ref, session.novena.id),
-                  onRestart: () => _start(context, ref, session.novena.id),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(
-                  session.novena.description,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: AppSpacing.section),
-                for (final day in session.novena.days) ...[
-                  _DayRow(
-                    day: day,
-                    status: session.statusForDay(day.day),
-                    strings: strings,
-                    onTap: session.canOpenDay(day.day)
-                        ? () => context.push(
-                            '/novenas/${session.novena.id}/day/${day.day}',
-                          )
-                        : null,
+                children: [
+                  _Header(
+                    title: session.novena.title,
+                    backLabel: strings.back,
+                    onBack: () => context.popOrGo('/novenas'),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  if (session.novena.thanksgivingSection?.afterDay ==
-                      day.day) ...[
-                    _ThanksgivingSectionRow(
-                      section: session.novena.thanksgivingSection!,
-                      onTap: () => context.push(
-                        '/novenas/${session.novena.id}/thanksgiving',
-                      ),
+                  const SizedBox(height: AppSpacing.lg),
+                  _ProgressPanel(
+                    session: session,
+                    strings: strings,
+                    onStart: () => _start(context, ref, session.novena.id),
+                    onRestart: () => _start(context, ref, session.novena.id),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    session.novena.description,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.section),
+                  for (final day in session.novena.days) ...[
+                    _DayRow(
+                      day: day,
+                      status: session.statusForDay(day.day),
+                      strings: strings,
+                      onTap: session.canOpenDay(day.day)
+                          ? () => context.push(
+                              '/novenas/${session.novena.id}/day/${day.day}',
+                            )
+                          : null,
                     ),
                     const SizedBox(height: AppSpacing.sm),
+                    if (session.novena.thanksgivingSection?.afterDay ==
+                        day.day) ...[
+                      _ThanksgivingSectionRow(
+                        section: session.novena.thanksgivingSection!,
+                        onTap: () => context.push(
+                          '/novenas/${session.novena.id}/thanksgiving',
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+                  ],
+                  if (session.novena.closingPrayer != null) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    _ClosingPrayerCard(
+                      title: session.novena.closingPrayer!.title,
+                      description: session.novena.closingPrayer!.description,
+                      strings: strings,
+                      onTap: () => context.push(
+                        '/novenas/${session.novena.id}/closing-prayer',
+                      ),
+                    ),
                   ],
                 ],
-                if (session.novena.closingPrayer != null) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  _ClosingPrayerCard(
-                    title: session.novena.closingPrayer!.title,
-                    description: session.novena.closingPrayer!.description,
-                    strings: strings,
-                    onTap: () => context.push(
-                      '/novenas/${session.novena.id}/closing-prayer',
-                    ),
-                  ),
-                ],
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
