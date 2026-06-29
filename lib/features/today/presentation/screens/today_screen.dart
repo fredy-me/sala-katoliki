@@ -325,8 +325,17 @@ class _RosaryTodayCard extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           OutlinedButton(
             onPressed: () => context.push('/rosary'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size.zero,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             child: Text(strings.startRosary),
           ),
         ],
@@ -353,12 +362,6 @@ class _QuickActionGrid extends StatelessWidget {
       ),
       _QuickAction(Icons.favorite_border, strings.favorites, '/favorites'),
       _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
-      _QuickAction(
-        Icons.radio_button_checked,
-        strings.rosary,
-        '/rosary',
-        usePush: true,
-      ),
     ];
 
     return GridView.count(
@@ -514,7 +517,6 @@ class _TodayStrings {
   String get commonPrayers => _sw ? 'Sala za Kawaida' : 'Common Prayers';
   String get recentlyOpened =>
       _sw ? 'Zilizofunguliwa Karibuni' : 'Recently Opened';
-  String get rosary => _sw ? 'Rozari' : 'Rosary';
   String get favorites => _sw ? 'Vipendwa' : 'Favorites';
   String reminderEnabled(String time) =>
       _sw ? 'Kikumbusho kimewekwa saa $time' : 'Reminder set for $time';
