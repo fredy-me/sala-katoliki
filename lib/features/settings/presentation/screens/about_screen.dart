@@ -415,6 +415,7 @@ class _IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       width: 58,
       height: 58,
@@ -422,6 +423,7 @@ class _IconBadge extends StatelessWidget {
         color: _AboutColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
+
       child: Icon(
         icon,
         color: foreground ?? _AboutColors.accent(context),
@@ -462,6 +464,7 @@ abstract final class _AboutColors {
 }
 
 abstract final class _AboutText {
+
   static TextStyle? display(BuildContext context) =>
       Theme.of(context).textTheme.headlineLarge;
 
@@ -488,38 +491,55 @@ class _AboutStrings {
   bool get _sw => languageCode == 'sw';
 
   String get title => _sw ? 'Kuhusu Programu' : 'About App';
+
   String get back => _sw ? 'Rudi' : 'Back';
+
   String get version => _sw ? 'Toleo 1.0.1' : 'Version 1.0.1';
+
   String get introduction => _sw
       ? 'Sala Katoliki huwasaidia waamini Wakatoliki kusali kila siku kwa Kiswahili na Kiingereza kupitia sala, novena, rozari na ibada, wakati wowote hata bila mtandao.'
       : 'Sala Katoliki helps Catholic faithful pray daily in Kiswahili and English with prayers, novenas, rosary content and devotions, anytime, anywhere, even offline.';
+
   String get aboutTitle => _sw ? 'Kuhusu' : 'About';
+
   String get aboutBody => _sw
       ? 'Imetengenezwa na Busara Digital kusaidia waamini kukua katika sala.'
       : 'Developed by Busara Digital to help the faithful grow in prayer.';
+
   String get developerTitle =>
       _sw ? 'Jifunze Kuhusu Busara Digital' : 'Learn About Busara Digital';
+
   String get developerBody => _sw
       ? 'Jifunze zaidi kuhusu msanidi wa Sala Katoliki.'
       : 'Learn more about the developer behind Sala Katoliki.';
+
   String get contentSourcesTitle =>
       _sw ? 'Vyanzo vya Maudhui' : 'Content Sources';
+
   String get contentSourcesBody => _sw
       ? 'Maudhui yanatokana na sala na ibada za kimapokeo za Kikatoliki zinazotumiwa na waamini.'
       : 'Content is based on traditional Catholic prayers and devotions used by the faithful.';
+
   String get disclaimerTitle => _sw ? 'Tahadhari' : 'Disclaimer';
+
   String get disclaimerBody => _sw
       ? 'Programu hii husaidia ibada binafsi na haibadilishi mafundisho rasmi ya Kanisa au mwongozo wa kichungaji.'
       : 'This app supports personal devotion and does not replace official Church teaching or pastoral guidance.';
+
   String get contact => _sw ? 'Mawasiliano na Maoni' : 'Contact & Feedback';
+
   String get contactTitle => _sw ? 'Tupo hapa kusaidia' : 'We are here to help';
+
   String get contactBody => _sw
       ? 'Kwa msaada, marekebisho ya maudhui au maoni, wasiliana nasi kupitia:'
       : 'For support, content corrections or feedback, reach us via:';
+
   String get emailLabel => _sw ? 'Barua pepe' : 'Email';
+
   String get copyright => _sw
       ? '© 2026 Busara Digital. Haki zote zimehifadhiwa.'
       : '© 2026 Busara Digital. All rights reserved.';
+      
   String get contactOpenError => _sw
       ? 'Imeshindikana kufungua programu ya mawasiliano.'
       : 'Could not open a contact app.';
