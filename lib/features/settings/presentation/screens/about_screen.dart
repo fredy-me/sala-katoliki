@@ -73,6 +73,7 @@ class AboutScreen extends ConsumerWidget {
                 icon: Icons.star_border,
                 title: strings.aboutTitle,
                 body: strings.aboutBody,
+                onTap: () => _showAboutDetails(context, strings),
               ),
 
               const SizedBox(height: AppSpacing.md),
@@ -116,6 +117,40 @@ class AboutScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showAboutDetails(BuildContext context, _AboutStrings strings) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+            ),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                0,
+                AppSpacing.xl,
+                AppSpacing.xl,
+              ),
+              children: [
+                Text(
+                  strings.aboutDetailsTitle,
+                  style: _AboutText.heading(context),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(strings.aboutDetailsBody, style: _AboutText.body(context)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
@@ -156,23 +191,23 @@ class _InfoCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.body,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String body;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return _AboutPanel(
+      onTap: onTap,
       child: Row(
-
         children: [
-
           _IconBadge(icon: icon),
           const SizedBox(width: AppSpacing.md),
           Expanded(
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
 
@@ -184,9 +219,10 @@ class _InfoCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: AppSpacing.sm),
-
-          Icon(Icons.chevron_right, color: _AboutColors.mutedText(context)),
+          if (onTap != null) ...[
+            const SizedBox(width: AppSpacing.sm),
+            Icon(Icons.chevron_right, color: _AboutColors.mutedText(context)),
+          ],
         ],
       ),
     );
@@ -205,13 +241,11 @@ class _DeveloperCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _AboutPanel(
-      
       child: InkWell(
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         onTap: () => _openWebsite(context),
 
         child: Row(
-
           children: [
             const _IconBadge(icon: Icons.public),
             const SizedBox(width: AppSpacing.md),
@@ -220,12 +254,11 @@ class _DeveloperCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
                     strings.developerTitle,
                     style: _AboutText.title(context),
                   ),
-                  
+
                   const SizedBox(height: AppSpacing.xs),
 
                   Text(
@@ -277,7 +310,6 @@ class _ContactCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Text(strings.contactTitle, style: _AboutText.title(context)),
           const SizedBox(height: AppSpacing.xs),
           Text(strings.contactBody, style: _AboutText.bodySmall(context)),
@@ -373,7 +405,6 @@ class _ContactAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-
             _IconBadge(icon: icon, foreground: _AboutColors.text(context)),
             const SizedBox(width: AppSpacing.md),
             Expanded(
@@ -397,13 +428,18 @@ class _ContactAction extends StatelessWidget {
 }
 
 class _AboutPanel extends StatelessWidget {
-  const _AboutPanel({required this.child});
+  const _AboutPanel({required this.child, this.onTap});
 
   final Widget child;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(padding: const EdgeInsets.all(AppSpacing.lg), child: child);
+    return AppCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: child,
+    );
   }
 }
 
@@ -415,7 +451,6 @@ class _IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: 58,
       height: 58,
@@ -464,7 +499,6 @@ abstract final class _AboutColors {
 }
 
 abstract final class _AboutText {
-
   static TextStyle? display(BuildContext context) =>
       Theme.of(context).textTheme.headlineLarge;
 
@@ -506,6 +540,13 @@ class _AboutStrings {
       ? 'Imetengenezwa na Busara Digital kusaidia waamini kukua katika sala.'
       : 'Developed by Busara Digital to help the faithful grow in prayer.';
 
+  String get aboutDetailsTitle =>
+      _sw ? 'Kuhusu Sala Katoliki' : 'About Sala Katoliki';
+
+  String get aboutDetailsBody => _sw
+      ? 'Sala Katoliki ni programu rahisi ya sala za Kikatoliki iliyoundwa kusaidia watu kusali, kutafakari, na kujenga mazoea ya ibada ya kila siku.\n\nProgramu hii inatoa sala za kawaida za Kikatoliki, sala za Rozari zilizoongozwa, novena, vipendwa, utafutaji, na vikumbusho vya kila siku. Inatumia Kiingereza na Kiswahili, hivyo inarahisisha watu wengi zaidi kusali kwa lugha wanayoielewa vizuri zaidi.\n\nSala Katoliki imeundwa kwa ajili ya kila mtu. Kama wewe ni Mkatoliki, inakusaidia kupata sala na ibada unazozifahamu katika sehemu moja. Kama hujazoea sala za Kikatoliki, programu hii inakupa njia iliyo wazi na rahisi ya kujifunza, kufuata, na kuelewa ibada za kawaida za Kikatoliki.\n\nProgramu hii inafanya kazi nje ya mtandao, hivyo unaweza kuendelea kutumia vipengele vikuu vya sala bila muunganisho wa intaneti. Haihitaji akaunti, malipo, au maandalizi magumu.\n\nSala Katoliki ni kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho. Si mbadala wa Kanisa, Biblia, Katekisimu, au mwongozo wa kichungaji, lakini inaweza kusaidia safari yako ya kila siku ya imani.'
+      : 'Sala Katoliki is a simple Catholic prayer app created to help people pray, reflect, and build a daily habit of devotion.\n\nThe app provides common Catholic prayers, guided Rosary prayers, novenas, favorites, search, and daily reminders. It supports both English and Kiswahili, making it easier for more people to pray in the language they understand best.\n\nSala Katoliki is designed for everyone. If you are Catholic, it helps you access familiar prayers and devotions in one place. If you are not familiar with Catholic prayer, the app gives you a clear and simple way to learn, follow, and understand common Catholic devotions.\n\nThe app works offline, so you can continue using the main prayer features without an internet connection. It does not require an account, payment, or complicated setup.\n\nSala Katoliki is for personal prayer, reflection, and spiritual growth. It is not a replacement for the Church, the Bible, the Catechism, or pastoral guidance, but it can support your daily journey of faith.';
+
   String get developerTitle =>
       _sw ? 'Jifunze Kuhusu Busara Digital' : 'Learn About Busara Digital';
 
@@ -539,7 +580,7 @@ class _AboutStrings {
   String get copyright => _sw
       ? '© 2026 Busara Digital. Haki zote zimehifadhiwa.'
       : '© 2026 Busara Digital. All rights reserved.';
-      
+
   String get contactOpenError => _sw
       ? 'Imeshindikana kufungua programu ya mawasiliano.'
       : 'Could not open a contact app.';
