@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
+import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/sala_logo_mark.dart';
 
 class AboutScreen extends ConsumerWidget {
@@ -357,24 +358,7 @@ class _AboutPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: _AboutColors.panel(context),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: _AboutColors.border(context)),
-        boxShadow: [
-          BoxShadow(
-            color: _AboutColors.shadow(context),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: child,
-      ),
-    );
+    return AppCard(padding: const EdgeInsets.all(AppSpacing.lg), child: child);
   }
 }
 
@@ -414,9 +398,6 @@ class _SectionLabel extends StatelessWidget {
 }
 
 abstract final class _AboutColors {
-  static Color panel(BuildContext context) =>
-      Theme.of(context).colorScheme.surface;
-
   static Color iconBackground(BuildContext context) =>
       Theme.of(context).colorScheme.surfaceContainerHighest;
 
@@ -433,9 +414,6 @@ abstract final class _AboutColors {
   static Color accent(BuildContext context) =>
       Theme.of(context).textTheme.labelSmall?.color ??
       Theme.of(context).colorScheme.secondary;
-
-  static Color shadow(BuildContext context) =>
-      Theme.of(context).shadowColor.withValues(alpha: 0.16);
 }
 
 abstract final class _AboutText {
