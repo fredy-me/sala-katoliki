@@ -192,7 +192,9 @@ class _DeveloperCard extends StatelessWidget {
                     strings.developerTitle,
                     style: _AboutText.title(context),
                   ),
+                  
                   const SizedBox(height: AppSpacing.xs),
+
                   Text(
                     strings.developerBody,
                     style: _AboutText.bodySmall(context),
@@ -240,17 +242,21 @@ class _ContactCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Text(strings.contactTitle, style: _AboutText.title(context)),
           const SizedBox(height: AppSpacing.xs),
           Text(strings.contactBody, style: _AboutText.bodySmall(context)),
           const SizedBox(height: AppSpacing.lg),
+
           _ContactAction(
             icon: Icons.chat_outlined,
             title: 'WhatsApp',
             subtitle: _displayWhatsappNumber,
             onTap: () => _openWhatsApp(context, strings),
           ),
+
           Divider(height: AppSpacing.xl, color: _AboutColors.border(context)),
+
           _ContactAction(
             icon: Icons.email_outlined,
             title: strings.emailLabel,
@@ -327,18 +333,22 @@ class _ContactAction extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       onTap: onTap,
+
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
+
             _IconBadge(icon: icon, foreground: _AboutColors.text(context)),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
                   Text(title, style: _AboutText.title(context)),
                   const SizedBox(height: AppSpacing.xs),
+
                   Text(subtitle, style: _AboutText.bodySmall(context)),
                 ],
               ),
