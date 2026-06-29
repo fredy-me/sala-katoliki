@@ -64,18 +64,23 @@ class AboutScreen extends ConsumerWidget {
                 title: strings.aboutTitle,
                 body: strings.aboutBody,
               ),
+
               const SizedBox(height: AppSpacing.md),
+
               _InfoCard(
                 icon: Icons.menu_book_outlined,
                 title: strings.contentSourcesTitle,
                 body: strings.contentSourcesBody,
               ),
+              
               const SizedBox(height: AppSpacing.md),
+
               _InfoCard(
                 icon: Icons.verified_user_outlined,
                 title: strings.disclaimerTitle,
                 body: strings.disclaimerBody,
               ),
+
               const SizedBox(height: AppSpacing.section),
               _SectionLabel(strings.contact),
               const SizedBox(height: AppSpacing.md),
