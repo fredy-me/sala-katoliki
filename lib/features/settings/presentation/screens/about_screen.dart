@@ -144,23 +144,29 @@ class AboutScreen extends ConsumerWidget {
     required String body,
   }) {
     showModalBottomSheet<void>(
+
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       isScrollControlled: true,
       builder: (context) {
+
         return SafeArea(
+
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.sizeOf(context).height * 0.8,
             ),
+
             child: ListView(
+
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.xl,
                 0,
                 AppSpacing.xl,
                 AppSpacing.xl,
               ),
+
               children: [
                 Text(title, style: _AboutText.heading(context)),
                 const SizedBox(height: AppSpacing.lg),
@@ -210,18 +216,21 @@ class _AboutHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+
       children: [
         IconButton(
           tooltip: strings.back,
           onPressed: () => context.popOrGo('/settings'),
           icon: Icon(Icons.arrow_back, color: _AboutColors.accent(context)),
         ),
+
         Expanded(
           child: Text(
             strings.title,
             textAlign: TextAlign.center,
             style: _AboutText.heading(context),
           ),
+          
         ),
         const SizedBox(width: AppSpacing.minTouchTarget),
       ],
