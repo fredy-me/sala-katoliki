@@ -104,7 +104,7 @@ class AboutScreen extends ConsumerWidget {
               _DeveloperCard(strings: strings),
 
               const SizedBox(height: AppSpacing.xl),
-              
+
               Text(
                 strings.copyright,
                 textAlign: TextAlign.center,
@@ -166,12 +166,16 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return _AboutPanel(
       child: Row(
+
         children: [
+
           _IconBadge(icon: icon),
           const SizedBox(width: AppSpacing.md),
           Expanded(
+
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 Text(title, style: _AboutText.title(context)),
                 const SizedBox(height: AppSpacing.xs),
@@ -179,7 +183,9 @@ class _InfoCard extends StatelessWidget {
               ],
             ),
           ),
+
           const SizedBox(width: AppSpacing.sm),
+
           Icon(Icons.chevron_right, color: _AboutColors.mutedText(context)),
         ],
       ),
@@ -199,17 +205,22 @@ class _DeveloperCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _AboutPanel(
+      
       child: InkWell(
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
         onTap: () => _openWebsite(context),
+
         child: Row(
+
           children: [
             const _IconBadge(icon: Icons.public),
             const SizedBox(width: AppSpacing.md),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Text(
                     strings.developerTitle,
                     style: _AboutText.title(context),
@@ -224,7 +235,9 @@ class _DeveloperCard extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(width: AppSpacing.sm),
+
             Icon(Icons.open_in_new, color: _AboutColors.accent(context)),
           ],
         ),
