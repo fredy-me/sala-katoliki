@@ -5,7 +5,7 @@ description: "Offline-first Catholic prayer app for English and Kiswahili."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.0.1+2
+version: 1.0.3+3
 
 environment:
   sdk: ^3.10.4
@@ -57,5 +57,3 @@ flutter:
     - assets/content/rosary/en/
     - assets/content/rosary/sw/
     - assets/content/metadata/
-
-  
