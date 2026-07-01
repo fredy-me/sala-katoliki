@@ -1,6 +1,6 @@
 abstract final class AppConstants {
   static const appName = 'Sala Katoliki';
-  static const appVersion = '1.0.1';
+  static const appVersion = '1.0.3';
   static const defaultLanguageCode = 'en';
   static const supportedLanguageCodes = ['en', 'sw'];
 }
