@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/navigation_utils.dart';
@@ -144,22 +145,18 @@ class AboutScreen extends ConsumerWidget {
     required String body,
   }) {
     showModalBottomSheet<void>(
-
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       showDragHandle: true,
       isScrollControlled: true,
       builder: (context) {
-
         return SafeArea(
-
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.sizeOf(context).height * 0.8,
             ),
 
             child: ListView(
-
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.xl,
                 0,
@@ -216,7 +213,6 @@ class _AboutHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-
       children: [
         IconButton(
           tooltip: strings.back,
@@ -230,7 +226,6 @@ class _AboutHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             style: _AboutText.heading(context),
           ),
-
         ),
         const SizedBox(width: AppSpacing.minTouchTarget),
       ],
@@ -505,7 +500,6 @@ class _IconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       width: 58,
       height: 58,
@@ -583,7 +577,9 @@ class _AboutStrings {
 
   String get back => _sw ? 'Rudi' : 'Back';
 
-  String get version => _sw ? 'Toleo 1.0.1' : 'Version 1.0.1';
+  String get version => _sw
+      ? 'Toleo ${AppConstants.appVersion}'
+      : 'Version ${AppConstants.appVersion}';
 
   String get introduction => _sw
       ? 'Sala Katoliki huwasaidia waamini Wakatoliki kusali kila siku kwa Kiswahili na Kiingereza kupitia sala, novena, rozari na ibada, wakati wowote hata bila mtandao.'
