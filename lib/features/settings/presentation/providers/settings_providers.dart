@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/localization/localization_providers.dart';
 import '../../../../shared/services/notification_service.dart';
 import '../../../today/presentation/providers/today_providers.dart';
 
@@ -50,6 +53,13 @@ class UserSettings {
 class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
   @override
   Future<UserSettings> build() async {
+    ref.listen<String>(activeLanguageProvider, (previous, next) {
+      if (previous == null || previous == next) {
+        return;
+      }
+      unawaited(_rescheduleEnabledReminder());
+    });
+
     final preferences = await SharedPreferences.getInstance();
     return UserSettings(
       themeMode: _themeModeFromStorage(
@@ -137,14 +147,36 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
 
   Future<bool> _scheduleReminder(String reminderTime) async {
     final (hour, minute) = _parseTime(reminderTime);
+    final strings = _ReminderNotificationStrings(
+      ref.read(activeLanguageProvider),
+    );
     return ref
         .read(notificationServiceProvider)
         .scheduleDailyReminder(
           hour: hour,
           minute: minute,
-          title: 'Sala Katoliki',
-          body: 'Take a moment for prayer today.',
+          title: strings.title,
+          body: strings.body,
         );
+  }
+
+  Future<void> _rescheduleEnabledReminder() async {
+    final current = state.asData?.value;
+    if (current == null || !current.reminderEnabled) {
+      return;
+    }
+
+    final scheduled = await _scheduleReminder(current.reminderTime);
+    if (scheduled) {
+      return;
+    }
+
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool(StorageKeys.reminderEnabled, false);
+    state = AsyncData(
+      current.copyWith(reminderEnabled: false, permissionDenied: true),
+    );
+    ref.invalidate(todayLocalStateProvider);
   }
 
   ThemeMode _themeModeFromStorage(String? value) {
@@ -192,4 +224,18 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
     final parts = valid.split(':');
     return (int.parse(parts.first), int.parse(parts.last));
   }
+}
+
+class _ReminderNotificationStrings {
+  const _ReminderNotificationStrings(this.languageCode);
+
+  final String languageCode;
+
+  bool get _sw => languageCode == 'sw';
+
+  String get title => 'Sala Katoliki';
+
+  String get body => _sw
+      ? 'Chukua muda mfupi kwa ajili ya sala leo.'
+      : 'Take a moment for prayer today.';
 }
