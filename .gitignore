@@ -54,3 +54,7 @@ app.*.map.json
 .env
 .env.*
 .env.example
+.graphify_analysis.json
+.graphify_labels.json
+.graphify_labels.json.sig
+/graphify-out/
