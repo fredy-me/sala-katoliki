@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:salakatoliki/app.dart';
 import 'package:salakatoliki/core/localization/localization_providers.dart';
+import 'package:salakatoliki/core/theme/app_colors.dart';
 import 'package:salakatoliki/data/models/novena_model.dart';
 import 'package:salakatoliki/data/models/rosary_model.dart';
 import 'package:salakatoliki/features/library/presentation/screens/favorites_screen.dart';
@@ -279,6 +280,19 @@ void main() {
     await _pumpUntilFound(tester, find.text('Active Novena'));
     expect(find.text('Divine Mercy Novena'), findsWidgets);
     expect(find.text('Day 2 of 9'), findsOneWidget);
+    final progressIndicator = tester.widget<LinearProgressIndicator>(
+      find.byType(LinearProgressIndicator),
+    );
+    expect(progressIndicator.color, AppColors.gold);
+    expect(
+      progressIndicator.backgroundColor,
+      Colors.white.withValues(alpha: 0.24),
+    );
+    final continueButton = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'Continue'),
+    );
+    expect(continueButton.style?.backgroundColor?.resolve({}), AppColors.gold);
+    expect(continueButton.style?.foregroundColor?.resolve({}), AppColors.text);
 
     await tester.tap(find.text('Continue').first);
     await _pumpUntilFound(tester, find.text('Day 2'));
