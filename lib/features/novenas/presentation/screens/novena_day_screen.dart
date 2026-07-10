@@ -55,9 +55,7 @@ class NovenaDayScreen extends ConsumerWidget {
               final dayContent = novena.days.firstWhere(
                 (item) => item.day == day,
               );
-              final completed =
-                  progress?.activeNovenaId == novenaId &&
-                  (progress?.completedDays.contains(day) ?? false);
+              final completed = progress?.isCompleted(novenaId, day) ?? false;
 
               return Column(
                 children: [
