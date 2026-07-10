@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,75 +75,179 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
   @override
   Future<NovenaProgress> build() async {
     final preferences = await SharedPreferences.getInstance();
-    return NovenaProgress(
-      activeNovenaId: preferences.getString(StorageKeys.activeNovenaId),
-      completedDays: _validCompletedDays(
+    final activeNovenaId = preferences.getString(StorageKeys.activeNovenaId);
+    final completedDaysByNovenaId = _readCompletedDaysByNovenaId(preferences);
+
+    if (activeNovenaId != null &&
+        !completedDaysByNovenaId.containsKey(activeNovenaId)) {
+      completedDaysByNovenaId[activeNovenaId] = _validCompletedDaysForNovena(
+        activeNovenaId,
         preferences.getStringList(StorageKeys.completedNovenaDays) ?? const [],
-      ),
+      );
+      await _writeProgressMap(preferences, completedDaysByNovenaId);
+    }
+
+    return NovenaProgress(
+      activeNovenaId: activeNovenaId,
+      completedDaysByNovenaId: completedDaysByNovenaId,
     );
   }
 
   Future<void> start(String novenaId) async {
-    await _save(
-      NovenaProgress(activeNovenaId: novenaId, completedDays: const {}),
-    );
-  }
-
-  Future<void> completeDay(String novenaId, int day) async {
-    if (day < 1 || day > 12) {
-      return;
-    }
-
     final current = state.asData?.value ?? await future;
-    final completedDays = current.activeNovenaId == novenaId
-        ? current.completedDays
-        : const <int>{};
+    final completedDaysByNovenaId = _copyCompletedDaysByNovenaId(current);
+    completedDaysByNovenaId.putIfAbsent(novenaId, () => const <int>{});
 
     await _save(
       NovenaProgress(
         activeNovenaId: novenaId,
-        completedDays: {...completedDays, day},
+        completedDaysByNovenaId: completedDaysByNovenaId,
+      ),
+    );
+  }
+
+  Future<void> restart(String novenaId) async {
+    final current = state.asData?.value ?? await future;
+    final completedDaysByNovenaId = _copyCompletedDaysByNovenaId(current);
+    completedDaysByNovenaId[novenaId] = const <int>{};
+
+    await _save(
+      NovenaProgress(
+        activeNovenaId: novenaId,
+        completedDaysByNovenaId: completedDaysByNovenaId,
+      ),
+    );
+  }
+
+  Future<void> completeDay(String novenaId, int day) async {
+    if (day < 1 || day > _maxDaysForNovena(novenaId)) {
+      return;
+    }
+
+    final current = state.asData?.value ?? await future;
+    final completedDaysByNovenaId = _copyCompletedDaysByNovenaId(current);
+    final completedDays = current.completedDaysFor(novenaId);
+    completedDaysByNovenaId[novenaId] = {...completedDays, day};
+
+    await _save(
+      NovenaProgress(
+        activeNovenaId: novenaId,
+        completedDaysByNovenaId: completedDaysByNovenaId,
       ),
     );
   }
 
   Future<void> clear() async {
-    await _save(const NovenaProgress(activeNovenaId: null, completedDays: {}));
+    await _save(
+      const NovenaProgress(activeNovenaId: null, completedDaysByNovenaId: {}),
+    );
   }
 
   Future<void> _save(NovenaProgress progress) async {
     final preferences = await SharedPreferences.getInstance();
     if (progress.activeNovenaId == null) {
       await preferences.remove(StorageKeys.activeNovenaId);
+      await preferences.remove(StorageKeys.completedNovenaDays);
     } else {
       await preferences.setString(
         StorageKeys.activeNovenaId,
         progress.activeNovenaId!,
       );
+      await _writeLegacyActiveCompletedDays(preferences, progress);
     }
 
-    final completed =
-        progress.completedDays.where((day) => day >= 1 && day <= 12).toList()
-          ..sort();
-    await preferences.setStringList(
-      StorageKeys.completedNovenaDays,
-      completed.map((day) => day.toString()).toList(growable: false),
-    );
+    await _writeProgressMap(preferences, progress.completedDaysByNovenaId);
 
     state = AsyncData(
       NovenaProgress(
         activeNovenaId: progress.activeNovenaId,
-        completedDays: completed.toSet(),
+        completedDaysByNovenaId: _copyCompletedDaysByNovenaId(progress),
       ),
     );
     ref.invalidate(todayLocalStateProvider);
   }
 
-  Set<int> _validCompletedDays(List<String> rawDays) {
+  Map<String, Set<int>> _readCompletedDaysByNovenaId(
+    SharedPreferences preferences,
+  ) {
+    final raw = preferences.getString(StorageKeys.novenaProgressById);
+    if (raw == null || raw.isEmpty) {
+      return {};
+    }
+
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(raw);
+    } on FormatException {
+      return {};
+    }
+    if (decoded is! Map) {
+      return {};
+    }
+
+    return {
+      for (final entry in decoded.entries)
+        if (entry.key is String && entry.value is List)
+          entry.key as String: _validCompletedDaysForNovena(
+            entry.key as String,
+            entry.value as List,
+          ),
+    };
+  }
+
+  Map<String, Set<int>> _copyCompletedDaysByNovenaId(NovenaProgress progress) {
+    return {
+      for (final entry in progress.completedDaysByNovenaId.entries)
+        entry.key: {...entry.value},
+    };
+  }
+
+  Future<void> _writeProgressMap(
+    SharedPreferences preferences,
+    Map<String, Set<int>> completedDaysByNovenaId,
+  ) async {
+    if (completedDaysByNovenaId.isEmpty) {
+      await preferences.remove(StorageKeys.novenaProgressById);
+      return;
+    }
+
+    final encoded = jsonEncode({
+      for (final entry in completedDaysByNovenaId.entries)
+        entry.key: _sortedValidDaysForNovena(entry.key, entry.value),
+    });
+    await preferences.setString(StorageKeys.novenaProgressById, encoded);
+  }
+
+  Future<void> _writeLegacyActiveCompletedDays(
+    SharedPreferences preferences,
+    NovenaProgress progress,
+  ) async {
+    await preferences.setStringList(
+      StorageKeys.completedNovenaDays,
+      _sortedValidDaysForNovena(
+        progress.activeNovenaId!,
+        progress.completedDays,
+      ).map((day) => day.toString()).toList(growable: false),
+    );
+  }
+
+  List<int> _sortedValidDaysForNovena(String novenaId, Iterable<int> days) {
+    final maxDays = _maxDaysForNovena(novenaId);
+    return days.where((day) => day >= 1 && day <= maxDays).toList()..sort();
+  }
+
+  Set<int> _validCompletedDaysForNovena(
+    String novenaId,
+    Iterable<Object?> rawDays,
+  ) {
+    final maxDays = _maxDaysForNovena(novenaId);
     return rawDays
-        .map(int.tryParse)
+        .map((day) => int.tryParse(day.toString()))
         .whereType<int>()
-        .where((day) => day >= 1 && day <= 12)
+        .where((day) => day >= 1 && day <= maxDays)
         .toSet();
   }
+
+  int _maxDaysForNovena(String novenaId) =>
+      novenaId == 'st_rita_novena' ? 12 : 9;
 }
