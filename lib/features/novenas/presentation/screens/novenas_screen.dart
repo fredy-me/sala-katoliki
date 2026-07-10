@@ -136,6 +136,8 @@ class _ActiveNovenaHero extends StatelessWidget {
           LinearProgressIndicator(
             value: session.completionRatio,
             minHeight: 8,
+            color: AppColors.gold,
+            backgroundColor: Colors.white.withValues(alpha: 0.24),
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -144,6 +146,10 @@ class _ActiveNovenaHero extends StatelessWidget {
               Expanded(
                 child: FilledButton(
                   onPressed: onContinue,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.gold,
+                    foregroundColor: AppColors.text,
+                  ),
                   child: Text(strings.continueLabel),
                 ),
               ),
