@@ -69,8 +69,8 @@ class NovenaDetailScreen extends ConsumerWidget {
                   _ProgressPanel(
                     session: session,
                     strings: strings,
-                    onStart: () => _start(context, ref, session.novena.id),
-                    onRestart: () => _start(context, ref, session.novena.id),
+                    onStart: () => _start(context, ref, session),
+                    onRestart: () => _restart(context, ref, session.novena.id),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
@@ -124,9 +124,22 @@ class NovenaDetailScreen extends ConsumerWidget {
   Future<void> _start(
     BuildContext context,
     WidgetRef ref,
+    NovenaSession session,
+  ) async {
+    final novenaId = session.novena.id;
+    final nextDay = session.nextDay;
+    await ref.read(novenaProgressProvider.notifier).start(novenaId);
+    if (context.mounted) {
+      context.push('/novenas/$novenaId/day/$nextDay');
+    }
+  }
+
+  Future<void> _restart(
+    BuildContext context,
+    WidgetRef ref,
     String novenaId,
   ) async {
-    await ref.read(novenaProgressProvider.notifier).start(novenaId);
+    await ref.read(novenaProgressProvider.notifier).restart(novenaId);
     if (context.mounted) {
       context.push('/novenas/$novenaId/day/1');
     }
@@ -245,32 +258,39 @@ class _ProgressPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = session.isActive;
+    final started = session.hasStarted;
 
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            active ? strings.progress : strings.notStarted,
+            started ? strings.progress : strings.notStarted,
             style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            active
+            started
                 ? strings.dayProgress(session.nextDay, session.totalDays)
                 : strings.startPrompt,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: AppSpacing.md),
           LinearProgressIndicator(
-            value: active ? session.completionRatio : 0,
+            value: started ? session.completionRatio : 0,
             minHeight: 8,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(
             onPressed: active ? onRestart : onStart,
-            child: Text(active ? strings.restart : strings.start),
+            child: Text(
+              active
+                  ? strings.restart
+                  : started
+                  ? strings.continueLabel
+                  : strings.start,
+            ),
           ),
         ],
       ),
@@ -412,6 +432,7 @@ class _NovenaDetailStrings {
   String get notStarted => _sw ? 'Haijaanza' : 'Not Started';
   String get startPrompt => _sw ? 'Anza Siku ya 1' : 'Start Day 1';
   String get start => _sw ? 'Anza Novena' : 'Start Novena';
+  String get continueLabel => _sw ? 'Endelea' : 'Continue';
   String get restart => _sw ? 'Anza Upya' : 'Restart';
   String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
   String dayProgress(int day, int totalDays) =>
