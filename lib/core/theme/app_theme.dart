@@ -93,6 +93,10 @@ abstract final class AppTheme {
         labelSmall: AppTextStyles.label,
       ),
       dividerTheme: DividerThemeData(color: border),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: primary,
+        linearTrackColor: border,
+      ),
       iconTheme: IconThemeData(color: primary),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
