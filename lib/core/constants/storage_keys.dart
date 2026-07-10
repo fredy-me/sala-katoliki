@@ -10,4 +10,5 @@ abstract final class StorageKeys {
   static const rosaryStepIndex = 'rosary_step_index';
   static const activeNovenaId = 'active_novena_id';
   static const completedNovenaDays = 'completed_novena_days';
+  static const novenaProgressById = 'novena_progress_by_id';
 }
