@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:salakatoliki/data/models/novena_model.dart';
 import 'package:salakatoliki/data/models/rosary_model.dart';
 import 'package:salakatoliki/features/novenas/domain/novena_state.dart';
+import 'package:salakatoliki/features/novenas/presentation/providers/novena_providers.dart';
 import 'package:salakatoliki/features/prayers/domain/entities/prayer_entity.dart';
 import 'package:salakatoliki/features/prayers/presentation/providers/prayer_providers.dart';
 import 'package:salakatoliki/features/rosary/presentation/providers/rosary_providers.dart';
@@ -158,7 +159,9 @@ void main() {
     () {
       final progress = NovenaProgress(
         activeNovenaId: 'divine_mercy_novena',
-        completedDays: {1, 2},
+        completedDaysByNovenaId: {
+          'divine_mercy_novena': {1, 2},
+        },
       );
       final session = NovenaSession(novena: _testNovena, progress: progress);
 
@@ -171,10 +174,76 @@ void main() {
     },
   );
 
+  test('novena progress is preserved when switching between novenas', () async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer();
+
+    await container
+        .read(novenaProgressProvider.notifier)
+        .start('divine_mercy_novena');
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('divine_mercy_novena', 1);
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('divine_mercy_novena', 2);
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('divine_mercy_novena', 3);
+
+    await container.read(novenaProgressProvider.notifier).start('other_novena');
+    await container
+        .read(novenaProgressProvider.notifier)
+        .completeDay('other_novena', 1);
+
+    var progress = container.read(novenaProgressProvider).requireValue;
+    expect(progress.activeNovenaId, 'other_novena');
+    expect(progress.completedDaysFor('divine_mercy_novena'), {1, 2, 3});
+    expect(progress.completedDaysFor('other_novena'), {1});
+
+    await container
+        .read(novenaProgressProvider.notifier)
+        .start('divine_mercy_novena');
+
+    progress = container.read(novenaProgressProvider).requireValue;
+    expect(progress.activeNovenaId, 'divine_mercy_novena');
+    expect(progress.completedDaysFor('divine_mercy_novena'), {1, 2, 3});
+    expect(progress.nextDayFor('divine_mercy_novena', 9), 4);
+    expect(progress.completedDaysFor('other_novena'), {1});
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getStringList('completed_novena_days'), ['1', '2', '3']);
+    expect(
+      preferences.getString('novena_progress_by_id'),
+      contains('other_novena'),
+    );
+    container.dispose();
+  });
+
+  test('inactive novena can continue from its own saved progress', () {
+    final progress = NovenaProgress(
+      activeNovenaId: 'another_novena',
+      completedDaysByNovenaId: {
+        'divine_mercy_novena': {1, 2, 3},
+        'another_novena': {1},
+      },
+    );
+    final session = NovenaSession(novena: _testNovena, progress: progress);
+
+    expect(session.isActive, isFalse);
+    expect(session.hasStarted, isTrue);
+    expect(session.statusForDay(1), NovenaDayStatus.completed);
+    expect(session.statusForDay(4), NovenaDayStatus.current);
+    expect(session.canOpenDay(4), isTrue);
+    expect(session.canOpenDay(5), isFalse);
+  });
+
   test('novena completed days do not leak into inactive novenas', () {
     final progress = NovenaProgress(
       activeNovenaId: 'another_novena',
-      completedDays: {1, 2, 3},
+      completedDaysByNovenaId: {
+        'another_novena': {1, 2, 3},
+      },
     );
     final session = NovenaSession(novena: _testNovena, progress: progress);
 
