@@ -296,7 +296,7 @@ void main() {
 
     await tester.tap(find.text('Continue').first);
     await _pumpUntilFound(tester, find.text('Day 2'));
-    await tester.tap(find.text('Mark Complete'));
+    await tester.tap(find.text('Complete Day 2'));
     await _pumpUntilFound(tester, find.text('Day 3 of 9'));
 
     preferences = await SharedPreferences.getInstance();
