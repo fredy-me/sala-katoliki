@@ -254,6 +254,30 @@ void main() {
     expect(session.canOpenDay(1), isTrue);
     expect(session.canOpenDay(2), isFalse);
   });
+
+  test('completing the final day clears local progress for that novena', () async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer();
+
+    await container
+        .read(novenaProgressProvider.notifier)
+        .start('divine_mercy_novena');
+    for (var day = 1; day <= 9; day += 1) {
+      await container
+          .read(novenaProgressProvider.notifier)
+          .completeDay('divine_mercy_novena', day);
+    }
+
+    final progress = container.read(novenaProgressProvider).requireValue;
+    final preferences = await SharedPreferences.getInstance();
+
+    expect(progress.activeNovenaId, isNull);
+    expect(progress.completedDaysFor('divine_mercy_novena'), isEmpty);
+    expect(preferences.getString('active_novena_id'), isNull);
+    expect(preferences.getStringList('completed_novena_days'), isNull);
+    expect(preferences.getString('novena_progress_by_id'), isNull);
+    container.dispose();
+  });
 }
 
 const _testNovena = NovenaModel(
