@@ -129,9 +129,18 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
     final completedDays = current.completedDaysFor(novenaId);
     completedDaysByNovenaId[novenaId] = {...completedDays, day};
 
+    final completedNovena = day == _maxDaysForNovena(novenaId);
+    if (completedNovena) {
+      completedDaysByNovenaId.remove(novenaId);
+    }
+
     await _save(
       NovenaProgress(
-        activeNovenaId: novenaId,
+        activeNovenaId: completedNovena
+            ? (current.activeNovenaId == novenaId
+                  ? null
+                  : current.activeNovenaId)
+            : novenaId,
         completedDaysByNovenaId: completedDaysByNovenaId,
       ),
     );
