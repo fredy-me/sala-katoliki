@@ -70,6 +70,7 @@ class NovenaDetailScreen extends ConsumerWidget {
                     session: session,
                     strings: strings,
                     onStart: () => _start(context, ref, session),
+                    onContinue: () => _continue(context, ref, session),
                     onRestart: () => _restart(context, ref, session.novena.id),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -142,6 +143,17 @@ class NovenaDetailScreen extends ConsumerWidget {
     await ref.read(novenaProgressProvider.notifier).restart(novenaId);
     if (context.mounted) {
       context.push('/novenas/$novenaId/day/1');
+    }
+  }
+
+  Future<void> _continue(
+    BuildContext context,
+    WidgetRef ref,
+    NovenaSession session,
+  ) async {
+    await ref.read(novenaProgressProvider.notifier).start(session.novena.id);
+    if (context.mounted) {
+      context.push('/novenas/${session.novena.id}/day/${session.nextDay}');
     }
   }
 }
@@ -247,50 +259,97 @@ class _ProgressPanel extends StatelessWidget {
     required this.session,
     required this.strings,
     required this.onStart,
+    required this.onContinue,
     required this.onRestart,
   });
 
   final NovenaSession session;
   final _NovenaDetailStrings strings;
   final VoidCallback onStart;
+  final VoidCallback onContinue;
   final VoidCallback onRestart;
 
   @override
   Widget build(BuildContext context) {
-    final active = session.isActive;
     final started = session.hasStarted;
+    final nextDay = session.nextDay;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            started ? strings.progress : strings.notStarted,
-            style: Theme.of(context).textTheme.labelSmall,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      started ? strings.progress : strings.notStarted,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      started
+                          ? strings.dayProgress(nextDay, session.totalDays)
+                          : strings.startPrompt,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: colorScheme.primary),
+                ),
+                child: Text(
+                  '$nextDay',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            started
-                ? strings.dayProgress(session.nextDay, session.totalDays)
-                : strings.startPrompt,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.lg),
           LinearProgressIndicator(
             value: started ? session.completionRatio : 0,
-            minHeight: 8,
+            minHeight: 4,
             borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
           ),
           const SizedBox(height: AppSpacing.lg),
-          FilledButton(
-            onPressed: active ? onRestart : onStart,
-            child: Text(
-              active
-                  ? strings.restart
-                  : started
-                  ? strings.continueLabel
-                  : strings.start,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: started ? onContinue : onStart,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    started
+                        ? strings.continueDay(nextDay)
+                        : strings.start,
+                  ),
+                ),
+              ),
+              if (started) ...[
+                const SizedBox(width: AppSpacing.sm),
+                OutlinedButton(
+                  onPressed: onRestart,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(strings.restart),
+                ),
+              ],
+            ],
           ),
         ],
       ),
@@ -432,8 +491,9 @@ class _NovenaDetailStrings {
   String get notStarted => _sw ? 'Haijaanza' : 'Not Started';
   String get startPrompt => _sw ? 'Anza Siku ya 1' : 'Start Day 1';
   String get start => _sw ? 'Anza Novena' : 'Start Novena';
-  String get continueLabel => _sw ? 'Endelea' : 'Continue';
-  String get restart => _sw ? 'Anza Upya' : 'Restart';
+  String continueDay(int day) =>
+      _sw ? 'Endelea Siku ya $day' : 'Continue to Day $day';
+  String get restart => _sw ? 'Anza Novena Upya' : 'Restart';
   String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
   String dayProgress(int day, int totalDays) =>
       _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
