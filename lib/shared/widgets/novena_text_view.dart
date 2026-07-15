@@ -10,6 +10,7 @@ class NovenaTextView extends StatelessWidget {
     this.showContainer = true,
     this.fontScale = 1,
     this.allSaintsStyle = false,
+    this.holySpiritStyle = false,
     super.key,
   });
 
@@ -17,6 +18,7 @@ class NovenaTextView extends StatelessWidget {
   final bool showContainer;
   final double fontScale;
   final bool allSaintsStyle;
+  final bool holySpiritStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class NovenaTextView extends StatelessWidget {
             _AllSaintsNovenaParagraph(
               text: paragraphs[index],
               fontScale: fontScale,
+              holySpiritStyle: holySpiritStyle,
             )
           else
             _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
@@ -59,10 +62,12 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   const _AllSaintsNovenaParagraph({
     required this.text,
     required this.fontScale,
+    this.holySpiritStyle = false,
   });
 
   final String text;
   final double fontScale;
+  final bool holySpiritStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +83,8 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       return Text(displayText, style: style?.copyWith(fontStyle: FontStyle.italic));
     }
 
-    if (_isHeading(displayText)) {
+    if (_isHeading(displayText) ||
+        (holySpiritStyle && _isHolySpiritHeading(displayText))) {
       return Text(
         displayText.toUpperCase(),
         style: style?.copyWith(
@@ -114,10 +120,16 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   bool _isIntentions(String value) {
     final normalized = value.toLowerCase();
     return normalized.startsWith('(state your intentions') ||
-        normalized.startsWith('(mention your intentions') ||
+        normalized.startsWith('(mention your intention') ||
         normalized.startsWith('(taja nia zako') ||
+        normalized.startsWith('(taja nia yako') ||
         normalized.startsWith('"today bring to me') ||
-        normalized.startsWith('"leo uniletee');
+        normalized.startsWith('"leo uniletee') ||
+        normalized.startsWith('holy spirit we ask for the grace of [') ||
+        normalized.startsWith('roho mtakatifu, tunakuomba neema ya [') ||
+        normalized.contains('(mention your intention') ||
+        normalized.contains('(taja nia zako hapa)') ||
+        normalized.contains('(taja nia yako hapa)');
   }
 
   bool _isInvocation(String value) {
@@ -129,7 +141,9 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   bool _isHeading(String value) {
     final normalized = value.toLowerCase();
     if (normalized == 'pray the divine mercy chaplet.' ||
-        normalized == 'sali chapleti ya huruma ya mungu.') {
+        normalized == 'sali chapleti ya huruma ya mungu.' ||
+        normalized == 'the litany of trust' ||
+        normalized == 'litania ya tumaini') {
       return true;
     }
 
@@ -138,6 +152,29 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     }
     final lettersOnly = value.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
     return lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase();
+  }
+
+  bool _isHolySpiritHeading(String value) {
+    return const {
+      'charity',
+      'joy',
+      'peace',
+      'patience',
+      'kindness',
+      'faithfulness',
+      'gentleness',
+      'self-control',
+      'goodness',
+      'mapendo',
+      'furaha',
+      'amani',
+      'subira',
+      'ukarimu',
+      'uaminifu',
+      'upole',
+      'kujitawala',
+      'wema',
+    }.contains(value.toLowerCase());
   }
 }
 
