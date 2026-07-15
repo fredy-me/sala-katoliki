@@ -5,9 +5,14 @@ import '../../core/theme/app_spacing.dart';
 import 'app_card.dart';
 
 class NovenaTextView extends StatelessWidget {
-  const NovenaTextView({required this.text, super.key});
+  const NovenaTextView({
+    required this.text,
+    this.showContainer = true,
+    super.key,
+  });
 
   final String text;
+  final bool showContainer;
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +22,25 @@ class NovenaTextView extends StatelessWidget {
         .where((paragraph) => paragraph.isNotEmpty)
         .toList(growable: false);
 
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var index = 0; index < paragraphs.length; index += 1) ...[
+          _NovenaParagraph(text: paragraphs[index]),
+          if (index != paragraphs.length - 1)
+            const SizedBox(height: AppSpacing.lg),
+        ],
+      ],
+    );
+
+    if (!showContainer) {
+      return content;
+    }
+
     return AppCard(
       radius: AppSpacing.radiusXl,
       padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var index = 0; index < paragraphs.length; index += 1) ...[
-            _NovenaParagraph(text: paragraphs[index]),
-            if (index != paragraphs.length - 1)
-              const SizedBox(height: AppSpacing.lg),
-          ],
-        ],
-      ),
+      child: content,
     );
   }
 }
