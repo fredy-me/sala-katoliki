@@ -101,9 +101,6 @@ class NovenaDayScreen extends ConsumerWidget {
                     onComplete: completed
                         ? null
                         : () => _complete(context, ref, novena, dayContent.day),
-                    onSkip: day < novena.days.length
-                        ? () => _skip(context, ref, novena, dayContent.day)
-                        : null,
                   ),
                 ],
               );
@@ -126,17 +123,6 @@ class NovenaDayScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _skip(
-    BuildContext context,
-    WidgetRef ref,
-    NovenaModel novena,
-    int day,
-  ) async {
-    await ref.read(novenaProgressProvider.notifier).completeDay(novena.id, day);
-    if (context.mounted) {
-      context.go('/novenas/${novena.id}/day/${day + 1}');
-    }
-  }
 }
 
 class _TopBar extends StatelessWidget {
@@ -183,14 +169,12 @@ class _CompleteBar extends StatelessWidget {
     required this.completed,
     required this.strings,
     required this.onComplete,
-    required this.onSkip,
   });
 
   final int day;
   final bool completed;
   final _NovenaDayStrings strings;
   final VoidCallback? onComplete;
-  final VoidCallback? onSkip;
 
   @override
   Widget build(BuildContext context) {
@@ -203,43 +187,30 @@ class _CompleteBar extends StatelessWidget {
           AppSpacing.screenHorizontal,
           AppSpacing.lg,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 320),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: onComplete,
-                  icon: Icon(
-                    completed ? Icons.check : Icons.check_circle_outline,
-                    size: 18,
-                  ),
-                  label: Text(
-                    completed ? strings.completed : strings.completeDay(day),
-                  ),
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(0, 44),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                      vertical: AppSpacing.sm,
-                    ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: onComplete,
+                icon: Icon(
+                  completed ? Icons.check : Icons.check_circle_outline,
+                  size: 18,
+                ),
+                label: Text(
+                  completed ? strings.completed : strings.completeDay(day),
+                ),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, 44),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.sm,
                   ),
                 ),
               ),
             ),
-            if (onSkip != null)
-              TextButton(
-                onPressed: onSkip,
-                style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.only(top: AppSpacing.xs),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(strings.skipDay(day)),
-              ),
-          ],
+          ),
         ),
       ),
     );
@@ -257,7 +228,6 @@ class _NovenaDayStrings {
   String get back => _sw ? 'Rudi' : 'Back';
   String completeDay(int day) =>
       _sw ? 'Nimemaliza Siku $day' : 'Complete Day $day';
-  String skipDay(int day) => _sw ? 'Ruka Siku $day →' : 'Skip Day $day →';
   String get completed => _sw ? 'Imekamilika' : 'Completed';
   String dayLabel(int day) => _sw ? 'Siku ya $day' : 'Day $day';
   String get errorTitle => _sw ? 'Siku haijapakia' : 'Day did not load';
