@@ -3,6 +3,7 @@ abstract final class StorageKeys {
   static const themeMode = 'theme_mode';
   static const fontSize = 'font_size';
   static const favoritePrayerIds = 'favorite_prayer_ids';
+  static const favoriteNovenaIds = 'favorite_novena_ids';
   static const recentPrayerIds = 'recent_prayer_ids';
   static const reminderEnabled = 'reminder_enabled';
   static const reminderTime = 'reminder_time';
