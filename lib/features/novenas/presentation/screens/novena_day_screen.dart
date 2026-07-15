@@ -30,6 +30,7 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
 
   double _textScale = _defaultTextScale;
 
+  @override
   Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
     final strings = _NovenaDayStrings(languageCode);
@@ -153,8 +154,10 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                               novena.id == 'litany_of_trust_novena' ||
                               novena.id == 'sacred_heart_of_jesus_novena' ||
                               novena.id == 'st_aloysius_gonzaga_novena' ||
-                              novena.id == 'st_jude_novena',
+                              novena.id == 'st_jude_novena' ||
+                              novena.id == 'st_rita_novena',
                           holySpiritStyle: novena.id == 'holy_spirit_novena',
+                          stRitaStyle: novena.id == 'st_rita_novena',
                         ),
                       ],
                     ),
