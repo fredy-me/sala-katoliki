@@ -148,7 +148,12 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                           fontScale: _textScale,
                           allSaintsStyle: novena.id == 'all_saints_day_novena' ||
                               novena.id == 'divine_mercy_novena' ||
-                              novena.id == 'holy_family_novena',
+                              novena.id == 'holy_family_novena' ||
+                              novena.id == 'holy_spirit_novena' ||
+                              novena.id == 'litany_of_trust_novena' ||
+                              novena.id == 'sacred_heart_of_jesus_novena' ||
+                              novena.id == 'st_aloysius_gonzaga_novena',
+                          holySpiritStyle: novena.id == 'holy_spirit_novena',
                         ),
                       ],
                     ),
