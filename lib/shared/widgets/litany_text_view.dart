@@ -93,6 +93,16 @@ class _LitanyLine extends StatelessWidget {
         );
       }
 
+      if (isLambOfGod) {
+        return Text(
+          plainText,
+          style: scaledStyle?.copyWith(
+            height: 1.5,
+            fontStyle: FontStyle.italic,
+          ),
+        );
+      }
+
       if (_isStRitaHeading(plainText)) {
         return Text(
           plainText.toUpperCase(),
