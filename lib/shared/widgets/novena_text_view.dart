@@ -9,12 +9,14 @@ class NovenaTextView extends StatelessWidget {
     required this.text,
     this.showContainer = true,
     this.fontScale = 1,
+    this.allSaintsStyle = false,
     super.key,
   });
 
   final String text;
   final bool showContainer;
   final double fontScale;
+  final bool allSaintsStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,13 @@ class NovenaTextView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var index = 0; index < paragraphs.length; index += 1) ...[
-          _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
+          if (allSaintsStyle)
+            _AllSaintsNovenaParagraph(
+              text: paragraphs[index],
+              fontScale: fontScale,
+            )
+          else
+            _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
           if (index != paragraphs.length - 1)
             const SizedBox(height: AppSpacing.lg),
         ],
@@ -44,6 +52,83 @@ class NovenaTextView extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: content,
     );
+  }
+}
+
+class _AllSaintsNovenaParagraph extends StatelessWidget {
+  const _AllSaintsNovenaParagraph({
+    required this.text,
+    required this.fontScale,
+  });
+
+  final String text;
+  final double fontScale;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayText = text.replaceAll('*', '').trim();
+    final baseStyle = Theme.of(context).textTheme.bodyLarge;
+    final style = baseStyle?.copyWith(
+      fontSize: (baseStyle.fontSize ?? 16) * fontScale,
+      height: 1.55,
+      fontWeight: FontWeight.w400,
+    );
+
+    if (_isIntentions(displayText)) {
+      return Text(displayText, style: style?.copyWith(fontStyle: FontStyle.italic));
+    }
+
+    if (_isHeading(displayText)) {
+      return Text(
+        displayText,
+        style: style?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.4,
+        ),
+      );
+    }
+
+    final invocation = _isInvocation(displayText);
+    if (invocation) {
+      return Text.rich(
+        TextSpan(
+          style: style?.copyWith(fontWeight: FontWeight.w600),
+          children: [
+            TextSpan(
+              text: '+',
+              style: style?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            TextSpan(text: displayText),
+          ],
+        ),
+      );
+    }
+
+    return Text(displayText, style: style);
+  }
+
+  bool _isIntentions(String value) {
+    final normalized = value.toLowerCase();
+    return normalized.startsWith('(state your intentions') ||
+        normalized.startsWith('(taja nia zako');
+  }
+
+  bool _isInvocation(String value) {
+    final normalized = value.toLowerCase();
+    return normalized.startsWith('in the name of the father') ||
+        normalized.startsWith('kwa jina la baba');
+  }
+
+  bool _isHeading(String value) {
+    if (value.length < 4 || value.length > 48) {
+      return false;
+    }
+    final lettersOnly = value.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
+    return lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase();
   }
 }
 
