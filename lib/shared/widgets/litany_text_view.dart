@@ -87,6 +87,7 @@ class _LitanyLine extends StatelessWidget {
           plainText,
           style: scaledStyle?.copyWith(
             height: 1.5,
+            color: Theme.of(context).colorScheme.primary,
             fontStyle: FontStyle.italic,
           ),
         );
