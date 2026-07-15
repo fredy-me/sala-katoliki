@@ -12,6 +12,7 @@ class NovenaTextView extends StatelessWidget {
     this.allSaintsStyle = false,
     this.holySpiritStyle = false,
     this.stRitaStyle = false,
+    this.thanksgivingStyle = false,
     super.key,
   });
 
@@ -21,6 +22,7 @@ class NovenaTextView extends StatelessWidget {
   final bool allSaintsStyle;
   final bool holySpiritStyle;
   final bool stRitaStyle;
+  final bool thanksgivingStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,7 @@ class NovenaTextView extends StatelessWidget {
               fontScale: fontScale,
               holySpiritStyle: holySpiritStyle,
               stRitaStyle: stRitaStyle,
+              thanksgivingStyle: thanksgivingStyle,
             )
           else
             _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
@@ -67,12 +70,14 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     required this.fontScale,
     this.holySpiritStyle = false,
     this.stRitaStyle = false,
+    this.thanksgivingStyle = false,
   });
 
   final String text;
   final double fontScale;
   final bool holySpiritStyle;
   final bool stRitaStyle;
+  final bool thanksgivingStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +93,8 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       return Text(displayText, style: style?.copyWith(fontStyle: FontStyle.italic));
     }
 
-    if (_isHeading(displayText) ||
+    if ((thanksgivingStyle && _isThanksgivingHeading(text)) ||
+        _isHeading(displayText) ||
         (holySpiritStyle && _isHolySpiritHeading(displayText))) {
       return Text(
         displayText.toUpperCase(),
@@ -315,6 +321,11 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       'kujitawala',
       'wema',
     }.contains(value.toLowerCase());
+  }
+
+  bool _isThanksgivingHeading(String value) {
+    final trimmed = value.trim();
+    return trimmed.startsWith('*') && trimmed.endsWith('*');
   }
 }
 
