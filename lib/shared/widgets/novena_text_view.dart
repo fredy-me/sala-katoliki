@@ -114,6 +114,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   bool _isIntentions(String value) {
     final normalized = value.toLowerCase();
     return normalized.startsWith('(state your intentions') ||
+        normalized.startsWith('(mention your intentions') ||
         normalized.startsWith('(taja nia zako') ||
         normalized.startsWith('"today bring to me') ||
         normalized.startsWith('"leo uniletee');
