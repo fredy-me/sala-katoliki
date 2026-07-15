@@ -151,6 +151,10 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                             'holy_spirit_litany',
                             'sacred_head_of_jesus_litany',
                             'st_aloysius_gonzaga_litany',
+                            'st_jude_thaddeus_litany',
+                            'st_joseph_litany',
+                            'st_anthony_of_padua_litany_v1',
+                            'st_anthony_of_padua_litany_v2',
                           }.contains(prayer.id),
                         )
                       else
