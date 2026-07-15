@@ -174,6 +174,8 @@ class _LitanyLine extends StatelessWidget {
         normalized.startsWith('w:') ||
         normalized.startsWith('r.') ||
         normalized.startsWith('w.') ||
+        normalized.startsWith('all:') ||
+        normalized.startsWith('wote:') ||
         normalized.endsWith('utuombee') ||
         normalized.endsWith('pray for us');
   }
@@ -182,6 +184,8 @@ class _LitanyLine extends StatelessWidget {
     final normalized = line.toLowerCase();
     final lettersOnly = line.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
     return (lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase()) ||
+        normalized.startsWith('the litany of') ||
+        normalized.startsWith('litania ya') ||
         normalized.startsWith('tuombe') ||
         normalized.startsWith('let us pray');
   }
