@@ -8,11 +8,13 @@ class NovenaTextView extends StatelessWidget {
   const NovenaTextView({
     required this.text,
     this.showContainer = true,
+    this.fontScale = 1,
     super.key,
   });
 
   final String text;
   final bool showContainer;
+  final double fontScale;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class NovenaTextView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var index = 0; index < paragraphs.length; index += 1) ...[
-          _NovenaParagraph(text: paragraphs[index]),
+          _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
           if (index != paragraphs.length - 1)
             const SizedBox(height: AppSpacing.lg),
         ],
@@ -46,16 +48,20 @@ class NovenaTextView extends StatelessWidget {
 }
 
 class _NovenaParagraph extends StatelessWidget {
-  const _NovenaParagraph({required this.text});
+  const _NovenaParagraph({required this.text, required this.fontScale});
 
   final String text;
+  final double fontScale;
 
   @override
   Widget build(BuildContext context) {
     final displayText = _stripMarkers(text);
-    final style = Theme.of(
-      context,
-    ).textTheme.bodyLarge?.copyWith(height: 1.55, fontWeight: FontWeight.w400);
+    final baseStyle = Theme.of(context).textTheme.bodyLarge;
+    final style = baseStyle?.copyWith(
+      fontSize: (baseStyle.fontSize ?? 16) * fontScale,
+      height: 1.55,
+      fontWeight: FontWeight.w400,
+    );
     final openingSplit = _splitOpening(displayText);
     final requestSplit = _splitRequestPlaceholder(displayText);
     final headingSplit = _splitHeading(displayText);
@@ -66,7 +72,7 @@ class _NovenaParagraph extends StatelessWidget {
         children: [
           _HighlightedParagraph(text: openingSplit.$1, style: style),
           const SizedBox(height: AppSpacing.sm),
-          _NovenaParagraph(text: openingSplit.$2),
+          _NovenaParagraph(text: openingSplit.$2, fontScale: fontScale),
         ],
       );
     }
