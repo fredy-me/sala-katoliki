@@ -278,6 +278,29 @@ void main() {
     expect(preferences.getString('novena_progress_by_id'), isNull);
     container.dispose();
   });
+
+  test('Holy Family final day clears its local progress', () async {
+    SharedPreferences.setMockInitialValues({});
+    final container = ProviderContainer();
+
+    await container
+        .read(novenaProgressProvider.notifier)
+        .start('holy_family_novena');
+    for (var day = 1; day <= 9; day += 1) {
+      await container
+          .read(novenaProgressProvider.notifier)
+          .completeDay('holy_family_novena', day);
+    }
+
+    final progress = container.read(novenaProgressProvider).requireValue;
+    final preferences = await SharedPreferences.getInstance();
+
+    expect(progress.activeNovenaId, isNull);
+    expect(progress.completedDaysFor('holy_family_novena'), isEmpty);
+    expect(preferences.getString('active_novena_id'), isNull);
+    expect(preferences.getString('novena_progress_by_id'), isNull);
+    container.dispose();
+  });
 }
 
 const _testNovena = NovenaModel(
