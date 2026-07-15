@@ -493,7 +493,7 @@ class _NovenaDetailStrings {
   String get start => _sw ? 'Anza Novena' : 'Start Novena';
   String continueDay(int day) =>
       _sw ? 'Endelea Siku ya $day' : 'Continue to Day $day';
-  String get restart => _sw ? 'Anza Novena Upya' : 'Restart';
+  String get restart => _sw ? 'Anza Upya' : 'Restart';
   String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
   String dayProgress(int day, int totalDays) =>
       _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
