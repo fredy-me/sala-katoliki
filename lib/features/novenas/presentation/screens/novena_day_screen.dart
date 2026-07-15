@@ -147,7 +147,8 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                           showContainer: false,
                           fontScale: _textScale,
                           allSaintsStyle: novena.id == 'all_saints_day_novena' ||
-                              novena.id == 'divine_mercy_novena',
+                              novena.id == 'divine_mercy_novena' ||
+                              novena.id == 'holy_family_novena',
                         ),
                       ],
                     ),
