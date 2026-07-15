@@ -185,7 +185,9 @@ class _LitanyLine extends StatelessWidget {
     final lettersOnly = line.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
     return (lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase()) ||
         normalized.startsWith('the litany of') ||
+        normalized.startsWith('litany to') ||
         normalized.startsWith('litania ya') ||
+        normalized.startsWith('litania kwa') ||
         normalized.startsWith('tuombe') ||
         normalized.startsWith('let us pray');
   }
