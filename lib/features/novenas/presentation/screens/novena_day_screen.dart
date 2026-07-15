@@ -87,7 +87,10 @@ class NovenaDayScreen extends ConsumerWidget {
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         const SizedBox(height: AppSpacing.xl),
-                        NovenaTextView(text: dayContent.body),
+                        NovenaTextView(
+                          text: dayContent.body,
+                          showContainer: false,
+                        ),
                       ],
                     ),
                   ),
