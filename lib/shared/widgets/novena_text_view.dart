@@ -80,7 +80,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
 
     if (_isHeading(displayText)) {
       return Text(
-        displayText,
+        displayText.toUpperCase(),
         style: style?.copyWith(
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w800,
@@ -114,7 +114,9 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   bool _isIntentions(String value) {
     final normalized = value.toLowerCase();
     return normalized.startsWith('(state your intentions') ||
-        normalized.startsWith('(taja nia zako');
+        normalized.startsWith('(taja nia zako') ||
+        normalized.startsWith('"today bring to me') ||
+        normalized.startsWith('"leo uniletee');
   }
 
   bool _isInvocation(String value) {
@@ -124,6 +126,12 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   }
 
   bool _isHeading(String value) {
+    final normalized = value.toLowerCase();
+    if (normalized == 'pray the divine mercy chaplet.' ||
+        normalized == 'sali chapleti ya huruma ya mungu.') {
+      return true;
+    }
+
     if (value.length < 4 || value.length > 48) {
       return false;
     }
