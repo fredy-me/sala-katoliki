@@ -11,6 +11,7 @@ class NovenaTextView extends StatelessWidget {
     this.fontScale = 1,
     this.allSaintsStyle = false,
     this.holySpiritStyle = false,
+    this.stRitaStyle = false,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class NovenaTextView extends StatelessWidget {
   final double fontScale;
   final bool allSaintsStyle;
   final bool holySpiritStyle;
+  final bool stRitaStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class NovenaTextView extends StatelessWidget {
               text: paragraphs[index],
               fontScale: fontScale,
               holySpiritStyle: holySpiritStyle,
+              stRitaStyle: stRitaStyle,
             )
           else
             _NovenaParagraph(text: paragraphs[index], fontScale: fontScale),
@@ -63,11 +66,13 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     required this.text,
     required this.fontScale,
     this.holySpiritStyle = false,
+    this.stRitaStyle = false,
   });
 
   final String text;
   final double fontScale;
   final bool holySpiritStyle;
+  final bool stRitaStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +119,53 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       );
     }
 
+    if (stRitaStyle) {
+      return Text.rich(
+        TextSpan(
+          style: style,
+          children: _stRitaTextSpans(displayText, style),
+        ),
+      );
+    }
+
     return Text(displayText, style: style);
+  }
+
+  List<InlineSpan> _stRitaTextSpans(String value, TextStyle? style) {
+    final normalized = value.toLowerCase();
+    if (normalized.startsWith('r:') || normalized.startsWith('w:')) {
+      return [
+        TextSpan(text: value, style: style?.copyWith(fontStyle: FontStyle.italic)),
+      ];
+    }
+
+    final responsePattern = RegExp(
+      r'\((?:here make|hapa omba)[^)]+\)|You help the blind[^.]*restored to life\.|Unawasaidia vipofu[^.]*wanarudishiwa uhai\.',
+      caseSensitive: false,
+    );
+    final matches = responsePattern.allMatches(value).toList(growable: false);
+    if (matches.isEmpty) {
+      return [TextSpan(text: value)];
+    }
+
+    final spans = <InlineSpan>[];
+    var cursor = 0;
+    for (final match in matches) {
+      if (match.start > cursor) {
+        spans.add(TextSpan(text: value.substring(cursor, match.start)));
+      }
+      spans.add(
+        TextSpan(
+          text: match.group(0),
+          style: style?.copyWith(fontStyle: FontStyle.italic),
+        ),
+      );
+      cursor = match.end;
+    }
+    if (cursor < value.length) {
+      spans.add(TextSpan(text: value.substring(cursor)));
+    }
+    return spans;
   }
 
   bool _isIntentions(String value) {
