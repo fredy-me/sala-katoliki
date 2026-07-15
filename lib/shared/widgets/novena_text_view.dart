@@ -123,7 +123,14 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       return Text.rich(
         TextSpan(
           style: style,
-          children: _stRitaTextSpans(displayText, style),
+          children: _stRitaTextSpans(
+            displayText,
+            style,
+            style?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ),
       );
     }
@@ -131,12 +138,14 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     return Text(displayText, style: style);
   }
 
-  List<InlineSpan> _stRitaTextSpans(String value, TextStyle? style) {
+  List<InlineSpan> _stRitaTextSpans(
+    String value,
+    TextStyle? style,
+    TextStyle? responseStyle,
+  ) {
     final normalized = value.toLowerCase();
     if (normalized.startsWith('r:') || normalized.startsWith('w:')) {
-      return [
-        TextSpan(text: value, style: style?.copyWith(fontStyle: FontStyle.italic)),
-      ];
+      return [TextSpan(text: value, style: responseStyle)];
     }
 
     final responsePattern = RegExp(
@@ -157,7 +166,9 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       spans.add(
         TextSpan(
           text: match.group(0),
-          style: style?.copyWith(fontStyle: FontStyle.italic),
+          style: match.group(0)!.trimLeft().startsWith('(')
+              ? style?.copyWith(fontStyle: FontStyle.italic)
+              : responseStyle,
         ),
       );
       cursor = match.end;
