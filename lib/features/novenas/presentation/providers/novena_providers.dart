@@ -71,6 +71,54 @@ final novenaProgressProvider =
       NovenaProgressNotifier.new,
     );
 
+final favoriteNovenaIdsProvider =
+    AsyncNotifierProvider<FavoriteNovenaIdsNotifier, Set<String>>(
+      FavoriteNovenaIdsNotifier.new,
+    );
+
+class FavoriteNovenaIdsNotifier extends AsyncNotifier<Set<String>> {
+  @override
+  Future<Set<String>> build() async {
+    final preferences = await SharedPreferences.getInstance();
+    return preferences
+            .getStringList(StorageKeys.favoriteNovenaIds)
+            ?.where((id) => id.trim().isNotEmpty)
+            .toSet() ??
+        <String>{};
+  }
+
+  Future<void> toggle(String novenaId) async {
+    final current = state.asData?.value ?? await future;
+    final updated = Set<String>.from(current);
+
+    if (updated.contains(novenaId)) {
+      updated.remove(novenaId);
+    } else {
+      updated.add(novenaId);
+    }
+
+    await _save(updated);
+  }
+
+  Future<void> remove(String novenaId) async {
+    final current = state.asData?.value ?? await future;
+    if (!current.contains(novenaId)) {
+      return;
+    }
+
+    await _save(Set<String>.from(current)..remove(novenaId));
+  }
+
+  Future<void> _save(Set<String> ids) async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setStringList(
+      StorageKeys.favoriteNovenaIds,
+      ids.toList()..sort(),
+    );
+    state = AsyncData(ids);
+  }
+}
+
 class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
   @override
   Future<NovenaProgress> build() async {
