@@ -8,7 +8,7 @@ Phase 13 prepares the Android-first Sala Katoliki MVP for Google Play internal t
 - Android application ID: `com.busaradigital.salakatoliki`
 - Android namespace: `com.busaradigital.salakatoliki`
 - Version source: `pubspec.yaml`
-- Current version: `1.0.4+4`
+- Current version: `1.0.5+5`
 
 ## SDK Requirements
 
