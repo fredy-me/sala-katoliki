@@ -75,7 +75,8 @@ class _LitanyLine extends StatelessWidget {
     final isHighlighted = isMarked || _isHighlightedLine(normalized);
     final isLambOfGod =
         plainText.startsWith('Mwanakondoo') ||
-        plainText.startsWith('Lamb of God');
+        plainText.startsWith('Lamb of God') ||
+        plainText.startsWith('O Lamb of God');
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final scaledStyle = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
