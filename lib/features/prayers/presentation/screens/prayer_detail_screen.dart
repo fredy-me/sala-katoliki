@@ -143,10 +143,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         LitanyTextView(
                           text: prayer.text(activeLanguageCode),
                           fontScale: _textScale,
-                          showContainer: !const {
-                            'st_rita_litany',
-                            'bikira_maria_litany',
-                          }.contains(prayer.id),
+                          showContainer: false,
                         )
                       else
                         PrayerTextView(
