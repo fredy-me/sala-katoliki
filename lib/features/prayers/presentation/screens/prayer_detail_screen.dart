@@ -147,6 +147,8 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                           stRitaStyle: const {
                             'st_rita_litany',
                             'bikira_maria_litany',
+                            'divine_mercy_litany',
+                            'holy_spirit_litany',
                           }.contains(prayer.id),
                         )
                       else
