@@ -120,12 +120,55 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     }
 
     if (stRitaStyle) {
+      final prayerHeading = _splitStRitaPrayerHeading(displayText);
+      if (prayerHeading != null) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              prayerHeading.heading.toUpperCase(),
+              style: style?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.4,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(prayerHeading.body, style: style),
+          ],
+        );
+      }
+
+      final request = _splitStRitaRequest(displayText);
+      if (request != null) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (request.before.isNotEmpty) Text(request.before, style: style),
+            if (request.before.isNotEmpty) const SizedBox(height: AppSpacing.sm),
+            Text(
+              request.placeholder,
+              style: style?.copyWith(fontStyle: FontStyle.italic),
+            ),
+            if (request.after.isNotEmpty) const SizedBox(height: AppSpacing.sm),
+            if (request.after.isNotEmpty) Text(request.after, style: style),
+          ],
+        );
+      }
+
+      if (_isStRitaPrayerCount(displayText)) {
+        return Text(
+          displayText,
+          style: style?.copyWith(fontStyle: FontStyle.italic),
+        );
+      }
+
       return Text.rich(
         TextSpan(
           style: style,
           children: _stRitaTextSpans(
             displayText,
-            style,
+            style?.copyWith(fontStyle: FontStyle.italic),
             style?.copyWith(
               color: Theme.of(context).colorScheme.primary,
               fontStyle: FontStyle.italic,
@@ -140,7 +183,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
 
   List<InlineSpan> _stRitaTextSpans(
     String value,
-    TextStyle? style,
+    TextStyle? italicStyle,
     TextStyle? responseStyle,
   ) {
     final normalized = value.toLowerCase();
@@ -149,7 +192,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     }
 
     final responsePattern = RegExp(
-      r'\((?:here make|hapa omba)[^)]+\)|You help the blind[^.]*restored to life\.|Unawasaidia vipofu[^.]*wanarudishiwa uhai\.',
+      r'You help the blind[^.]*restored to life\.|Unawasaidia vipofu[^.]*wanarudishiwa uhai\.',
       caseSensitive: false,
     );
     final matches = responsePattern.allMatches(value).toList(growable: false);
@@ -166,9 +209,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       spans.add(
         TextSpan(
           text: match.group(0),
-          style: match.group(0)!.trimLeft().startsWith('(')
-              ? style?.copyWith(fontStyle: FontStyle.italic)
-              : responseStyle,
+          style: italicStyle,
         ),
       );
       cursor = match.end;
@@ -177,6 +218,43 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       spans.add(TextSpan(text: value.substring(cursor)));
     }
     return spans;
+  }
+
+  _StRitaTextSplit? _splitStRitaRequest(String value) {
+    final match = RegExp(
+      r'\((?:here make|hapa omba)[^)]+\)',
+      caseSensitive: false,
+    ).firstMatch(value);
+    if (match == null) {
+      return null;
+    }
+
+    return _StRitaTextSplit(
+      before: value.substring(0, match.start).trim(),
+      placeholder: match.group(0)!.trim(),
+      after: value.substring(match.end).trim(),
+    );
+  }
+
+  _StRitaPrayerHeading? _splitStRitaPrayerHeading(String value) {
+    final match = RegExp(
+      r'^(LET US PRAY:|TUOMBE:)\s*(.+)$',
+      caseSensitive: false,
+    ).firstMatch(value);
+    if (match == null) {
+      return null;
+    }
+
+    return _StRitaPrayerHeading(
+      heading: match.group(1)!.trim(),
+      body: match.group(2)!.trim(),
+    );
+  }
+
+  bool _isStRitaPrayerCount(String value) {
+    final normalized = value.toLowerCase();
+    return normalized.contains('our father (3)') ||
+        normalized.contains('baba yetu (3)');
   }
 
   bool _isIntentions(String value) {
@@ -238,6 +316,25 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       'wema',
     }.contains(value.toLowerCase());
   }
+}
+
+class _StRitaTextSplit {
+  const _StRitaTextSplit({
+    required this.before,
+    required this.placeholder,
+    required this.after,
+  });
+
+  final String before;
+  final String placeholder;
+  final String after;
+}
+
+class _StRitaPrayerHeading {
+  const _StRitaPrayerHeading({required this.heading, required this.body});
+
+  final String heading;
+  final String body;
 }
 
 class _NovenaParagraph extends StatelessWidget {
