@@ -141,7 +141,7 @@ void main() {
 
     expect(find.text('Our Father'), findsOneWidget);
     expect(find.text('missing_prayer'), findsNothing);
-    expect(find.text('1 saved prayers'), findsOneWidget);
+    expect(find.text('1 saved favorites'), findsOneWidget);
 
     await _pumpUntilFound(tester, find.byTooltip('Remove favorite'));
     await tester.tap(find.byTooltip('Remove favorite').first);
