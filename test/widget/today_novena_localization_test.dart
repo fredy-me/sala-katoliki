@@ -9,7 +9,7 @@ import 'package:salakatoliki/features/today/presentation/providers/today_provide
 import 'package:salakatoliki/features/today/presentation/screens/today_screen.dart';
 
 void main() {
-  testWidgets('shows the Kiswahili St. Rita title for an active novena', (
+  testWidgets('shows localized Kiswahili titles for active novenas', (
     tester,
   ) async {
     await _expectActiveNovenaTitle(
@@ -18,11 +18,10 @@ void main() {
       expectedTitle: 'Novena ya Mt. Rita wa Kashia',
       untranslatedTitle: 'St Rita Novena',
     );
-  });
 
-  testWidgets('shows the Kiswahili St. Jude title for an active novena', (
-    tester,
-  ) async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+
     await _expectActiveNovenaTitle(
       tester,
       novenaId: 'st_jude_novena',
@@ -44,7 +43,6 @@ Future<void> _expectActiveNovenaTitle(
       novenaId: {1},
     },
   );
-  addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
 
   await tester.pumpWidget(
     ProviderScope(
