@@ -11,13 +11,13 @@ class LegalLinks extends StatelessWidget {
   });
 
   static final Uri privacyPolicyUrl = Uri.parse(
-    'https://fredyme-99845.web.app/apps/sala-katoliki/privacy-policy.html',
+    'https://busaradigital.com/apps/sala-katoliki/privacy-policy',
   );
   static final Uri termsOfServiceUrl = Uri.parse(
-    'https://fredyme-99845.web.app/apps/sala-katoliki/terms-of-service.html',
+    'https://busaradigital.com/apps/sala-katoliki/terms-of-service',
   );
   static final Uri contentDisclaimerUrl = Uri.parse(
-    'https://fredyme-99845.web.app/apps/sala-katoliki/content-disclaimer.html',
+    'https://busaradigital.com/apps/sala-katoliki/content-disclaimer',
   );
 
   final String languageCode;
