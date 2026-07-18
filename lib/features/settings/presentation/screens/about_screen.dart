@@ -280,9 +280,7 @@ class _InfoCard extends StatelessWidget {
 class _DeveloperCard extends StatelessWidget {
   const _DeveloperCard({required this.strings});
 
-  static final _websiteUri = Uri.parse(
-    'https://busaradigital.ebuild.workers.dev/',
-  );
+  static final _websiteUri = Uri.parse('https://busaradigital.com/');
 
   final _AboutStrings strings;
 
@@ -348,7 +346,7 @@ class _ContactCard extends StatelessWidget {
 
   static const _whatsappNumber = '255696189401';
   static const _displayWhatsappNumber = '+255 696 189 401';
-  static const _email = 'busaraplatform@gmail.com';
+  static const _email = 'support@busaradigital.com';
 
   final _AboutStrings strings;
 
