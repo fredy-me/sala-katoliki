@@ -369,7 +369,12 @@ class _QuickActionGrid extends StatelessWidget {
         recentPrayer == null ? null : '/prayers/${recentPrayer!.id}',
         usePush: true,
       ),
-      _QuickAction(Icons.favorite_border, strings.favorites, '/favorites'),
+      _QuickAction(
+        Icons.favorite_border,
+        strings.favorites,
+        '/favorites',
+        usePush: true,
+      ),
       _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
     ];
 
