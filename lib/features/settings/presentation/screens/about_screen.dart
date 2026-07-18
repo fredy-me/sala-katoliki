@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/legal_links.dart';
@@ -200,9 +201,7 @@ class AboutScreen extends ConsumerWidget {
 }
 
 SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
-  return Theme.of(context).brightness == Brightness.dark
-      ? SystemUiOverlayStyle.light
-      : SystemUiOverlayStyle.dark;
+  return AppTheme.systemOverlayStyleFor(Theme.of(context).brightness);
 }
 
 class _AboutHeader extends StatelessWidget {
