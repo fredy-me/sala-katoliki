@@ -15,16 +15,16 @@ abstract final class AppTheme {
   static SystemUiOverlayStyle systemOverlayStyleFor(Brightness brightness) {
     if (brightness == Brightness.dark) {
       return const SystemUiOverlayStyle(
-        statusBarColor: AppColors.darkBackground,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.light,
       );
     }
 
     return const SystemUiOverlayStyle(
-      statusBarColor: AppColors.lightStatusBarCream,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.dark,
     );
   }
 
