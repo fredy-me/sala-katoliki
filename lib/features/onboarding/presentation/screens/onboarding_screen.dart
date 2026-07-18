@@ -128,12 +128,14 @@ class _AppMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return SalaLogoMark(
-      size: 66,
-      backgroundColor: colorScheme.surfaceContainerHighest,
-      borderColor: colorScheme.primary.withValues(alpha: 0.45),
+      size: 116,
+      padding: 4,
+      backgroundColor: colorScheme.surface,
+      borderColor: theme.textTheme.labelSmall?.color ?? colorScheme.secondary,
     );
   }
 }
