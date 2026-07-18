@@ -6,9 +6,19 @@ import 'app_spacing.dart';
 import 'app_text_styles.dart';
 
 abstract final class AppTheme {
+  static Color statusBarColorFor(Brightness brightness) {
+    return brightness == Brightness.dark
+        ? AppColors.darkBackground
+        : AppColors.lightStatusBarCream;
+  }
+
   static SystemUiOverlayStyle systemOverlayStyleFor(Brightness brightness) {
     if (brightness == Brightness.dark) {
-      return SystemUiOverlayStyle.light;
+      return const SystemUiOverlayStyle(
+        statusBarColor: AppColors.darkBackground,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      );
     }
 
     return const SystemUiOverlayStyle(
