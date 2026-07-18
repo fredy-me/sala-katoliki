@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../features/novenas/presentation/providers/novena_providers.dart';
 import '../../../../features/prayers/domain/entities/prayer_entity.dart';
 import '../../../../features/prayers/presentation/providers/prayer_providers.dart';
 import '../../../../shared/widgets/app_card.dart';
@@ -21,6 +22,12 @@ class TodayScreen extends ConsumerWidget {
     final strings = _TodayStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final localState = ref.watch(todayLocalStateProvider).asData?.value;
+    final activeNovenaTitle = ref
+        .watch(activeNovenaSessionProvider)
+        .asData
+        ?.value
+        ?.novena
+        .title;
     final recentIds =
         ref.watch(recentPrayerIdsProvider).asData?.value ?? const <String>[];
 
@@ -31,12 +38,14 @@ class TodayScreen extends ConsumerWidget {
         dailyPrayer: null,
         recentPrayer: null,
         localState: localState,
+        activeNovenaTitle: activeNovenaTitle,
       ),
       data: (prayers) => _TodayContent(
         strings: strings,
         dailyPrayer: _selectDailyPrayer(prayers),
         recentPrayer: _selectRecentPrayer(prayers, recentIds),
         localState: localState,
+        activeNovenaTitle: activeNovenaTitle,
       ),
     );
   }
@@ -76,12 +85,14 @@ class _TodayContent extends StatelessWidget {
     required this.dailyPrayer,
     required this.recentPrayer,
     required this.localState,
+    required this.activeNovenaTitle,
   });
 
   final _TodayStrings strings;
   final PrayerEntity? dailyPrayer;
   final PrayerEntity? recentPrayer;
   final TodayLocalState? localState;
+  final String? activeNovenaTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +121,11 @@ class _TodayContent extends StatelessWidget {
         if (state?.activeNovenaId == null)
           _NoActiveNovenaCard(strings: strings)
         else
-          _ContinueNovenaCard(strings: strings, state: state!),
+          _ContinueNovenaCard(
+            strings: strings,
+            state: state!,
+            title: activeNovenaTitle,
+          ),
         const SizedBox(height: AppSpacing.lg),
         _RosaryTodayCard(strings: strings),
         const SizedBox(height: AppSpacing.xl),
@@ -222,10 +237,15 @@ class _NoActiveNovenaCard extends StatelessWidget {
 }
 
 class _ContinueNovenaCard extends StatelessWidget {
-  const _ContinueNovenaCard({required this.strings, required this.state});
+  const _ContinueNovenaCard({
+    required this.strings,
+    required this.state,
+    required this.title,
+  });
 
   final _TodayStrings strings;
   final TodayLocalState state;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +267,7 @@ class _ContinueNovenaCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      _formatNovenaId(state.activeNovenaId!),
+                      title ?? strings.activeNovenaUnavailable,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
@@ -279,17 +299,6 @@ class _ContinueNovenaCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatNovenaId(String id) {
-    return id
-        .split('_')
-        .map(
-          (word) => word.isEmpty
-              ? word
-              : '${word[0].toUpperCase()}${word.substring(1)}',
-        )
-        .join(' ');
   }
 }
 
@@ -503,6 +512,8 @@ class _TodayStrings {
   String get prayNow => _sw ? 'Sali Sasa' : 'Pray Now';
   String get quickActions => _sw ? 'Fikia Haraka' : 'Quick Actions';
   String get continueNovena => _sw ? 'Endelea Novena' : 'Continue Novena';
+  String get activeNovenaUnavailable =>
+      _sw ? 'Novena haijapatikana' : 'Novena unavailable';
   String get continueAction => _sw ? 'Endelea' : 'Continue';
   String get novenas => _sw ? 'Novenas' : 'Novenas';
   String get noActiveNovena =>
