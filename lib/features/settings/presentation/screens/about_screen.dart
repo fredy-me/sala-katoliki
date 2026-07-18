@@ -344,9 +344,9 @@ class _DeveloperCard extends StatelessWidget {
 class _ContactCard extends StatelessWidget {
   const _ContactCard({required this.strings});
 
-  static const _whatsappNumber = '255696189401';
-  static const _displayWhatsappNumber = '+255 696 189 401';
   static const _email = 'support@busaradigital.com';
+  static const _playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.busaradigital.salakatoliki';
 
   final _AboutStrings strings;
 
@@ -362,10 +362,10 @@ class _ContactCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
 
           _ContactAction(
-            icon: Icons.chat_outlined,
-            title: 'WhatsApp',
-            subtitle: _displayWhatsappNumber,
-            onTap: () => _openWhatsApp(context, strings),
+            icon: Icons.star_outline,
+            title: strings.rateAppLabel,
+            subtitle: 'Google Play',
+            onTap: () => _openPlayStore(context, strings),
           ),
 
           Divider(height: AppSpacing.xl, color: _AboutColors.border(context)),
@@ -381,19 +381,16 @@ class _ContactCard extends StatelessWidget {
     );
   }
 
-  Future<void> _openWhatsApp(
+  Future<void> _openPlayStore(
     BuildContext context,
     _AboutStrings strings,
   ) async {
-    final appUri = Uri.parse('whatsapp://send?phone=$_whatsappNumber');
-    final webUri = Uri.parse('https://wa.me/$_whatsappNumber');
-
-    if (await _tryLaunch(appUri) || await _tryLaunch(webUri)) {
+    if (await _tryLaunch(Uri.parse(_playStoreUrl))) {
       return;
     }
 
     if (context.mounted) {
-      _showLaunchError(context, strings.contactOpenError);
+      _showLaunchError(context, strings.playStoreOpenError);
     }
   }
 
@@ -619,13 +616,16 @@ class _AboutStrings {
       ? 'Programu hii husaidia ibada binafsi na haibadilishi mafundisho rasmi ya Kanisa au mwongozo wa kichungaji.'
       : 'This app supports personal devotion and does not replace official Church teaching or pastoral guidance.';
 
-  String get contact => _sw ? 'Mawasiliano na Maoni' : 'Contact & Feedback';
+  String get contact => _sw ? 'Mawasiliano' : 'Contact';
 
   String get contactTitle => _sw ? 'Tupo hapa kusaidia' : 'We are here to help';
 
   String get contactBody => _sw
-      ? 'Kwa msaada, marekebisho ya maudhui au maoni, wasiliana nasi kupitia:'
-      : 'For support, content corrections or feedback, reach us via:';
+      ? 'Kwa msaada au marekebisho ya maudhui, wasiliana nasi kupitia:'
+      : 'For support or content corrections, reach us via:';
+
+  String get rateAppLabel =>
+      _sw ? 'Tathmini Sala Katoliki' : 'Rate Sala Katoliki';
 
   String get emailLabel => _sw ? 'Barua pepe' : 'Email';
 
@@ -636,4 +636,8 @@ class _AboutStrings {
   String get contactOpenError => _sw
       ? 'Imeshindikana kufungua programu ya mawasiliano.'
       : 'Could not open a contact app.';
+
+  String get playStoreOpenError => _sw
+      ? 'Imeshindikana kufungua Google Play.'
+      : 'Could not open Google Play.';
 }
