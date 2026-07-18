@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/legal_links.dart';
@@ -133,9 +134,7 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
-  return Theme.of(context).brightness == Brightness.dark
-      ? SystemUiOverlayStyle.light
-      : SystemUiOverlayStyle.dark;
+  return AppTheme.systemOverlayStyleFor(Theme.of(context).brightness);
 }
 
 class _SettingsHeader extends StatelessWidget {
