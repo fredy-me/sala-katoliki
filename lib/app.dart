@@ -26,6 +26,14 @@ class SalaKatolikiApp extends ConsumerWidget {
         final scale = settings?.fontScale ?? 1;
         final mediaQuery = MediaQuery.of(context);
         final isLightTheme = Theme.of(context).brightness == Brightness.light;
+        final appContent = MediaQuery(
+          data: mediaQuery.copyWith(textScaler: TextScaler.linear(scale)),
+          child: child ?? const SizedBox.shrink(),
+        );
+
+        if (!isLightTheme) {
+          return appContent;
+        }
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: AppTheme.systemOverlayStyleFor(
@@ -34,11 +42,8 @@ class SalaKatolikiApp extends ConsumerWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              MediaQuery(
-                data: mediaQuery.copyWith(textScaler: TextScaler.linear(scale)),
-                child: child ?? const SizedBox.shrink(),
-              ),
-              if (isLightTheme && mediaQuery.padding.top > 0)
+              appContent,
+              if (mediaQuery.padding.top > 0)
                 Positioned(
                   top: 0,
                   left: 0,
