@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 import 'app_spacing.dart';
 import 'app_text_styles.dart';
 
 abstract final class AppTheme {
+  static SystemUiOverlayStyle systemOverlayStyleFor(Brightness brightness) {
+    if (brightness == Brightness.dark) {
+      return SystemUiOverlayStyle.light;
+    }
+
+    return const SystemUiOverlayStyle(
+      statusBarColor: AppColors.lightStatusBarCream,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+    );
+  }
+
   static ThemeData get light {
     final scheme = ColorScheme.fromSeed(
       seedColor: AppColors.navy,
