@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'features/settings/presentation/providers/settings_providers.dart';
 import 'routes/app_router.dart';
@@ -22,11 +24,32 @@ class SalaKatolikiApp extends ConsumerWidget {
       routerConfig: router,
       builder: (context, child) {
         final scale = settings?.fontScale ?? 1;
-        return MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(scale)),
-          child: child ?? const SizedBox.shrink(),
+        final mediaQuery = MediaQuery.of(context);
+        final isLightTheme = Theme.of(context).brightness == Brightness.light;
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: AppTheme.systemOverlayStyleFor(
+            Theme.of(context).brightness,
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              MediaQuery(
+                data: mediaQuery.copyWith(textScaler: TextScaler.linear(scale)),
+                child: child ?? const SizedBox.shrink(),
+              ),
+              if (isLightTheme && mediaQuery.padding.top > 0)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: mediaQuery.padding.top,
+                  child: const IgnorePointer(
+                    child: ColoredBox(color: AppColors.lightStatusBarCream),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
