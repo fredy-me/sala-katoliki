@@ -44,105 +44,117 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     final favoriteNovenaIds =
         ref.watch(favoriteNovenaIdsProvider).asData?.value ?? <String>{};
 
-    return Scaffold(
-      body: SafeArea(
-        child: prayersState.when(
-          loading: () => AppLoading(label: strings.loading),
-          error: (error, stackTrace) => AppErrorState(
-            title: strings.loadErrorTitle,
-            message: strings.loadErrorMessage,
-            actionLabel: strings.back,
-            onAction: () => context.popOrGo('/today'),
-          ),
-          data: (prayers) {
-            final favorites = _favoritePrayers(prayers, favoriteIds);
-            final favoriteNovenas = _favoriteNovenas(
-              novenasState.asData?.value ?? const <NovenaModel>[],
-              favoriteNovenaIds,
-            );
-            final visible = favorites
-                .where((prayer) => prayer.matches(_query))
-                .toList(growable: false);
-            final visibleNovenas = favoriteNovenas
-                .where((novena) => _matchesNovena(novena, _query))
-                .toList(growable: false);
+    return PopScope(
+      canPop: context.canPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
 
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenHorizontal,
-                AppSpacing.lg,
-                AppSpacing.screenHorizontal,
-                AppSpacing.screenBottom,
-              ),
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      tooltip: strings.back,
-                      onPressed: () => context.popOrGo('/today'),
-                      icon: const Icon(Icons.arrow_back),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        strings.title,
-                        style: Theme.of(context).textTheme.headlineMedium,
+        context.popOrGo('/today');
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: prayersState.when(
+            loading: () => AppLoading(label: strings.loading),
+            error: (error, stackTrace) => AppErrorState(
+              title: strings.loadErrorTitle,
+              message: strings.loadErrorMessage,
+              actionLabel: strings.back,
+              onAction: () => context.popOrGo('/today'),
+            ),
+            data: (prayers) {
+              final favorites = _favoritePrayers(prayers, favoriteIds);
+              final favoriteNovenas = _favoriteNovenas(
+                novenasState.asData?.value ?? const <NovenaModel>[],
+                favoriteNovenaIds,
+              );
+              final visible = favorites
+                  .where((prayer) => prayer.matches(_query))
+                  .toList(growable: false);
+              final visibleNovenas = favoriteNovenas
+                  .where((novena) => _matchesNovena(novena, _query))
+                  .toList(growable: false);
+
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.lg,
+                  AppSpacing.screenHorizontal,
+                  AppSpacing.screenBottom,
+                ),
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        tooltip: strings.back,
+                        onPressed: () => context.popOrGo('/today'),
+                        icon: const Icon(Icons.arrow_back),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Padding(
-                  padding: const EdgeInsets.only(left: 56),
-                  child: Text(
-                    strings.subtitle(favorites.length + favoriteNovenas.length),
-                    style: Theme.of(context).textTheme.bodyMedium,
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          strings.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppSearchBar(
-                  controller: _searchController,
-                  hintText: strings.searchHint,
-                  onChanged: (value) => setState(() => _query = value),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                if (favorites.isEmpty && favoriteNovenas.isEmpty)
-                  AppEmptyState(
-                    title: strings.emptyTitle,
-                    message: strings.emptyMessage,
-                    icon: Icons.favorite_border,
-                  )
-                else if (visible.isEmpty && visibleNovenas.isEmpty)
-                  AppEmptyState(
-                    message: strings.noSearchResults,
-                    icon: Icons.search_off_outlined,
-                  )
-                else ...[
-                  for (final novena in visibleNovenas) ...[
-                    _FavoriteNovenaCard(
-                      novena: novena,
-                      onTap: () => context.push('/novenas/${novena.id}'),
-                      onRemove: () => ref
-                          .read(favoriteNovenaIdsProvider.notifier)
-                          .remove(novena.id),
+                  const SizedBox(height: AppSpacing.xs),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 56),
+                    child: Text(
+                      strings.subtitle(
+                        favorites.length + favoriteNovenas.length,
+                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                  ],
-                  for (final prayer in visible) ...[
-                    PrayerCard(
-                      prayer: prayer,
-                      isFavorite: true,
-                      onTap: () => context.push('/prayers/${prayer.id}'),
-                      onFavoriteToggle: () => ref
-                          .read(favoritePrayerIdsProvider.notifier)
-                          .remove(prayer.id),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  AppSearchBar(
+                    controller: _searchController,
+                    hintText: strings.searchHint,
+                    onChanged: (value) => setState(() => _query = value),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  if (favorites.isEmpty && favoriteNovenas.isEmpty)
+                    AppEmptyState(
+                      title: strings.emptyTitle,
+                      message: strings.emptyMessage,
+                      icon: Icons.favorite_border,
+                    )
+                  else if (visible.isEmpty && visibleNovenas.isEmpty)
+                    AppEmptyState(
+                      message: strings.noSearchResults,
+                      icon: Icons.search_off_outlined,
+                    )
+                  else ...[
+                    for (final novena in visibleNovenas) ...[
+                      _FavoriteNovenaCard(
+                        novena: novena,
+                        onTap: () => context.push('/novenas/${novena.id}'),
+                        onRemove: () => ref
+                            .read(favoriteNovenaIdsProvider.notifier)
+                            .remove(novena.id),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+                    for (final prayer in visible) ...[
+                      PrayerCard(
+                        prayer: prayer,
+                        isFavorite: true,
+                        onTap: () => context.push('/prayers/${prayer.id}'),
+                        onFavoriteToggle: () => ref
+                            .read(favoritePrayerIdsProvider.notifier)
+                            .remove(prayer.id),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
                   ],
                 ],
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
