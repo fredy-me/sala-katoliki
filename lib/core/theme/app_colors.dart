@@ -4,6 +4,7 @@ abstract final class AppColors {
   static const background = Color(0xFFFBF7EF);
   static const surface = Color(0xFFFFFFFF);
   static const surfaceWarm = Color(0xFFF3EDE2);
+  static const lightStatusBarCream = Color(0xFFD4C09D);
   static const navy = Color(0xFF233763);
   static const navyPressed = Color(0xFF1B2C52);
   static const gold = Color(0xFFD8A940);
