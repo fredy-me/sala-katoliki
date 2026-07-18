@@ -38,13 +38,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 AppSpacing.xl,
               ),
               children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.more_horiz,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
-                ),
                 const SizedBox(height: 34),
                 const _AppMark(),
                 const SizedBox(height: AppSpacing.section),
@@ -131,11 +124,13 @@ class _AppMark extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return SalaLogoMark(
-      size: 116,
-      padding: 4,
-      backgroundColor: colorScheme.surface,
-      borderColor: theme.textTheme.labelSmall?.color ?? colorScheme.secondary,
+    return Center(
+      child: SalaLogoMark(
+        size: 116,
+        padding: 4,
+        backgroundColor: colorScheme.surface,
+        borderColor: theme.textTheme.labelSmall?.color ?? colorScheme.secondary,
+      ),
     );
   }
 }
