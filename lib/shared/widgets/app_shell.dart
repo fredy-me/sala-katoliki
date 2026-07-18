@@ -34,7 +34,10 @@ class _AppShellState extends ConsumerState<AppShell> {
         _handleBack(strings.exitPrompt);
       },
       child: Scaffold(
-        body: SafeArea(bottom: false, child: widget.child),
+        body: SafeArea(
+          bottom: false,
+          child: NavigatorPopHandler(child: widget.child),
+        ),
         bottomNavigationBar: AppBottomNav(
           location: widget.location,
           destinations: [
