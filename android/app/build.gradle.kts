@@ -70,3 +70,10 @@ flutter {
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
+
+configurations.configureEach {
+    resolutionStrategy.force(
+        "androidx.test.espresso:espresso-core:3.7.0",
+        "androidx.test.espresso:espresso-idling-resource:3.7.0",
+    )
+}
