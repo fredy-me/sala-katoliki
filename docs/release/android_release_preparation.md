@@ -8,17 +8,17 @@ Phase 13 prepares the Android-first Sala Katoliki MVP for Google Play internal t
 - Android application ID: `com.busaradigital.salakatoliki`
 - Android namespace: `com.busaradigital.salakatoliki`
 - Version source: `pubspec.yaml`
-- Current version: `1.0.5+5`
+- Current version: `1.0.6+6`
 
 ## SDK Requirements
 
-Google Play requires new apps and app updates submitted after 31 August 2025 to target Android 15, API level 35, or higher.
+Google Play requires new apps and app updates submitted after 31 August 2026 to target Android 16, API level 36, or higher.
 
 Current Android configuration:
 
-- `minSdk`: `23`
-- `targetSdk`: `35`
-- `compileSdk`: Flutter toolchain default
+- `minSdk`: `24` (Android 7.0)
+- `targetSdk`: `36` (Android 16)
+- `compileSdk`: `36` (Flutter toolchain default)
 
 Before every store upload, verify the current Google Play target API policy and update `targetSdk` if the requirement has increased.
 
