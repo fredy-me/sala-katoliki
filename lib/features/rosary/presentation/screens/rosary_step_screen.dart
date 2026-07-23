@@ -81,24 +81,23 @@ class RosaryStepScreen extends ConsumerWidget {
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                             const SizedBox(height: AppSpacing.lg),
-                            LitanyTextView(text: step.prayer.text()),
+                            LitanyTextView(
+                              text: step.prayer.text(),
+                              showContainer: false,
+                            ),
                           ],
                         )
                       else
-                        AppCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                step.prayer.title(),
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.headlineMedium,
-                              ),
-                              const SizedBox(height: AppSpacing.lg),
-                              PrayerTextView(text: step.prayer.text()),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              step.prayer.title(),
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            PrayerTextView(text: step.prayer.text()),
+                          ],
                         ),
                     ],
                   ),
