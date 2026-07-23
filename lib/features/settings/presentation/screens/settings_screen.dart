@@ -802,7 +802,7 @@ class _SettingsStrings {
   String get light => _sw ? 'Mwanga' : 'Light';
   String get dark => _sw ? 'Giza' : 'Dark';
   String get information => _sw ? 'Taarifa' : 'Information';
-  String get about => _sw ? 'Kuhusu Sala Katoliki' : 'About Sala Katoliki';
+  String get about => _sw ? 'Kuhusu Programu' : 'About App';
   String get aboutSubtitle =>
       _sw ? 'Toleo, msanidi, na zaidi' : 'Version, developer and more';
   String get privacyTitle => _sw ? 'Faragha na Sera' : 'Privacy & Policies';
