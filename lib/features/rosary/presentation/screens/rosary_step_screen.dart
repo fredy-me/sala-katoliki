@@ -69,7 +69,7 @@ class RosaryStepScreen extends ConsumerWidget {
                       _BeadProgress(step: step),
                       const SizedBox(height: AppSpacing.xl),
                       if (step.mysteryTitle != null) ...[
-                        _MysteryMeditationCard(step: step),
+                        _MysteryMeditation(step: step),
                         const SizedBox(height: AppSpacing.lg),
                       ],
                       if (step.prayer.categoryId == 'litanies')
@@ -275,31 +275,56 @@ class _BeadProgress extends StatelessWidget {
   }
 }
 
-class _MysteryMeditationCard extends StatelessWidget {
-  const _MysteryMeditationCard({required this.step});
+class _MysteryMeditation extends StatelessWidget {
+  const _MysteryMeditation({required this.step});
 
   final RosaryStep step;
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      borderColor: AppColors.gold,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            step.mysteryTitle!,
-            style: Theme.of(context).textTheme.titleLarge,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ColonSeparatedText(
+          text: step.mysteryTitle!,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        if (step.mysteryVirtue != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _ColonSeparatedText(
+            text: step.mysteryVirtue!,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
-          if (step.mysteryVirtue != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              step.mysteryVirtue!,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ],
+        ],
+      ],
+    );
+  }
+}
+
+class _ColonSeparatedText extends StatelessWidget {
+  const _ColonSeparatedText({required this.text, required this.style});
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final colonIndex = text.indexOf(':');
+    if (colonIndex < 0) {
+      return Text(text, style: style);
+    }
+
+    return Text.rich(
+      TextSpan(
+        style: style,
+        children: [
+          TextSpan(text: text.substring(0, colonIndex + 1)),
+          TextSpan(
+            text: text.substring(colonIndex + 1),
+            style: style?.copyWith(fontStyle: FontStyle.italic),
+          ),
         ],
       ),
     );
