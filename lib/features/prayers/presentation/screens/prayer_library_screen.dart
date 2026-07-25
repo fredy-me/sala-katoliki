@@ -6,12 +6,14 @@ import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../data/models/category_model.dart';
+import '../../../../data/models/novena_model.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_search_bar.dart';
 import '../../domain/entities/prayer_entity.dart';
+import '../../../novenas/presentation/providers/novena_providers.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
 
@@ -46,6 +48,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
     final strings = _PrayerLibraryStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
+    final novenasState = ref.watch(novenasProvider);
     final favoriteIds =
         ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
@@ -56,9 +59,20 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
         onRetry: () => ref.invalidate(prayersProvider),
       ),
       data: (prayers) {
-        final filtered = prayers
-            .where((prayer) => prayer.matches(_query))
-            .toList(growable: false);
+        final novenas = novenasState.asData?.value ?? const <NovenaModel>[];
+        final scoredPrayers = prayers
+            .map((p) => (prayer: p, score: p.score(_query)))
+            .where((r) => r.score > 0)
+            .toList()
+          ..sort((a, b) => b.score.compareTo(a.score));
+        final scoredNovenas = novenas
+            .map((n) => (
+                  novena: n,
+                  score: scoreNovena(n.title, n.description, _query),
+                ))
+            .where((r) => r.score > 0)
+            .toList()
+          ..sort((a, b) => b.score.compareTo(a.score));
 
         return ListView(
           padding: const EdgeInsets.fromLTRB(
@@ -86,7 +100,8 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
             const SizedBox(height: AppSpacing.lg),
             if (_query.trim().isNotEmpty)
               _SearchResults(
-                prayers: filtered,
+                prayers: scoredPrayers,
+                novenas: scoredNovenas,
                 favoriteIds: favoriteIds,
                 emptyMessage: strings.noSearchResults,
                 onFavoriteToggle: (prayerId) => ref
@@ -118,19 +133,21 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
 class _SearchResults extends StatelessWidget {
   const _SearchResults({
     required this.prayers,
+    required this.novenas,
     required this.favoriteIds,
     required this.emptyMessage,
     required this.onFavoriteToggle,
   });
 
-  final List<PrayerEntity> prayers;
+  final List<({PrayerEntity prayer, int score})> prayers;
+  final List<({NovenaModel novena, int score})> novenas;
   final Set<String> favoriteIds;
   final String emptyMessage;
   final ValueChanged<String> onFavoriteToggle;
 
   @override
   Widget build(BuildContext context) {
-    if (prayers.isEmpty) {
+    if (prayers.isEmpty && novenas.isEmpty) {
       return AppEmptyState(
         message: emptyMessage,
         icon: Icons.search_off_outlined,
@@ -139,12 +156,46 @@ class _SearchResults extends StatelessWidget {
 
     return Column(
       children: [
-        for (final prayer in prayers) ...[
+        for (final novena in novenas) ...[
+          AppCard(
+            onTap: () => context.push('/novenas/${novena.novena.id}'),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_month_outlined),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        novena.novena.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        novena.novena.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+        for (final result in prayers) ...[
           PrayerCard(
-            prayer: prayer,
-            isFavorite: favoriteIds.contains(prayer.id),
-            onTap: () => context.push('/prayers/${prayer.id}'),
-            onFavoriteToggle: () => onFavoriteToggle(prayer.id),
+            prayer: result.prayer,
+            isFavorite: favoriteIds.contains(result.prayer.id),
+            onTap: () => context.push('/prayers/${result.prayer.id}'),
+            onFavoriteToggle: () => onFavoriteToggle(result.prayer.id),
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
