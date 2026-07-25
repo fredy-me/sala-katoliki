@@ -84,6 +84,8 @@ class RosaryStepScreen extends ConsumerWidget {
                             LitanyTextView(
                               text: step.prayer.text(),
                               showContainer: false,
+                              stRitaStyle:
+                                  step.prayer.id == 'bikira_maria_litany',
                             ),
                           ],
                         )
