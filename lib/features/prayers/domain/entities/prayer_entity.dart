@@ -14,6 +14,7 @@ class PrayerEntity {
     this.lastUpdated,
     this.isOfflineAvailable = true,
     this.isFavorite = false,
+    this.showTitle = true,
   });
 
   final String id;
@@ -30,6 +31,7 @@ class PrayerEntity {
   final DateTime? lastUpdated;
   final bool isOfflineAvailable;
   final bool isFavorite;
+  final bool showTitle;
 
   String title([String? languageCode]) {
     return localizedTitle;
