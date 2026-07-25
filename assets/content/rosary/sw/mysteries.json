@@ -1,5 +1,30 @@
 [
   {
+    "id": "divine_mercy_rosary",
+    "language": "sw",
+    "title": "Rozari ya Huruma ya Mungu",
+    "description": "Rozari ya Huruma ya Mungu.",
+    "days": [],
+    "mysteries": [],
+    "virtues": [],
+    "prayer_sequence": {
+      "intro": [
+        {"prayer_id": "our_father", "repeat_count": 1},
+        {"prayer_id": "hail_mary", "repeat_count": 3},
+        {"prayer_id": "apostles_creed", "repeat_count": 1},
+        {"prayer_id": "divine_mercy_prayer", "repeat_count": 1}
+      ],
+      "decade": [
+        {"prayer_id": "divine_mercy_small_bead_prayer", "repeat_count": 10},
+        {"prayer_id": "divine_mercy_prayer", "repeat_count": 1}
+      ],
+      "closing": [
+        {"prayer_id": "divine_mercy_closing_prayer", "repeat_count": 3},
+        {"prayer_id": "divine_mercy_litany", "repeat_count": 1}
+      ]
+    }
+  },
+  {
     "id": "joyful_mysteries",
     "language": "sw",
     "title": "Matendo ya Furaha",
