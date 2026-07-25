@@ -66,8 +66,10 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
                 .where((prayer) => _includesPrayer(prayer.categoryId))
                 .toList(growable: false);
             final visiblePrayers = categoryPrayers
-                .where((prayer) => prayer.matches(_query))
-                .toList(growable: false);
+                .map((p) => (prayer: p, score: p.score(_query)))
+                .where((r) => r.score > 0)
+                .toList()
+              ..sort((a, b) => b.score.compareTo(a.score));
             final categoryTitle =
                 categoriesState.asData?.value
                     .where((category) => category.id == widget.categoryId)
@@ -128,14 +130,14 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
                     icon: Icons.search_off_outlined,
                   )
                 else
-                  for (final prayer in visiblePrayers) ...[
+                  for (final result in visiblePrayers) ...[
                     PrayerCard(
-                      prayer: prayer,
-                      isFavorite: favoriteIds.contains(prayer.id),
-                      onTap: () => context.push('/prayers/${prayer.id}'),
+                      prayer: result.prayer,
+                      isFavorite: favoriteIds.contains(result.prayer.id),
+                      onTap: () => context.push('/prayers/${result.prayer.id}'),
                       onFavoriteToggle: () => ref
                           .read(favoritePrayerIdsProvider.notifier)
-                          .toggle(prayer.id),
+                          .toggle(result.prayer.id),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                   ],
