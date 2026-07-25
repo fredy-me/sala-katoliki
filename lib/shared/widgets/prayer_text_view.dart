@@ -55,20 +55,51 @@ class PrayerTextView extends StatelessWidget {
 
     for (var index = 0; index < lines.length; index += 1) {
       final line = lines[index];
-      spans.add(
-        TextSpan(
-          text: line,
-          style: _styleForLine(
-            line,
-            baseStyle: baseStyle,
-            responseStyle: responseStyle,
-            sectionStyle: sectionStyle,
-          ),
-        ),
+      final lineSpans = _buildLineSpans(
+        line,
+        baseStyle: baseStyle,
+        responseStyle: responseStyle,
+        sectionStyle: sectionStyle,
       );
+      spans.addAll(lineSpans);
       if (index != lines.length - 1) {
         spans.add(const TextSpan(text: '\n'));
       }
+    }
+
+    return spans;
+  }
+
+  List<TextSpan> _buildLineSpans(
+    String line, {
+    required TextStyle? baseStyle,
+    required TextStyle? responseStyle,
+    required TextStyle? sectionStyle,
+  }) {
+    final italicPattern = RegExp(r'_(.+?)_');
+    final matches = italicPattern.allMatches(line).toList();
+
+    if (matches.isEmpty) {
+      return [TextSpan(text: line, style: _styleForLine(line, baseStyle: baseStyle, responseStyle: responseStyle, sectionStyle: sectionStyle))];
+    }
+
+    final spans = <TextSpan>[];
+    var lastEnd = 0;
+    final lineStyle = _styleForLine(line, baseStyle: baseStyle, responseStyle: responseStyle, sectionStyle: sectionStyle);
+
+    for (final match in matches) {
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(text: line.substring(lastEnd, match.start), style: lineStyle));
+      }
+      spans.add(TextSpan(
+        text: match.group(1),
+        style: lineStyle?.copyWith(fontStyle: FontStyle.italic),
+      ));
+      lastEnd = match.end;
+    }
+
+    if (lastEnd < line.length) {
+      spans.add(TextSpan(text: line.substring(lastEnd), style: lineStyle));
     }
 
     return spans;
