@@ -212,6 +212,12 @@ class _CategoryGrid extends StatelessWidget {
               iconName: 'rosary',
               route: '/rosary',
             ),
+            _PrayerFeatureEntry(
+              title: strings.divineMercyRosary,
+              description: strings.divineMercyRosaryDescription,
+              iconName: 'heart',
+              route: '/rosary/step/divine_mercy_rosary',
+            ),
           ],
           languageCode: languageCode,
           strings: strings,
@@ -480,6 +486,11 @@ class _PrayerLibraryStrings {
   String get rosaryAndMysteriesDescription => _sw
       ? 'Sali rozari kwa hatua na mafumbo ya siku.'
       : 'Pray the rosary step by step with the mysteries of the day.';
+  String get divineMercyRosary =>
+      _sw ? 'Rozari ya Huruma ya Mungu' : 'Divine Mercy Rosary';
+  String get divineMercyRosaryDescription => _sw
+      ? 'Rozari ya Huruma ya Mungu bila mafumbo.'
+      : 'Divine Mercy Rosary without mysteries.';
   String get comingSoon => _sw ? 'Inaandaliwa' : 'Coming soon';
   String countLabel(int count) {
     if (_sw) {
