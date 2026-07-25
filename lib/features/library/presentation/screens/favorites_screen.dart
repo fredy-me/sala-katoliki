@@ -11,7 +11,7 @@ import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_search_bar.dart';
-import '../../../prayers/domain/entities/prayer_entity.dart';
+import '../../../prayers/domain/entities/prayer_entity.dart' show PrayerEntity, scoreNovena;
 import '../../../prayers/presentation/providers/prayer_providers.dart';
 import '../../../prayers/presentation/widgets/prayer_card.dart';
 import '../../../novenas/presentation/providers/novena_providers.dart';
@@ -70,11 +70,18 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 favoriteNovenaIds,
               );
               final visible = favorites
-                  .where((prayer) => prayer.matches(_query))
-                  .toList(growable: false);
+                  .map((p) => (prayer: p, score: p.score(_query)))
+                  .where((r) => r.score > 0)
+                  .toList()
+                ..sort((a, b) => b.score.compareTo(a.score));
               final visibleNovenas = favoriteNovenas
-                  .where((novena) => _matchesNovena(novena, _query))
-                  .toList(growable: false);
+                  .map((n) => (
+                        novena: n,
+                        score: scoreNovena(n.title, n.description, _query),
+                      ))
+                  .where((r) => r.score > 0)
+                  .toList()
+                ..sort((a, b) => b.score.compareTo(a.score));
 
               return ListView(
                 padding: const EdgeInsets.fromLTRB(
@@ -129,24 +136,24 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                       icon: Icons.search_off_outlined,
                     )
                   else ...[
-                    for (final novena in visibleNovenas) ...[
+                    for (final result in visibleNovenas) ...[
                       _FavoriteNovenaCard(
-                        novena: novena,
-                        onTap: () => context.push('/novenas/${novena.id}'),
+                        novena: result.novena,
+                        onTap: () => context.push('/novenas/${result.novena.id}'),
                         onRemove: () => ref
                             .read(favoriteNovenaIdsProvider.notifier)
-                            .remove(novena.id),
+                            .remove(result.novena.id),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                     ],
-                    for (final prayer in visible) ...[
+                    for (final result in visible) ...[
                       PrayerCard(
-                        prayer: prayer,
+                        prayer: result.prayer,
                         isFavorite: true,
-                        onTap: () => context.push('/prayers/${prayer.id}'),
+                        onTap: () => context.push('/prayers/${result.prayer.id}'),
                         onFavoriteToggle: () => ref
                             .read(favoritePrayerIdsProvider.notifier)
-                            .remove(prayer.id),
+                            .remove(result.prayer.id),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                     ],
@@ -176,13 +183,6 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     return novenas
         .where((novena) => favoriteIds.contains(novena.id))
         .toList(growable: false);
-  }
-
-  bool _matchesNovena(NovenaModel novena, String query) {
-    final normalized = query.trim().toLowerCase();
-    return normalized.isEmpty ||
-        novena.title.toLowerCase().contains(normalized) ||
-        novena.description.toLowerCase().contains(normalized);
   }
 }
 
