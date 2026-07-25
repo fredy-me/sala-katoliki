@@ -108,9 +108,131 @@ final rosaryStepsProvider = FutureProvider.family<List<RosaryStep>, String>((
     return const [];
   }
 
-  final rosaryPrayers = await ref.watch(rosaryPrayerSequenceProvider.future);
   final prayers = await ref.watch(prayersProvider.future);
   final prayersById = {for (final prayer in prayers) prayer.id: prayer};
+
+  if (mystery.hasCustomPrayerSequence) {
+    return _buildCustomSteps(mystery, prayersById);
+  }
+
+  final rosaryPrayers = await ref.watch(rosaryPrayerSequenceProvider.future);
+  return _buildStandardSteps(mystery, prayersById, rosaryPrayers);
+});
+
+List<RosaryStep> _buildCustomSteps(
+  RosaryMysteryModel mystery,
+  Map<String, PrayerEntity> prayersById,
+) {
+  final sequence = mystery.prayerSequence!;
+  final steps = <RosaryStep>[];
+
+  void addStep({
+    required String prayerId,
+    required int decadeIndex,
+    required int beadNumber,
+    required int beadTotal,
+    String? mysteryTitle,
+    String? mysteryVirtue,
+  }) {
+    final prayer = prayersById[prayerId];
+    if (prayer == null) return;
+    steps.add(
+      RosaryStep(
+        index: steps.length,
+        prayer: prayer,
+        decadeIndex: decadeIndex,
+        beadNumber: beadNumber,
+        beadTotal: beadTotal,
+        mysteryTitle: mysteryTitle,
+        mysteryVirtue: mysteryVirtue,
+      ),
+    );
+  }
+
+  // Build intro steps
+  var introBead = 0;
+  for (final step in sequence.intro) {
+    for (var repeat = 0; repeat < step.repeatCount; repeat += 1) {
+      introBead += 1;
+      addStep(
+        prayerId: step.prayerId,
+        decadeIndex: 0,
+        beadNumber: introBead,
+        beadTotal: 0, // Will be calculated after
+      );
+    }
+  }
+  // Update intro beadTotal
+  final introTotal = introBead;
+  for (var i = 0; i < introBead; i++) {
+    steps[i] = RosaryStep(
+      index: steps[i].index,
+      prayer: steps[i].prayer,
+      decadeIndex: 0,
+      beadNumber: steps[i].beadNumber,
+      beadTotal: introTotal,
+      mysteryTitle: steps[i].mysteryTitle,
+      mysteryVirtue: steps[i].mysteryVirtue,
+    );
+  }
+
+  // Build decade steps (no mysteries for custom sequences)
+  for (var decade = 0; decade < 5; decade += 1) {
+    var decadeBead = 0;
+    var decadeTotal = 0;
+    for (final step in sequence.decade) {
+      decadeTotal += step.repeatCount;
+    }
+
+    for (final step in sequence.decade) {
+      for (var repeat = 0; repeat < step.repeatCount; repeat += 1) {
+        decadeBead += 1;
+        addStep(
+          prayerId: step.prayerId,
+          decadeIndex: decade + 1,
+          beadNumber: decadeBead,
+          beadTotal: decadeTotal,
+        );
+      }
+    }
+  }
+
+  // Build closing steps
+  var closingBead = 0;
+  for (final step in sequence.closing) {
+    for (var repeat = 0; repeat < step.repeatCount; repeat += 1) {
+      closingBead += 1;
+      addStep(
+        prayerId: step.prayerId,
+        decadeIndex: 6,
+        beadNumber: closingBead,
+        beadTotal: 0, // Will be calculated after
+      );
+    }
+  }
+  // Update closing beadTotal
+  final closingTotal = closingBead;
+  final closingStart = steps.length - closingTotal;
+  for (var i = closingStart; i < steps.length; i++) {
+    steps[i] = RosaryStep(
+      index: steps[i].index,
+      prayer: steps[i].prayer,
+      decadeIndex: 6,
+      beadNumber: steps[i].beadNumber,
+      beadTotal: closingTotal,
+      mysteryTitle: steps[i].mysteryTitle,
+      mysteryVirtue: steps[i].mysteryVirtue,
+    );
+  }
+
+  return steps;
+}
+
+List<RosaryStep> _buildStandardSteps(
+  RosaryMysteryModel mystery,
+  Map<String, PrayerEntity> prayersById,
+  List<RosaryPrayerModel> rosaryPrayers,
+) {
   final prayerIds = {for (final prayerRef in rosaryPrayers) prayerRef.id};
   final apostlesCreed = prayerIds.contains('apostles_creed')
       ? prayersById['apostles_creed']
@@ -220,7 +342,7 @@ final rosaryStepsProvider = FutureProvider.family<List<RosaryStep>, String>((
   }
 
   return steps;
-});
+}
 
 class RosaryProgressNotifier extends AsyncNotifier<RosaryProgress?> {
   @override
