@@ -76,16 +76,17 @@ class RosaryStepScreen extends ConsumerWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              step.prayer.title(),
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
+                            if (step.prayer.showTitle) ...[
+                              Text(
+                                step.prayer.title(),
+                                style: Theme.of(context).textTheme.headlineMedium,
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                            ],
                             LitanyTextView(
                               text: step.prayer.text(),
                               showContainer: false,
-                              stRitaStyle:
-                                  step.prayer.id == 'bikira_maria_litany',
+                              stRitaStyle: true,
                             ),
                           ],
                         )
@@ -93,11 +94,13 @@ class RosaryStepScreen extends ConsumerWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              step.prayer.title(),
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
+                            if (step.prayer.showTitle) ...[
+                              Text(
+                                step.prayer.title(),
+                                style: Theme.of(context).textTheme.headlineMedium,
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                            ],
                             PrayerTextView(text: step.prayer.text()),
                           ],
                         ),
