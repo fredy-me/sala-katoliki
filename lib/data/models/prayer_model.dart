@@ -16,6 +16,7 @@ class PrayerModel extends PrayerEntity {
     super.lastUpdated,
     super.isOfflineAvailable,
     super.isFavorite,
+    super.showTitle,
   });
 
   factory PrayerModel.fromJson(
@@ -42,6 +43,7 @@ class PrayerModel extends PrayerEntity {
           : DateTime.parse(json['last_updated'] as String),
       isOfflineAvailable: json['is_offline_available'] as bool? ?? true,
       categoryTitles: categoryTitles,
+      showTitle: json['show_title'] as bool? ?? true,
     );
   }
 }
