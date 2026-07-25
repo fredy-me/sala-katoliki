@@ -66,7 +66,7 @@ class RosaryStepScreen extends ConsumerWidget {
                     children: [
                       _ProgressHeader(session: session, strings: strings),
                       const SizedBox(height: AppSpacing.xl),
-                      _BeadProgress(step: step),
+                      _BeadProgress(step: step, strings: strings),
                       const SizedBox(height: AppSpacing.xl),
                       if (step.mysteryTitle != null) ...[
                         _MysteryMeditation(step: step),
@@ -234,16 +234,17 @@ class _ProgressHeader extends StatelessWidget {
 }
 
 class _BeadProgress extends StatelessWidget {
-  const _BeadProgress({required this.step});
+  const _BeadProgress({required this.step, required this.strings});
 
   final RosaryStep step;
+  final _RosaryStepStrings strings;
 
   @override
   Widget build(BuildContext context) {
     final label = step.isIntro
         ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
         : step.decadeIndex > 5
-        ? 'Litania'
+        ? (step.prayer.categoryId == 'litanies' ? strings.litany : strings.closing)
         : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
@@ -418,6 +419,8 @@ class _RosaryStepStrings {
   String get pause => _sw ? 'Sitisha' : 'Pause';
   String get next => _sw ? 'Inayofuata' : 'Next';
   String get finish => _sw ? 'Maliza' : 'Finish';
+  String get litany => _sw ? 'Litania' : 'Litany';
+  String get closing => _sw ? 'Hitimisho' : 'Closing';
   String get errorTitle => _sw ? 'Rozari haijapakia' : 'Rosary did not load';
   String get errorMessage => _sw
       ? 'Kuna tatizo kusoma hatua za rozari.'
