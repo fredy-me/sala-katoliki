@@ -224,8 +224,17 @@ class _ContentValidator {
         );
         _string(mystery, 'title', 'rosary mystery $id');
         final mysteryItems = mystery['mysteries'];
-        if (mysteryItems is! List || mysteryItems.length != 5) {
-          _errors.add('Rosary mystery $id must contain exactly 5 mysteries.');
+        final hasPrayerSequence = mystery['prayer_sequence'] != null;
+        if (!hasPrayerSequence) {
+          if (mysteryItems is! List || mysteryItems.length != 5) {
+            _errors.add(
+              'Rosary mystery $id must contain exactly 5 mysteries.',
+            );
+          }
+        } else {
+          if (mysteryItems is! List || mysteryItems.isEmpty) {
+            // Custom prayer sequence Rosaries can have empty mysteries
+          }
         }
         if (mysteryLanguage != language) {
           _errors.add(
