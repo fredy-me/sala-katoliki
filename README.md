@@ -34,7 +34,7 @@ An open-source, offline-first Catholic prayer app for mobile. Built with Flutter
 
 The SRS PDF is the product source of truth:
 
-[docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf](docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf)
+[docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.md](docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.md)
 
 When project code, UI, or docs conflict with that SRS, the SRS wins unless Busara Digital approves a new written requirement.
 
