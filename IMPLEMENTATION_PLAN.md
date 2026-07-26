@@ -4,7 +4,7 @@
 
 This is the single implementation plan and status record for Sala Katoliki. It is the place to check what is in scope, what is implemented, what still needs verification, and what blocks release.
 
-The product authority remains [the MVP SRS](docs/srs/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf). If this plan conflicts with the SRS, the SRS wins until an approved requirement change is recorded here.
+The product authority remains [the MVP SRS](docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf). If this plan conflicts with the SRS, the SRS wins until an approved requirement change is recorded here.
 
 Reference specifications support this plan but do not maintain a second implementation roadmap:
 
