@@ -4,7 +4,7 @@ Flutter mobile application for Catholic prayers, built from the MVP SRS prepared
 
 The SRS PDF is the product source of truth:
 
-`/home/meck/Downloads/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf`
+[docs/srs/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf](docs/srs/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf)
 
 When project code, UI, or docs conflict with that SRS, the SRS wins unless Kilimanjaro Technology approves a new written requirement.
 
