@@ -1,10 +1,12 @@
 # UI Reference
 
-The UI reference folder for Sala Katoliki is:
+The UI reference screenshots for Sala Katoliki are stored in:
 
-`/home/meck/Desktop/Sala-picturesUI`
+[docs/screenshots/](screenshots/)
 
-It contains 13 PNG mobile screenshots. These screenshots are the visual implementation reference for the MVP, while the SRS remains the product and requirements source of truth.
+This directory contains 13 PNG mobile screenshots. These screenshots are the visual implementation reference for the MVP, while the SRS remains the product and requirements source of truth.
+
+For screenshot contribution guidelines, see [screenshots/README.md](screenshots/README.md).
 
 ## Referenced Screens
 
