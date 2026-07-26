@@ -6,6 +6,7 @@ An open-source, offline-first Catholic prayer app for mobile. Built with Flutter
 [![Flutter](https://img.shields.io/badge/Flutter-%5E3.10.4-blue.svg)](https://flutter.dev)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Issues Welcome](https://img.shields.io/badge/Issues-welcome-orange.svg)](../../issues)
+[![Google Play](https://img.shields.io/badge/Google%20Play-Get%20App-green.svg)](https://play.google.com/store/apps/details?id=com.busaradigital.salakatoliki)
 
 ## What It Does
 
@@ -22,7 +23,12 @@ An open-source, offline-first Catholic prayer app for mobile. Built with Flutter
 
 ## Project Status
 
-**Published on Google Play Store.** Core MVP features are implemented and functional. Android release is live. iOS support is pending. See [Implementation Plan](IMPLEMENTATION_PLAN.md) for detailed status.
+**Live on Google Play Store** - [Download App](https://play.google.com/store/apps/details?id=com.busaradigital.salakatoliki)
+
+- 6 releases shipped
+- Android production ready
+- iOS support planned
+- See [Implementation Plan](IMPLEMENTATION_PLAN.md) for detailed status
 
 ## Source of Truth
 
@@ -32,9 +38,9 @@ The SRS PDF is the product source of truth:
 
 When project code, UI, or docs conflict with that SRS, the SRS wins unless Busara Digital approves a new written requirement.
 
-## MVP Scope
+## Features
 
-### Required Features
+### Core Features
 
 - First-launch language selection for English and Kiswahili.
 - Today screen with quick access to prayer actions.
@@ -44,9 +50,9 @@ When project code, UI, or docs conflict with that SRS, the SRS wins unless Busar
 - Favorites, offline search, and local reminder notifications.
 - Settings for language, reminders, font size, theme, About, and content sources.
 - Local bundled content architecture that allows adding prayers without creating new screens.
-- Android-first release, with iOS supported by the Flutter codebase.
+- Android release, with iOS planned.
 
-### Out of Scope
+### Not Included (By Design)
 
 - Authentication, registration, profiles, cloud sync, or social sign-in.
 - Backend CMS, admin dashboard, real-time content management, or remote database dependency.
@@ -268,12 +274,12 @@ We welcome contributions from developers and content creators. Please read our c
 | [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) | Requirement-status and acceptance record |
 | [Screenshots](docs/screenshots/) | App screenshots for documentation |
 
-## Acceptance Baseline
+## Quality Standards
 
-Before MVP release, the app must satisfy these SRS acceptance areas:
+The app meets these standards:
 
 - First-time user selects English or Kiswahili and reaches Today.
-- Airplane-mode user can open prayers, search, use Rosary, use novenas, and view favorites.
+- Offline user can open prayers, search, use Rosary, use novenas, and view favorites.
 - Common prayers are loaded from JSON, not hard-coded in screen files.
 - A new valid prayer JSON entry appears without creating a new screen.
 - Favorites and settings persist after restart.
@@ -281,7 +287,7 @@ Before MVP release, the app must satisfy these SRS acceptance areas:
 - Novena can start, mark days complete, and continue from Today.
 - Daily reminder can be scheduled, changed, and disabled.
 - App does not request camera, microphone, contacts, location, NFC, Bluetooth, or biometric permissions.
-- Store readiness includes support link, privacy policy link, content attribution, and minimal permission declaration.
+- Store listing includes support link, privacy policy link, content attribution, and minimal permission declaration.
 
 ## License
 
