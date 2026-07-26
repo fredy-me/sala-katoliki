@@ -19,7 +19,7 @@ Sala Katoliki is an offline-first Catholic prayer app for personal devotion. The
 
 ## Contact And Policy
 
-- Developer: Kilimanjaro Technology
+- Developer: Busara Digital
 - Support email: to be confirmed before public release
 - Website: to be confirmed before public release
 - Privacy policy: to be confirmed before public release
