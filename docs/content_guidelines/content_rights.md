@@ -4,7 +4,7 @@ Content rights are release-blocking for Sala Katoliki.
 
 ## Rule
 
-Do not publish copyrighted Bible translations, Mass readings, devotional books, or other protected text unless Kilimanjaro Technology has written permission or valid licensing.
+Do not publish copyrighted Bible translations, Mass readings, devotional books, or other protected text unless Busara Digital has written permission or valid licensing.
 
 ## Required Metadata
 
