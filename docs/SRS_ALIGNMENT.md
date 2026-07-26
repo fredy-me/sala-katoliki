@@ -1,10 +1,10 @@
 # SRS Alignment
 
-This repository follows the Sala Katoliki / Catholic Prayer Mobile Application MVP SRS prepared for Kilimanjaro Technology.
+This repository follows the Sala Katoliki / Catholic Prayer Mobile Application MVP SRS prepared for Busara Digital.
 
 Source document:
 
-`/home/meck/Downloads/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf`
+[docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf](srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf)
 
 Document metadata:
 
