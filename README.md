@@ -1,5 +1,18 @@
 # Sala Katoliki / Catholic Prayer
 
+An open-source, offline-first Catholic prayer app for mobile. Built with Flutter for Catholic faithful worldwide who want free, ad-free, privacy-respecting prayer resources.
+
+**What it does:**
+- Daily prayers, Rosary, and novenas in English and Kiswahili
+- Works completely offline - no internet required
+- Favorites, search, and daily reminders
+- No accounts, no ads, no tracking, no data collection
+
+**Why it exists:**
+- Free and open-source under GPL-3.0
+- Privacy-first: all data stays on your device
+- Community-driven: contributions welcome from developers and content creators
+
 Flutter mobile application for Catholic prayers, built from the MVP SRS prepared for Kilimanjaro Technology on 2 June 2026.
 
 The SRS PDF is the product source of truth:
@@ -80,7 +93,7 @@ The app is a Flutter project using:
 - Riverpod for explicit, testable state.
 - Go Router for navigation.
 - Shared preferences for local persistence.
-- Easy localization for UI language support.
+- Riverpod-based localization for English and Kiswahili UI support.
 - Bundled assets under `assets/`.
 
 Some folders and placeholders may still reflect earlier planning. During restructuring, keep only SRS-approved MVP modules in the main implementation path.
