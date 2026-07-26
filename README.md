@@ -2,30 +2,39 @@
 
 An open-source, offline-first Catholic prayer app for mobile. Built with Flutter for Catholic faithful worldwide who want free, ad-free, privacy-respecting prayer resources.
 
-**What it does:**
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Flutter](https://img.shields.io/badge/Flutter-%5E3.10.4-blue.svg)](https://flutter.dev)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Issues Welcome](https://img.shields.io/badge/Issues-welcome-orange.svg)](../../issues)
+
+## What It Does
+
 - Daily prayers, Rosary, and novenas in English and Kiswahili
 - Works completely offline - no internet required
 - Favorites, search, and daily reminders
 - No accounts, no ads, no tracking, no data collection
 
-**Why it exists:**
+## Why It Exists
+
 - Free and open-source under GPL-3.0
 - Privacy-first: all data stays on your device
 - Community-driven: contributions welcome from developers and content creators
 
-Flutter mobile application for Catholic prayers, built from the MVP SRS prepared for Kilimanjaro Technology on 2 June 2026.
+## Project Status
+
+**Published on Google Play Store.** Core MVP features are implemented and functional. Android release is live. iOS support is pending. See [Implementation Plan](IMPLEMENTATION_PLAN.md) for detailed status.
+
+## Source of Truth
 
 The SRS PDF is the product source of truth:
 
-[docs/srs/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf](docs/srs/Sala_Katoliki_MVP_SRS_Kilimanjaro_Technology.pdf)
+[docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf](docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf)
 
-When project code, UI, or docs conflict with that SRS, the SRS wins unless Kilimanjaro Technology approves a new written requirement.
+When project code, UI, or docs conflict with that SRS, the SRS wins unless Busara Digital approves a new written requirement.
 
 ## MVP Scope
 
-Sala Katoliki is an offline-first mobile app. It must provide essential Catholic prayer resources without account registration, backend dependency, paid features, or media-heavy content.
-
-Required MVP features:
+### Required Features
 
 - First-launch language selection for English and Kiswahili.
 - Today screen with quick access to prayer actions.
@@ -37,7 +46,7 @@ Required MVP features:
 - Local bundled content architecture that allows adding prayers without creating new screens.
 - Android-first release, with iOS supported by the Flutter codebase.
 
-Explicitly out of scope for the MVP:
+### Out of Scope
 
 - Authentication, registration, profiles, cloud sync, or social sign-in.
 - Backend CMS, admin dashboard, real-time content management, or remote database dependency.
@@ -46,26 +55,16 @@ Explicitly out of scope for the MVP:
 - Community posting, chat, comments, AI spiritual advisor, or pastoral automation.
 - Copyrighted Bible translations, Mass readings, or devotional material without written permission or valid licensing.
 
-## Documentation
+## Tech Stack
 
-- [SRS Alignment](docs/SRS_ALIGNMENT.md) defines how this repository follows the PDF.
-- [Architecture](docs/ARCHITECTURE.md) documents the required clean, offline-first architecture.
-- [Folder Structure](docs/architecture/folder_structure.md) is the canonical target structure for the Flutter app, assets, tests, tools, and docs.
-- [Content Architecture](docs/architecture/content_architecture.md) explains how bundled prayer, Rosary, novena, and metadata content is organized.
-- [Data Models](docs/architecture/data_models.md) documents the MVP JSON models.
-- [Content Guide](docs/CONTENT_GUIDE.md) documents the bundled JSON content model and contribution rules.
-- [Adding New Prayers](docs/content_guidelines/adding_new_prayers.md) documents the no-hard-coded-prayer workflow.
-- [Translation Guidelines](docs/content_guidelines/translation_guidelines.md) documents English/Kiswahili content rules.
-- [Content Rights](docs/content_guidelines/content_rights.md) documents source and licensing requirements.
-- [UI Reference](docs/ui_reference.md) documents the provided mobile screenshots and visual rules.
-- [Implementation Plan](IMPLEMENTATION_PLAN.md) is the single roadmap, implementation-status, acceptance, and release-readiness record.
-- [Android Release Preparation](docs/release/android_release_preparation.md) documents Android package identity, signing, permissions, and AAB preparation.
-- [Google Play Internal Testing Metadata](docs/release/google_play_internal_testing.md) contains the first internal testing listing draft.
-- [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) links to the canonical requirement-status and acceptance record.
+- **Framework:** Flutter and Dart
+- **State Management:** Riverpod
+- **Navigation:** Go Router
+- **Local Storage:** SharedPreferences
+- **Localization:** Riverpod-based (English/Kiswahili)
+- **Content:** Bundled JSON under `assets/`
 
-## Architecture Summary
-
-The MVP architecture is intentionally simple:
+## Architecture
 
 ```text
 Flutter Mobile App
@@ -76,33 +75,18 @@ Flutter Mobile App
   -> Local Device Storage
 ```
 
-Required separation:
+### Layer Separation
 
 - `presentation`: screens, widgets, view state, navigation.
 - `domain`: app entities, repository contracts, use cases, business rules.
 - `data/content`: JSON models, content loading, repositories.
 - `local storage`: preferences, favorites, Rosary progress, novena progress, reminders.
 
-Future remote content support may be added behind repository interfaces, but the MVP must work fully without internet.
+Future remote content support may be added behind repository interfaces, but the app must work fully without internet.
 
-## Current Project Shape
-
-The app is a Flutter project using:
-
-- Flutter and Dart.
-- Riverpod for explicit, testable state.
-- Go Router for navigation.
-- Shared preferences for local persistence.
-- Riverpod-based localization for English and Kiswahili UI support.
-- Bundled assets under `assets/`.
-
-Some folders and placeholders may still reflect earlier planning. During restructuring, keep only SRS-approved MVP modules in the main implementation path.
-
-## Content Rules
+## Content Structure
 
 Prayer, category, Rosary, and novena content must be data-driven. UI screens must not hard-code one screen per prayer.
-
-Current content structure:
 
 ```text
 assets/
@@ -158,7 +142,7 @@ assets/
       app_info.json
 ```
 
-Required prayer fields:
+### Required Prayer Fields
 
 - `id`
 - `type`
@@ -167,7 +151,7 @@ Required prayer fields:
 - `title`
 - `body`
 
-Recommended metadata:
+### Recommended Metadata
 
 - `description`
 - `tags`
@@ -249,6 +233,41 @@ Run with environment:
 flutter run --dart-define-from-file=.env
 ```
 
+## Contributing
+
+We welcome contributions from developers and content creators. Please read our contributing guidelines before submitting any changes.
+
+- [Contributing Guide](CONTRIBUTING.md) - How to contribute code, content, or documentation
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards and expectations
+- [License](LICENSE) - GPL-3.0 license terms
+
+### Quick Start for Contributors
+
+1. Read the [Contributing Guide](CONTRIBUTING.md)
+2. Open an issue describing your change
+3. Wait for maintainer approval
+4. Create a branch and make your changes
+5. Submit a pull request
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/ARCHITECTURE.md) | Clean, offline-first architecture documentation |
+| [Folder Structure](docs/architecture/folder_structure.md) | Target structure for the Flutter app |
+| [Content Architecture](docs/architecture/content_architecture.md) | How bundled content is organized |
+| [Data Models](docs/architecture/data_models.md) | MVP JSON models |
+| [Content Guide](docs/CONTENT_GUIDE.md) | Bundled JSON content model and rules |
+| [Adding New Prayers](docs/content_guidelines/adding_new_prayers.md) | No-hard-coded-prayer workflow |
+| [Translation Guidelines](docs/content_guidelines/translation_guidelines.md) | English/Kiswahili content rules |
+| [Content Rights](docs/content_guidelines/content_rights.md) | Source and licensing requirements |
+| [UI Reference](docs/ui_reference.md) | Mobile screenshots and visual rules |
+| [Implementation Plan](IMPLEMENTATION_PLAN.md) | Roadmap and release-readiness record |
+| [Android Release](docs/release/android_release_preparation.md) | Package identity, signing, permissions |
+| [Google Play Metadata](docs/release/google_play_internal_testing.md) | Internal testing listing draft |
+| [Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md) | Requirement-status and acceptance record |
+| [Screenshots](docs/screenshots/) | App screenshots for documentation |
+
 ## Acceptance Baseline
 
 Before MVP release, the app must satisfy these SRS acceptance areas:
@@ -263,3 +282,11 @@ Before MVP release, the app must satisfy these SRS acceptance areas:
 - Daily reminder can be scheduled, changed, and disabled.
 - App does not request camera, microphone, contacts, location, NFC, Bluetooth, or biometric permissions.
 - Store readiness includes support link, privacy policy link, content attribution, and minimal permission declaration.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+## Developed By
+
+**Busara Digital**
