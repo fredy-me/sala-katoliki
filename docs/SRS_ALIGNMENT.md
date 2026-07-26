@@ -4,7 +4,7 @@ This repository follows the Sala Katoliki / Catholic Prayer Mobile Application M
 
 Source document:
 
-[docs/srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf](srs/Sala_Katoliki_MVP_SRS_Busara_Digital.pdf)
+[Sala_Katoliki_MVP_SRS_Busara_Digital.md](srs/Sala_Katoliki_MVP_SRS_Busara_Digital.md)
 
 Document metadata:
 
