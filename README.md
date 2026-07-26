@@ -89,7 +89,7 @@ Some folders and placeholders may still reflect earlier planning. During restruc
 
 Prayer, category, Rosary, and novena content must be data-driven. UI screens must not hard-code one screen per prayer.
 
-Recommended content structure from the SRS:
+Current content structure:
 
 ```text
 assets/
@@ -99,21 +99,39 @@ assets/
     prayers/
       en/
         common_prayers.json
-        marian_prayers.json
         confession_prayers.json
-        mass_prayers.json
         divine_mercy.json
+        litanies.json
+        marian_prayers.json
+        mass_prayers.json
       sw/
         common_prayers.json
-        marian_prayers.json
         confession_prayers.json
-        mass_prayers.json
         divine_mercy.json
+        litanies.json
+        marian_prayers.json
+        mass_prayers.json
     novenas/
       en/
+        all_saints_day_novena.json
         divine_mercy_novena.json
+        holy_family_novena.json
+        holy_spirit_novena.json
+        litany_of_trust_novena.json
+        sacred_heart_of_jesus_novena.json
+        st_aloysius_gonzaga_novena.json
+        st_jude_novena.json
+        st_rita_novena.json
       sw/
+        all_saints_day_novena.json
         divine_mercy_novena.json
+        holy_family_novena.json
+        holy_spirit_novena.json
+        litany_of_trust_novena.json
+        sacred_heart_of_jesus_novena.json
+        st_aloysius_gonzaga_novena.json
+        st_jude_novena.json
+        st_rita_novena.json
     rosary/
       en/
         rosary_prayers.json
@@ -147,28 +165,75 @@ Recommended metadata:
 
 ## Development
 
-Install dependencies:
+### Prerequisites
+
+- Flutter SDK ^3.10.4
+- Dart SDK ^3.10.4
+- Android Studio or VS Code with Flutter extension
+- Physical Android device or emulator (API level 24+)
+
+### Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/salakatoliki.git
+cd salakatoliki
+
+# Install dependencies
 flutter pub get
+
+# Copy environment template (optional, for development)
+cp .env.example .env
 ```
 
-Analyze:
+### Development Commands
+
+| Command | Description | When to Run |
+|---------|-------------|-------------|
+| `flutter pub get` | Install dependencies | After cloning or changing pubspec.yaml |
+| `flutter analyze` | Check code for issues | Before every commit |
+| `flutter test` | Run unit and widget tests | Before every commit |
+| `flutter run` | Run app on connected device | During development |
+| `dart run tools/validate_content.dart` | Validate bundled JSON content | After changing content files |
+| `flutter test integration_test/` | Run integration tests | Before submitting PR |
+
+### Content Validation
+
+After modifying any JSON content files, always run the validator:
 
 ```bash
-flutter analyze
+dart run tools/validate_content.dart
 ```
 
-Run tests:
+This checks:
+- All required fields are present
+- Language codes are valid (en/sw)
+- No duplicate IDs exist
+- Category references are valid
+- Novena day counts are correct
+- Rosary step references are valid
+
+### Integration Tests
+
+Run integration tests on a connected device or emulator:
 
 ```bash
-flutter test
+flutter test integration_test/
 ```
 
-Run app:
+### Environment Configuration
+
+The app supports environment configuration via `.env` files. See `.env.example` for available options:
 
 ```bash
-flutter run
+cp .env.example .env
+# Edit .env with your local values
+```
+
+Run with environment:
+
+```bash
+flutter run --dart-define-from-file=.env
 ```
 
 ## Acceptance Baseline
