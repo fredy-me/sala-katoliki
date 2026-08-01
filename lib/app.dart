@@ -43,22 +43,8 @@ class _SalaKatolikiAppState extends ConsumerState<SalaKatolikiApp> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_handleColdStartFromWidget());
+      ref.read(prayersProvider);
     });
-  }
-
-  Future<void> _handleColdStartFromWidget() async {
-    try {
-      final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-      if (uri != null && mounted) {
-        ref.read(appRouterProvider).go(uri.toString());
-      }
-      if (mounted) {
-        ref.read(prayersProvider);
-      }
-    } on MissingPluginException {
-      // Widget support is unavailable (for example, in tests).
-    }
   }
 
   @override
