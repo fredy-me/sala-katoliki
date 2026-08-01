@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_description"
+    android:initialLayout="@layout/sala_widget_layout"
+    android:minWidth="110dp"
+    android:minHeight="40dp"
+    android:previewImage="@drawable/sala_widget_preview"
+    android:previewLayout="@layout/sala_widget_layout"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="4"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />
