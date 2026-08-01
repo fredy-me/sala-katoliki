@@ -42,21 +42,12 @@ class TodayScreen extends ConsumerWidget {
       ),
       data: (prayers) => _TodayContent(
         strings: strings,
-        dailyPrayer: _selectDailyPrayer(prayers),
+        dailyPrayer: dailyPrayerFor(prayers),
         recentPrayer: _selectRecentPrayer(prayers, recentIds),
         localState: localState,
         activeNovenaTitle: activeNovenaTitle,
       ),
     );
-  }
-
-  PrayerEntity? _selectDailyPrayer(List<PrayerEntity> prayers) {
-    if (prayers.isEmpty) {
-      return null;
-    }
-
-    final dayIndex = DateTime.now().day % prayers.length;
-    return prayers[dayIndex];
   }
 
   PrayerEntity? _selectRecentPrayer(
