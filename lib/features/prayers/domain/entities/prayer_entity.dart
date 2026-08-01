@@ -102,6 +102,14 @@ class PrayerEntity {
   }
 }
 
+/// Returns the prayer featured for today, rotating deterministically by day.
+PrayerEntity? dailyPrayerFor(List<PrayerEntity> prayers) {
+  if (prayers.isEmpty) {
+    return null;
+  }
+  return prayers[DateTime.now().day % prayers.length];
+}
+
 /// Scores a novena against a search query.
 /// Returns 0 if no match.
 int scoreNovena(String title, String description, String query) {
