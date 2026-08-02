@@ -180,5 +180,19 @@
     "version": 1,
     "last_updated": "2026-06-13",
     "is_offline_available": true
+  },
+  {
+    "id": "sacred_heart_of_jesus_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "en",
+    "title": "Litany of the Sacred Heart of Jesus",
+    "description": "A litany honoring the Sacred Heart of Jesus, source of God's infinite love and mercy.",
+    "body": "Litany of the Sacred Heart of Jesus\n\nLord, have mercy.\nLord, have mercy.\nChrist, have mercy.\nChrist, have mercy.\nLord, have mercy.\nLord, have mercy.\nChrist, hear us.\nChrist, graciously hear us.\n\nResponse: Have mercy on us\n\nGod the Father of Heaven,\nGod the Son, Redeemer of the world,\nGod the Holy Ghost,\nHoly Trinity, One God,\n\nHeart of Jesus, Son of the Eternal Father,\nHeart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother,\nHeart of Jesus, substantially united to the Word of God,\nHeart of Jesus, of infinite majesty,\nHeart of Jesus, holy Temple of God,\nHeart of Jesus, Tabernacle of the Most High,\nHeart of Jesus, House of God and Gate of Heaven,\nHeart of Jesus, burning furnace of charity,\nHeart of Jesus, vessel of justice and love,\nHeart of Jesus, full of goodness and love,\nHeart of Jesus, abyss of all virtues,\nHeart of Jesus, most worthy of all praise,\nHeart of Jesus, King and centre of all hearts,\nHeart of Jesus, wherein are all the treasures of wisdom and knowledge,\nHeart of Jesus, wherein dwelleth all the fullness of the Godhead,\nHeart of Jesus, in whom the Father is well pleased,\nHeart of Jesus, of whose fullness we have all received,\nHeart of Jesus, desire of the everlasting hills,\nHeart of Jesus, patient and most merciful,\nHeart of Jesus, enriching all who invoke Thee,\nHeart of Jesus, fountain of life and holiness,\nHeart of Jesus, propitiation for our sins,\nHeart of Jesus, loaded down with opprobrium,\nHeart of Jesus, bruised for our offences,\nHeart of Jesus, obedient unto death,\nHeart of Jesus, pierced with a lance,\nHeart of Jesus, source of all consolation,\nHeart of Jesus, our life and resurrection,\nHeart of Jesus, our peace and reconciliation,\nHeart of Jesus, victim for sinners,\nHeart of Jesus, salvation of those who hope in Thee,\nHeart of Jesus, hope of those who die in Thee,\nHeart of Jesus, delight of all the Saints,\n\nResponse: Have mercy on us\n\nLamb of God, who takest away the sins of the world,\nLamb of God, who takest away the sins of the world,\nLamb of God, who takest away the sins of the world,\n\nV. Jesus, meek and humble of Heart,\nR. Make our hearts like unto Thine.\n\nLET US PRAY.\n\nO Almighty and Eternal God, look upon the Heart of Thy most beloved Son, and upon the honour and satisfaction which He hath offered unto Thee on behalf of sinners; and being well pleased, grant pardon to those who implore Thy mercy, through the same Thy Son Jesus Christ, Who liveth and reigneth with Thee in the unity of the Holy Ghost, God, world without end. Amen.",
+    "tags": ["litany", "sacred heart", "jesus", "love", "mercy"],
+    "source": "Litany.txt",
+    "version": 1,
+    "last_updated": "2026-08-02",
+    "is_offline_available": true
   }
 ]
