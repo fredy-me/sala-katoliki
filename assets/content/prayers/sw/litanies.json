@@ -180,5 +180,19 @@
     "version": 1,
     "last_updated": "2026-06-13",
     "is_offline_available": true
+  },
+  {
+    "id": "sacred_heart_of_jesus_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "sw",
+    "title": "Litania ya Moyo Mtakatifu wa Yesu",
+    "description": "Litania ya kuheshimu Moyo Mtakatifu wa Yesu, ishara ya upendo wa Mungu kwa wanadamu.",
+    "body": "Litania ya Moyo Mtakatifu wa Yesu\n\nBwana utuhurumie.\nBwana utuhurumie.\nKristo utuhurumie.\nKristo utuhurumie.\nBwana utuhurumie.\nBwana utuhurumie.\nKristo utusikie.\nKristo utusikilize.\n\nKiitikio: Utuhurumie\n\nBaba wa mbinguni, Mungu,\nMwana, Mkombozi wa dunia, Mungu,\nRoho Mtakatifu, Mungu,\nUtatu Mtakatifu, Mungu mmoja,\nMoyo wa Yesu, Mwana wa Baba wa Milele,\nMoyo wa Yesu, uliotungwa na Roho Mtakatifu,\nMwilini mwa Mama Bikira,\nMoyo wa Yesu, ulioungana na Neno wa Mungu,\nMoyo wa Yesu, ulio na utukufu pasipo mfano,\nMoyo wa Yesu, hekalu takatifu la Mungu,\nMoyo wa Yesu, hema la Yule Aliye juu,\nMoyo wa Yesu, nyumba ya Mungu na mlango wa mbinguni,\nMoyo wa Yesu, tanuru yenye kuwaka mapendo,\nMoyo wa Yesu, chombo cha haki na upendo,\nMoyo wa Yesu, unaojaa upendo na wema,\nMoyo wa Yesu, kilindi cha fadhila zote,\nMoyo wa Yesu, unaostahili sifa zote,\nMoyo wa Yesu, unaotawala mioyo yote,\nMoyo wa Yesu, zinamokaa hazina za hekima na elimu,\nMoyo wa Yesu, mnamokuwa utimilifu wote wa Mungu,\nMoyo wa Yesu, uliopendelewa kabisa na Mungu Baba,\nMoyo wa Yesu, uliotueneza maziada yake,\nMoyo wa Yesu, Mtamaniwa wa vilima vya milele,\nMoyo wa Yesu, wenye uvumilivu, na huruma nyingi,\nMoyo wa Yesu, tajiri kwa wote wenye kukuomba,\nMoyo wa Yesu, chemchemi za uzima na utakatifu,\nMoyo wa Yesu, malipo kwa dhambi zetu,\nMoyo wa Yesu, ulioshibishwa matusi,\nMoyo wa Yesu, uliovunjika kwa sababu ya ubaya wetu,\nMoyo wa Yesu, uliotii mpaka kufa,\nMoyo wa Yesu, uliochomwa kwa mkuki,\nMoyo wa Yesu, chemchemi ya faraja zote,\nMoyo wa Yesu, uzima na ufufuo wetu,\nMoyo wa Yesu, amani na upatanisho wetu,\nMoyo wa Yesu, sadaka ya wakosefu,\nMoyo wa Yesu, mnamokuwa wokovu wao wenye kukutumainia,\nMoyo wa Yesu, matumaini yao wenye kuzimia kwako,\nMoyo wa Yesu, sababu ya furaha kwa Watakatifu wote,\n\nKiitikio: Utuhurumie\n\nMwanakondoo wa Mungu, uondoaye dhambi za ulimwengu,\nMwanakondoo wa Mungu, uondoaye dhambi za ulimwengu,\nMwanakondoo wa Mungu, uondoaye dhambi za ulimwengu,\n\nK. Yesu, mwenye Moyo mpole na mnyenyekevu,\nW. Uzilinganishe nyonyo zetu na moyo wako.\n\nTUOMBE\n\nEe Mungu, mwenyezi wa milele, uuangalie Moyo wa mwanao mpendelevu, pia na heshima na malipo aliyokutolea kwa ajili ya wenye dhambi, uridhike, uwaondolee wenye kuomba toba kwako kwa njia ya huyo Mwanao Yesu Kristo, anayeishi na kutawala nawe pamoja na Roho Mtakatifu, Mungu, milele na milele. Amina.",
+    "tags": ["litania", "moyo mtakatifu", "yesu", "upendo", "huruma"],
+    "source": "Litany.txt",
+    "version": 1,
+    "last_updated": "2026-08-02",
+    "is_offline_available": true
   }
 ]
