@@ -110,12 +110,10 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                       ),
                       children: [
                         Text(
-                          strings.dayProgress(
-                            widget.day,
-                            novena.days.length,
-                          ),
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(letterSpacing: 1.6),
+                          strings.dayProgress(widget.day, novena.days.length),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.labelMedium?.copyWith(letterSpacing: 1.6),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
@@ -147,7 +145,8 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                           text: dayContent.body,
                           showContainer: false,
                           fontScale: _textScale,
-                          allSaintsStyle: novena.id == 'all_saints_day_novena' ||
+                          allSaintsStyle:
+                              novena.id == 'all_saints_day_novena' ||
                               novena.id == 'divine_mercy_novena' ||
                               novena.id == 'holy_family_novena' ||
                               novena.id == 'holy_spirit_novena' ||
@@ -255,7 +254,6 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
       );
     });
   }
-
 }
 
 class _ActionBar extends StatelessWidget {
@@ -300,9 +298,7 @@ class _ActionBar extends StatelessWidget {
           IconButton(
             tooltip: isFavorite ? strings.removeFavorite : strings.saveFavorite,
             onPressed: onToggleFavorite,
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-            ),
+            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
           ),
         ],
       ),
