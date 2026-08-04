@@ -19,10 +19,7 @@ class RosaryPrayerModel {
 }
 
 class RosaryPrayerStep {
-  const RosaryPrayerStep({
-    required this.prayerId,
-    required this.repeatCount,
-  });
+  const RosaryPrayerStep({required this.prayerId, required this.repeatCount});
 
   final String prayerId;
   final int repeatCount;
@@ -46,19 +43,23 @@ class RosaryPrayerSequence {
   final List<RosaryPrayerStep> decade;
   final List<RosaryPrayerStep> closing;
 
-  bool get hasCustomSequence => intro.isNotEmpty || decade.isNotEmpty || closing.isNotEmpty;
+  bool get hasCustomSequence =>
+      intro.isNotEmpty || decade.isNotEmpty || closing.isNotEmpty;
 
   factory RosaryPrayerSequence.fromJson(Map<String, dynamic> json) {
     return RosaryPrayerSequence(
-      intro: (json['intro'] as List<dynamic>?)
+      intro:
+          (json['intro'] as List<dynamic>?)
               ?.map((e) => RosaryPrayerStep.fromJson(e as Map<String, dynamic>))
               .toList(growable: false) ??
           const [],
-      decade: (json['decade'] as List<dynamic>?)
+      decade:
+          (json['decade'] as List<dynamic>?)
               ?.map((e) => RosaryPrayerStep.fromJson(e as Map<String, dynamic>))
               .toList(growable: false) ??
           const [],
-      closing: (json['closing'] as List<dynamic>?)
+      closing:
+          (json['closing'] as List<dynamic>?)
               ?.map((e) => RosaryPrayerStep.fromJson(e as Map<String, dynamic>))
               .toList(growable: false) ??
           const [],
@@ -87,7 +88,8 @@ class RosaryMysteryModel {
   final List<String> virtues;
   final RosaryPrayerSequence? prayerSequence;
 
-  bool get hasCustomPrayerSequence => prayerSequence?.hasCustomSequence ?? false;
+  bool get hasCustomPrayerSequence =>
+      prayerSequence?.hasCustomSequence ?? false;
 
   factory RosaryMysteryModel.fromJson(Map<String, dynamic> json) {
     return RosaryMysteryModel(
@@ -100,7 +102,8 @@ class RosaryMysteryModel {
       virtues: (json['virtues'] as List<dynamic>?)?.cast<String>() ?? const [],
       prayerSequence: json['prayer_sequence'] != null
           ? RosaryPrayerSequence.fromJson(
-              json['prayer_sequence'] as Map<String, dynamic>)
+              json['prayer_sequence'] as Map<String, dynamic>,
+            )
           : null,
     );
   }
