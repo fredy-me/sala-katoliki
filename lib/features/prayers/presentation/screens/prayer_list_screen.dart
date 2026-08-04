@@ -65,11 +65,12 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
             final categoryPrayers = prayers
                 .where((prayer) => _includesPrayer(prayer.categoryId))
                 .toList(growable: false);
-            final visiblePrayers = categoryPrayers
-                .map((p) => (prayer: p, score: p.score(_query)))
-                .where((r) => r.score > 0)
-                .toList()
-              ..sort((a, b) => b.score.compareTo(a.score));
+            final visiblePrayers =
+                categoryPrayers
+                    .map((p) => (prayer: p, score: p.score(_query)))
+                    .where((r) => r.score > 0)
+                    .toList()
+                  ..sort((a, b) => b.score.compareTo(a.score));
             final categoryTitle =
                 categoriesState.asData?.value
                     .where((category) => category.id == widget.categoryId)
