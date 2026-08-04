@@ -11,7 +11,8 @@ import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_search_bar.dart';
-import '../../../prayers/domain/entities/prayer_entity.dart' show PrayerEntity, scoreNovena;
+import '../../../prayers/domain/entities/prayer_entity.dart'
+    show PrayerEntity, scoreNovena;
 import '../../../prayers/presentation/providers/prayer_providers.dart';
 import '../../../prayers/presentation/widgets/prayer_card.dart';
 import '../../../novenas/presentation/providers/novena_providers.dart';
@@ -69,19 +70,23 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 novenasState.asData?.value ?? const <NovenaModel>[],
                 favoriteNovenaIds,
               );
-              final visible = favorites
-                  .map((p) => (prayer: p, score: p.score(_query)))
-                  .where((r) => r.score > 0)
-                  .toList()
-                ..sort((a, b) => b.score.compareTo(a.score));
-              final visibleNovenas = favoriteNovenas
-                  .map((n) => (
-                        novena: n,
-                        score: scoreNovena(n.title, n.description, _query),
-                      ))
-                  .where((r) => r.score > 0)
-                  .toList()
-                ..sort((a, b) => b.score.compareTo(a.score));
+              final visible =
+                  favorites
+                      .map((p) => (prayer: p, score: p.score(_query)))
+                      .where((r) => r.score > 0)
+                      .toList()
+                    ..sort((a, b) => b.score.compareTo(a.score));
+              final visibleNovenas =
+                  favoriteNovenas
+                      .map(
+                        (n) => (
+                          novena: n,
+                          score: scoreNovena(n.title, n.description, _query),
+                        ),
+                      )
+                      .where((r) => r.score > 0)
+                      .toList()
+                    ..sort((a, b) => b.score.compareTo(a.score));
 
               return ListView(
                 padding: const EdgeInsets.fromLTRB(
@@ -139,7 +144,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                     for (final result in visibleNovenas) ...[
                       _FavoriteNovenaCard(
                         novena: result.novena,
-                        onTap: () => context.push('/novenas/${result.novena.id}'),
+                        onTap: () =>
+                            context.push('/novenas/${result.novena.id}'),
                         onRemove: () => ref
                             .read(favoriteNovenaIdsProvider.notifier)
                             .remove(result.novena.id),
@@ -150,7 +156,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                       PrayerCard(
                         prayer: result.prayer,
                         isFavorite: true,
-                        onTap: () => context.push('/prayers/${result.prayer.id}'),
+                        onTap: () =>
+                            context.push('/prayers/${result.prayer.id}'),
                         onFavoriteToggle: () => ref
                             .read(favoritePrayerIdsProvider.notifier)
                             .remove(result.prayer.id),
@@ -209,7 +216,10 @@ class _FavoriteNovenaCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(novena.title, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  novena.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   novena.description,
