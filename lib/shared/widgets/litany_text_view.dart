@@ -184,7 +184,8 @@ class _LitanyLine extends StatelessWidget {
   bool _isStRitaHeading(String line) {
     final normalized = line.toLowerCase();
     final lettersOnly = line.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
-    return (lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase()) ||
+    return (lettersOnly.isNotEmpty &&
+            lettersOnly == lettersOnly.toUpperCase()) ||
         normalized.startsWith('the litany of') ||
         normalized.startsWith('litany to') ||
         normalized.startsWith('litania ya') ||
