@@ -90,7 +90,10 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     );
 
     if (_isIntentions(displayText)) {
-      return Text(displayText, style: style?.copyWith(fontStyle: FontStyle.italic));
+      return Text(
+        displayText,
+        style: style?.copyWith(fontStyle: FontStyle.italic),
+      );
     }
 
     if ((thanksgivingStyle && _isThanksgivingHeading(text)) ||
@@ -151,7 +154,8 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (request.before.isNotEmpty) Text(request.before, style: style),
-            if (request.before.isNotEmpty) const SizedBox(height: AppSpacing.sm),
+            if (request.before.isNotEmpty)
+              const SizedBox(height: AppSpacing.sm),
             Text(
               request.placeholder,
               style: style?.copyWith(fontStyle: FontStyle.italic),
@@ -212,12 +216,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       if (match.start > cursor) {
         spans.add(TextSpan(text: value.substring(cursor, match.start)));
       }
-      spans.add(
-        TextSpan(
-          text: match.group(0),
-          style: italicStyle,
-        ),
-      );
+      spans.add(TextSpan(text: match.group(0), style: italicStyle));
       cursor = match.end;
     }
     if (cursor < value.length) {
