@@ -60,19 +60,23 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
       ),
       data: (prayers) {
         final novenas = novenasState.asData?.value ?? const <NovenaModel>[];
-        final scoredPrayers = prayers
-            .map((p) => (prayer: p, score: p.score(_query)))
-            .where((r) => r.score > 0)
-            .toList()
-          ..sort((a, b) => b.score.compareTo(a.score));
-        final scoredNovenas = novenas
-            .map((n) => (
-                  novena: n,
-                  score: scoreNovena(n.title, n.description, _query),
-                ))
-            .where((r) => r.score > 0)
-            .toList()
-          ..sort((a, b) => b.score.compareTo(a.score));
+        final scoredPrayers =
+            prayers
+                .map((p) => (prayer: p, score: p.score(_query)))
+                .where((r) => r.score > 0)
+                .toList()
+              ..sort((a, b) => b.score.compareTo(a.score));
+        final scoredNovenas =
+            novenas
+                .map(
+                  (n) => (
+                    novena: n,
+                    score: scoreNovena(n.title, n.description, _query),
+                  ),
+                )
+                .where((r) => r.score > 0)
+                .toList()
+              ..sort((a, b) => b.score.compareTo(a.score));
 
         return ListView(
           padding: const EdgeInsets.fromLTRB(
