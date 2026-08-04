@@ -310,9 +310,9 @@ class _ProgressPanel extends StatelessWidget {
                 ),
                 child: Text(
                   '$nextDay',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: colorScheme.primary,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(color: colorScheme.primary),
                 ),
               ),
             ],
@@ -329,13 +329,9 @@ class _ProgressPanel extends StatelessWidget {
               Expanded(
                 child: FilledButton(
                   onPressed: started ? onContinue : onStart,
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(0, 44),
-                  ),
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
                   child: Text(
-                    started
-                        ? strings.continueDay(nextDay)
-                        : strings.start,
+                    started ? strings.continueDay(nextDay) : strings.start,
                   ),
                 ),
               ),
