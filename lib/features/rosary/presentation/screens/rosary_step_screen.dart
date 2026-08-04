@@ -79,7 +79,9 @@ class RosaryStepScreen extends ConsumerWidget {
                             if (step.prayer.showTitle) ...[
                               Text(
                                 step.prayer.title(),
-                                style: Theme.of(context).textTheme.headlineMedium,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
                               ),
                               const SizedBox(height: AppSpacing.lg),
                             ],
@@ -97,7 +99,9 @@ class RosaryStepScreen extends ConsumerWidget {
                             if (step.prayer.showTitle) ...[
                               Text(
                                 step.prayer.title(),
-                                style: Theme.of(context).textTheme.headlineMedium,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
                               ),
                               const SizedBox(height: AppSpacing.lg),
                             ],
@@ -244,7 +248,9 @@ class _BeadProgress extends StatelessWidget {
     final label = step.isIntro
         ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
         : step.decadeIndex > 5
-        ? (step.prayer.categoryId == 'litanies' ? strings.litany : strings.closing)
+        ? (step.prayer.categoryId == 'litanies'
+              ? strings.litany
+              : strings.closing)
         : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
