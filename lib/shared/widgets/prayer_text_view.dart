@@ -80,21 +80,43 @@ class PrayerTextView extends StatelessWidget {
     final matches = italicPattern.allMatches(line).toList();
 
     if (matches.isEmpty) {
-      return [TextSpan(text: line, style: _styleForLine(line, baseStyle: baseStyle, responseStyle: responseStyle, sectionStyle: sectionStyle))];
+      return [
+        TextSpan(
+          text: line,
+          style: _styleForLine(
+            line,
+            baseStyle: baseStyle,
+            responseStyle: responseStyle,
+            sectionStyle: sectionStyle,
+          ),
+        ),
+      ];
     }
 
     final spans = <TextSpan>[];
     var lastEnd = 0;
-    final lineStyle = _styleForLine(line, baseStyle: baseStyle, responseStyle: responseStyle, sectionStyle: sectionStyle);
+    final lineStyle = _styleForLine(
+      line,
+      baseStyle: baseStyle,
+      responseStyle: responseStyle,
+      sectionStyle: sectionStyle,
+    );
 
     for (final match in matches) {
       if (match.start > lastEnd) {
-        spans.add(TextSpan(text: line.substring(lastEnd, match.start), style: lineStyle));
+        spans.add(
+          TextSpan(
+            text: line.substring(lastEnd, match.start),
+            style: lineStyle,
+          ),
+        );
       }
-      spans.add(TextSpan(
-        text: match.group(1),
-        style: lineStyle?.copyWith(fontStyle: FontStyle.italic),
-      ));
+      spans.add(
+        TextSpan(
+          text: match.group(1),
+          style: lineStyle?.copyWith(fontStyle: FontStyle.italic),
+        ),
+      );
       lastEnd = match.end;
     }
 
