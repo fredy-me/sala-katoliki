@@ -46,7 +46,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ? 'Chagua Lugha Yako ya Sala'
                       : 'Choose Your Prayer Language',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(
