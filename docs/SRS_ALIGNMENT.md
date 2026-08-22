@@ -9,14 +9,14 @@ Source document:
 Document metadata:
 
 - Product: Sala Katoliki / Catholic Prayer.
-- Version: 1.0 - MVP SRS.
+- Version: 1.0 - SRS.
 - Date: 2 June 2026.
 - Technology: Flutter, Dart, bundled local JSON content, local storage.
 - Status: Development-ready baseline.
 
 ## Source Of Truth Rule
 
-The SRS controls MVP scope, architecture, data models, acceptance criteria, and release constraints.
+The SRS controls scope, architecture, data models, acceptance criteria, and release constraints.
 
 If repository documentation or code conflicts with the SRS:
 
