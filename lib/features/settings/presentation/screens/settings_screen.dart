@@ -396,7 +396,10 @@ class _SettingsHeader extends StatelessWidget {
 }
 
 class _NoticeCard extends StatelessWidget {
-  const _NoticeCard({required this.message, this.icon = Icons.warning_amber_rounded});
+  const _NoticeCard({
+    required this.message,
+    this.icon = Icons.warning_amber_rounded,
+  });
 
   final String message;
   final IconData icon;
@@ -532,9 +535,14 @@ class _ReminderTimeTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(width: SettingsIconBadge.defaultSize + AppSpacing.md),
+              const SizedBox(
+                width: SettingsIconBadge.defaultSize + AppSpacing.md,
+              ),
               Expanded(
-                child: Text(label, style: SettingsTextStyles.titleSmall(context)),
+                child: Text(
+                  label,
+                  style: SettingsTextStyles.titleSmall(context),
+                ),
               ),
               Text(time, style: SettingsTextStyles.body(context)),
               const SizedBox(width: AppSpacing.sm),
