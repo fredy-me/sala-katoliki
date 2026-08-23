@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/app_card.dart';
@@ -43,43 +44,157 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.section),
                 _SectionLabel(strings.preferences),
                 const SizedBox(height: AppSpacing.md),
-                _LanguageCard(
-                  selectedLanguage: selectedLanguage,
-                  strings: strings,
-                  onSelected: (languageCode) => ref
-                      .read(selectedLanguageProvider.notifier)
-                      .selectLanguage(languageCode),
+                _SettingsPanel(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.language,
+                        title: strings.language,
+                        trailing: _TileValue(
+                          value: _languageLabel(selectedLanguage),
+                        ),
+                        onTap: () => _showOptionPickerSheet<String>(
+                          context,
+                          title: strings.language,
+                          value: selectedLanguage,
+                          options: [
+                            _SegmentOption(
+                              value: SupportedLanguages.english.code,
+                              label: SupportedLanguages.english.name,
+                              icon: Icons.translate,
+                            ),
+                            _SegmentOption(
+                              value: SupportedLanguages.kiswahili.code,
+                              label: SupportedLanguages.kiswahili.name,
+                              icon: Icons.record_voice_over_outlined,
+                            ),
+                          ],
+                          onSelected: (languageCode) => ref
+                              .read(selectedLanguageProvider.notifier)
+                              .selectLanguage(languageCode),
+                        ),
+                      ),
+                      const _TileDivider(),
+                      _SettingsTile(
+                        icon: Icons.alarm,
+                        title: strings.dailyReminder,
+                        trailing: Switch(
+                          value: settings.reminderEnabled,
+                          activeThumbColor:
+                              _SettingsColors.selectedText(context),
+                          activeTrackColor: _SettingsColors.accent(context),
+                          onChanged: (value) => ref
+                              .read(userSettingsProvider.notifier)
+                              .setReminderEnabled(value),
+                        ),
+                      ),
+                      _ReminderTimeTile(
+                        enabled: settings.reminderEnabled,
+                        label: strings.changeTime,
+                        time: _formatDisplayTime(settings.reminderTime),
+                        onTap: () =>
+                            _pickTime(context, ref, settings.reminderTime),
+                      ),
+                      const _TileDivider(),
+                      _SettingsTile(
+                        icon: Icons.text_fields,
+                        title: strings.fontSize,
+                        trailing: _TileValue(
+                          value: strings.textSizeLabel(
+                            _textSizeValue(settings.fontScale),
+                          ),
+                        ),
+                        onTap: () =>
+                            _showOptionPickerSheet<_TextSizeValue>(
+                          context,
+                          title: strings.fontSize,
+                          value: _textSizeValue(settings.fontScale),
+                          options: [
+                            _SegmentOption(
+                              value: _TextSizeValue.small,
+                              label: strings.small,
+                              icon: Icons.text_decrease,
+                            ),
+                            _SegmentOption(
+                              value: _TextSizeValue.medium,
+                              label: strings.medium,
+                              icon: Icons.text_fields,
+                            ),
+                            _SegmentOption(
+                              value: _TextSizeValue.large,
+                              label: strings.large,
+                              icon: Icons.text_increase,
+                            ),
+                          ],
+                          onSelected: (value) => ref
+                              .read(userSettingsProvider.notifier)
+                              .setFontScale(_fontScaleFor(value)),
+                        ),
+                      ),
+                      const _TileDivider(),
+                      _SettingsTile(
+                        icon: Icons.contrast,
+                        title: strings.theme,
+                        trailing: _TileValue(
+                          value: _themeLabel(settings.themeMode, strings),
+                        ),
+                        onTap: () => _showOptionPickerSheet<ThemeMode>(
+                          context,
+                          title: strings.theme,
+                          value: settings.themeMode,
+                          options: [
+                            _SegmentOption(
+                              value: ThemeMode.system,
+                              label: strings.system,
+                              icon: Icons.phone_android,
+                            ),
+                            _SegmentOption(
+                              value: ThemeMode.light,
+                              label: strings.light,
+                              icon: Icons.light_mode_outlined,
+                            ),
+                            _SegmentOption(
+                              value: ThemeMode.dark,
+                              label: strings.dark,
+                              icon: Icons.dark_mode_outlined,
+                            ),
+                          ],
+                          onSelected: (value) => ref
+                              .read(userSettingsProvider.notifier)
+                              .setThemeMode(value),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                _ReminderCard(settings: settings, strings: strings),
                 if (settings.permissionDenied) ...[
                   const SizedBox(height: AppSpacing.md),
                   _NoticeCard(message: strings.permissionDenied),
                 ],
-                const SizedBox(height: AppSpacing.md),
-                _TextSizeCard(settings: settings, strings: strings),
-                const SizedBox(height: AppSpacing.section),
-                _SectionLabel(strings.appearance),
-                const SizedBox(height: AppSpacing.md),
-                _ThemeCard(settings: settings, strings: strings),
                 const SizedBox(height: AppSpacing.section),
                 _SectionLabel(strings.supportInfo),
                 const SizedBox(height: AppSpacing.md),
-                _NavigationCard(
-                  icon: Icons.info_outline,
-                  title: strings.about,
-                  subtitle: strings.aboutSubtitle,
-                  onTap: () => context.push('/about'),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                _NavigationCard(
-                  icon: Icons.verified_user_outlined,
-                  title: strings.privacyTitle,
-                  subtitle: strings.privacySubtitle,
-                  onTap: () => _showLegalSheet(
-                    context,
-                    selectedLanguage,
-                    strings.privacyTitle,
+                _SettingsPanel(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.info_outline,
+                        title: strings.about,
+                        onTap: () => context.push('/about'),
+                      ),
+                      const _TileDivider(),
+                      _SettingsTile(
+                        icon: Icons.verified_user_outlined,
+                        title: strings.privacyTitle,
+                        onTap: () => _showLegalSheet(
+                          context,
+                          selectedLanguage,
+                          strings.privacyTitle,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -259,30 +374,34 @@ class _ReminderCard extends ConsumerWidget {
           Divider(height: 1, color: _SettingsColors.border(context)),
           InkWell(
             onTap: () => _pickTime(context, ref, settings.reminderTime),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.lg,
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 76),
-                  Expanded(
-                    child: Text(
-                      strings.changeTime,
-                      style: _SettingsText.titleSmall(context),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: settings.reminderEnabled ? 1 : 0.45,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.lg,
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: _IconBadge.size + AppSpacing.md),
+                    Expanded(
+                      child: Text(
+                        strings.changeTime,
+                        style: _SettingsText.titleSmall(context),
+                      ),
                     ),
-                  ),
-                  Text(
-                    _formatDisplayTime(settings.reminderTime),
-                    style: _SettingsText.body(context),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Icon(
-                    Icons.chevron_right,
-                    color: _SettingsColors.mutedText(context),
-                  ),
-                ],
+                    Text(
+                      _formatDisplayTime(settings.reminderTime),
+                      style: _SettingsText.body(context),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Icon(
+                      Icons.chevron_right,
+                      color: _SettingsColors.mutedText(context),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -408,7 +527,7 @@ class _ThemeCard extends ConsumerWidget {
       child: Column(
         children: [
           _CardHeader(
-            icon: Icons.phone_android,
+            icon: Icons.contrast,
             title: strings.theme,
             subtitle: strings.themeSubtitle,
           ),
@@ -561,11 +680,13 @@ class _IconBadge extends StatelessWidget {
 
   final IconData icon;
 
+  static const size = 54.0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 54,
-      height: 54,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: _SettingsColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
@@ -605,27 +726,26 @@ class _SegmentedControl<T> extends StatelessWidget {
         border: Border.all(color: _SettingsColors.border(context)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          for (var index = 0; index < options.length; index++) ...[
-            Expanded(
-              child: _SegmentButton<T>(
-                option: options[index],
-                selected: value == options[index].value,
-                onTap: onSelected,
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            for (var index = 0; index < options.length; index++) ...[
+              Expanded(
+                child: _SegmentButton<T>(
+                  option: options[index],
+                  selected: value == options[index].value,
+                  onTap: onSelected,
+                ),
               ),
-            ),
-            if (index != options.length - 1)
-              SizedBox(
-                height: 64,
-                child: VerticalDivider(
+              if (index != options.length - 1)
+                VerticalDivider(
                   width: 1,
                   thickness: 1,
                   color: _SettingsColors.border(context),
                 ),
-              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -648,7 +768,11 @@ class _SegmentButton<T> extends StatelessWidget {
       onTap: () => onTap(option.value),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
-        height: 64,
+        constraints: const BoxConstraints(minHeight: 64),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
           color: selected ? _SettingsColors.accent(context) : null,
         ),
@@ -692,7 +816,9 @@ enum _TextSizeValue { small, medium, large }
 
 abstract final class _SettingsColors {
   static Color iconBackground(BuildContext context) =>
-      Theme.of(context).colorScheme.surfaceContainerHighest;
+      Theme.of(context).brightness == Brightness.dark
+      ? AppColors.darkSurfaceElevated
+      : AppColors.surfaceWarm;
 
   static Color border(BuildContext context) =>
       Theme.of(context).dividerTheme.color ??
@@ -727,12 +853,13 @@ abstract final class _SettingsText {
 
   static TextStyle? bodySmall(BuildContext context) => body(context);
 
-  static TextStyle? section(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall;
+  static TextStyle? section(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.labelSmall?.copyWith(color: _SettingsColors.mutedText(context));
 
   static TextStyle? value(BuildContext context) =>
       Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: _SettingsColors.accent(context),
+        color: _SettingsColors.text(context),
         fontWeight: FontWeight.w700,
       );
 
