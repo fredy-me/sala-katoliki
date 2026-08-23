@@ -138,7 +138,7 @@ abstract final class AppTheme {
         dialBackgroundColor: inputFill,
         dialHandColor: primary,
         dialTextColor: WidgetStateColor.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? primary : text,
+          (states) => states.contains(WidgetState.selected) ? buttonText : text,
         ),
         dayPeriodColor: WidgetStateColor.resolveWith(
           (states) => states.contains(WidgetState.selected)
