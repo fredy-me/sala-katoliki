@@ -101,7 +101,7 @@ class AboutScreen extends ConsumerWidget {
 
               const SizedBox(height: AppSpacing.section),
 
-              _SectionLabel(strings.contact),
+              SettingsSectionLabel(strings.contact),
 
               const SizedBox(height: AppSpacing.md),
 
@@ -254,7 +254,7 @@ class _InfoCard extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          _IconBadge(icon: icon),
+          SettingsIconBadge(icon: icon),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
@@ -294,7 +294,7 @@ class _DeveloperCard extends StatelessWidget {
 
         child: Row(
           children: [
-            const _IconBadge(icon: Icons.public),
+            const SettingsIconBadge(icon: Icons.public),
             const SizedBox(width: AppSpacing.md),
 
             Expanded(
@@ -449,7 +449,7 @@ class _ContactAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            _IconBadge(icon: icon, foreground: SettingsColors.text(context)),
+            SettingsIconBadge(icon: icon, foreground: SettingsColors.text(context)),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -488,7 +488,7 @@ class _AboutPanel extends StatelessWidget {
 }
 
 class _IconBadge extends StatelessWidget {
-  const _IconBadge({required this.icon, this.foreground});
+  const SettingsIconBadge({required this.icon, this.foreground});
 
   final IconData icon;
   final Color? foreground;
@@ -513,7 +513,7 @@ class _IconBadge extends StatelessWidget {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
+  const SettingsSectionLabel(this.label);
 
   final String label;
 
