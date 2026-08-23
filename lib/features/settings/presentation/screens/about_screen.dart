@@ -359,7 +359,10 @@ class _ContactCard extends StatelessWidget {
         children: [
           Text(strings.contactTitle, style: SettingsTextStyles.title(context)),
           const SizedBox(height: AppSpacing.xs),
-          Text(strings.contactBody, style: SettingsTextStyles.bodySmall(context)),
+          Text(
+            strings.contactBody,
+            style: SettingsTextStyles.bodySmall(context),
+          ),
           const SizedBox(height: AppSpacing.lg),
 
           _ContactAction(
@@ -449,7 +452,10 @@ class _ContactAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            SettingsIconBadge(icon: icon, foreground: SettingsColors.text(context)),
+            SettingsIconBadge(
+              icon: icon,
+              foreground: SettingsColors.text(context),
+            ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
