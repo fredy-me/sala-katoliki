@@ -395,20 +395,29 @@ class _SettingsHeader extends StatelessWidget {
   }
 }
 
-class _SettingsError extends StatelessWidget {
-  const _SettingsError({required this.strings});
+class _NoticeCard extends StatelessWidget {
+  const _NoticeCard({required this.message, this.icon = Icons.warning_amber_rounded});
 
-  final _SettingsStrings strings;
+  final String message;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
-      children: [
-        Text(strings.title, style: SettingsTextStyles.display(context)),
-        const SizedBox(height: AppSpacing.lg),
-        _NoticeCard(message: strings.loadError),
-      ],
+    return AppCard(
+      backgroundColor: SettingsColors.dangerBackground(context),
+      borderColor: SettingsColors.dangerBorder(context),
+      child: Row(
+        children: [
+          SettingsIconBadge(
+            icon: icon,
+            foreground: SettingsColors.danger(context),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(message, style: SettingsTextStyles.body(context)),
+          ),
+        ],
+      ),
     );
   }
 }
