@@ -12,6 +12,7 @@ import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/legal_links.dart';
 import '../providers/settings_providers.dart';
+import '../widgets/settings_ui.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -42,7 +43,7 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 _SettingsHeader(strings: strings),
                 const SizedBox(height: AppSpacing.section),
-                _SectionLabel(strings.preferences),
+                SettingsSectionLabel(strings.preferences),
                 const SizedBox(height: AppSpacing.md),
                 _SettingsPanel(
                   padding: EdgeInsets.zero,
@@ -81,10 +82,10 @@ class SettingsScreen extends ConsumerWidget {
                         title: strings.dailyReminder,
                         trailing: Switch(
                           value: settings.reminderEnabled,
-                          activeThumbColor: _SettingsColors.selectedText(
+                          activeThumbColor: SettingsColors.selectedText(
                             context,
                           ),
-                          activeTrackColor: _SettingsColors.accent(context),
+                          activeTrackColor: SettingsColors.accent(context),
                           onChanged: (value) => ref
                               .read(userSettingsProvider.notifier)
                               .setReminderEnabled(value),
@@ -173,7 +174,7 @@ class SettingsScreen extends ConsumerWidget {
                   _NoticeCard(message: strings.permissionDenied),
                 ],
                 const SizedBox(height: AppSpacing.section),
-                _SectionLabel(strings.supportInfo),
+                SettingsSectionLabel(strings.supportInfo),
                 const SizedBox(height: AppSpacing.md),
                 _SettingsPanel(
                   padding: EdgeInsets.zero,
@@ -226,16 +227,16 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: _SettingsText.title(context)),
+              Text(title, style: SettingsTextStyles.title(context)),
               const SizedBox(height: AppSpacing.lg),
               Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: Theme.of(context).colorScheme.copyWith(
-                    primary: _SettingsColors.accent(context),
+                    primary: SettingsColors.accent(context),
                   ),
                   textTheme: Theme.of(context).textTheme.apply(
-                    bodyColor: _SettingsColors.mutedText(context),
-                    displayColor: _SettingsColors.text(context),
+                    bodyColor: SettingsColors.mutedText(context),
+                    displayColor: SettingsColors.text(context),
                   ),
                 ),
                 child: LegalLinks(languageCode: languageCode),
@@ -270,12 +271,12 @@ class SettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: _SettingsText.title(context)),
+              Text(title, style: SettingsTextStyles.title(context)),
               const SizedBox(height: AppSpacing.lg),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  border: Border.all(color: _SettingsColors.border(context)),
+                  border: Border.all(color: SettingsColors.border(context)),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Column(
@@ -296,7 +297,7 @@ class SettingsScreen extends ConsumerWidget {
                           ),
                           child: Divider(
                             height: 1,
-                            color: _SettingsColors.border(context),
+                            color: SettingsColors.border(context),
                           ),
                         ),
                     ],
@@ -371,7 +372,7 @@ class _SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(strings.title, style: _SettingsText.display(context));
+    return Text(strings.title, style: SettingsTextStyles.display(context));
   }
 }
 
@@ -385,7 +386,7 @@ class _SettingsError extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
       children: [
-        Text(strings.title, style: _SettingsText.display(context)),
+        Text(strings.title, style: SettingsTextStyles.display(context)),
         const SizedBox(height: AppSpacing.lg),
         _NoticeCard(message: strings.loadError),
       ],
@@ -420,10 +421,10 @@ class _SettingsTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _IconBadge(icon: icon),
+            SettingsIconBadge(icon: icon),
             const SizedBox(width: AppSpacing.md),
             Expanded(
-              child: Text(title, style: _SettingsText.titleSmall(context)),
+              child: Text(title, style: SettingsTextStyles.titleSmall(context)),
             ),
             if (trailing != null) ...[
               const SizedBox(width: AppSpacing.sm),
@@ -432,7 +433,7 @@ class _SettingsTile extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Icon(
                 Icons.chevron_right,
-                color: _SettingsColors.mutedText(context),
+                color: SettingsColors.mutedText(context),
               ),
             ],
           ],
@@ -449,7 +450,7 @@ class _TileDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: _SettingsTile.contentIndent),
-      child: Divider(height: 1, color: _SettingsColors.border(context)),
+      child: Divider(height: 1, color: SettingsColors.border(context)),
     );
   }
 }
@@ -464,12 +465,12 @@ class _TileValue extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(value, style: _SettingsText.value(context)),
+        Text(value, style: SettingsTextStyles.value(context)),
         const SizedBox(width: AppSpacing.xs),
         Icon(
           Icons.chevron_right,
           size: 20,
-          color: _SettingsColors.mutedText(context),
+          color: SettingsColors.mutedText(context),
         ),
       ],
     );
@@ -505,13 +506,13 @@ class _ReminderTimeTile extends StatelessWidget {
             children: [
               const SizedBox(width: _IconBadge.size + AppSpacing.md),
               Expanded(
-                child: Text(label, style: _SettingsText.titleSmall(context)),
+                child: Text(label, style: SettingsTextStyles.titleSmall(context)),
               ),
-              Text(time, style: _SettingsText.body(context)),
+              Text(time, style: SettingsTextStyles.body(context)),
               const SizedBox(width: AppSpacing.sm),
               Icon(
                 Icons.chevron_right,
-                color: _SettingsColors.mutedText(context),
+                color: SettingsColors.mutedText(context),
               ),
             ],
           ),
@@ -562,13 +563,13 @@ class _NoticeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SettingsPanel(
-      child: Text(message, style: _SettingsText.body(context)),
+      child: Text(message, style: SettingsTextStyles.body(context)),
     );
   }
 }
 
 class _IconBadge extends StatelessWidget {
-  const _IconBadge({required this.icon});
+  const SettingsIconBadge({required this.icon});
 
   final IconData icon;
 
@@ -580,22 +581,22 @@ class _IconBadge extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: _SettingsColors.iconBackground(context),
+        color: SettingsColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
-      child: Icon(icon, color: _SettingsColors.accent(context), size: 28),
+      child: Icon(icon, color: SettingsColors.accent(context), size: 28),
     );
   }
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
+  const SettingsSectionLabel(this.label);
 
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: _SettingsText.section(context));
+    return Text(label.toUpperCase(), style: SettingsTextStyles.section(context));
   }
 }
 
@@ -621,14 +622,14 @@ class _PickerRow<T> extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _IconBadge(icon: option.icon),
+            SettingsIconBadge(icon: option.icon),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Text(
                 option.label,
                 style: selected
-                    ? _SettingsText.titleSmall(context)
-                    : _SettingsText.body(context),
+                    ? SettingsTextStyles.titleSmall(context)
+                    : SettingsTextStyles.body(context),
               ),
             ),
             if (selected)
@@ -696,11 +697,11 @@ abstract final class _SettingsText {
 
   static TextStyle? section(BuildContext context) => Theme.of(
     context,
-  ).textTheme.labelSmall?.copyWith(color: _SettingsColors.mutedText(context));
+  ).textTheme.labelSmall?.copyWith(color: SettingsColors.mutedText(context));
 
   static TextStyle? value(BuildContext context) =>
       Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: _SettingsColors.text(context),
+        color: SettingsColors.text(context),
         fontWeight: FontWeight.w700,
       );
 }
