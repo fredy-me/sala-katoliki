@@ -251,7 +251,7 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context, {
     required String title,
     required T value,
-    required List<_SegmentOption<T>> options,
+    required List<_PickerOption<T>> options,
     required ValueChanged<T> onSelected,
   }) {
     showModalBottomSheet<void>(
@@ -272,13 +272,36 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               Text(title, style: _SettingsText.title(context)),
               const SizedBox(height: AppSpacing.lg),
-              _SegmentedControl<T>(
-                value: value,
-                options: options,
-                onSelected: (selected) {
-                  Navigator.of(sheetContext).pop();
-                  onSelected(selected);
-                },
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  border: Border.all(color: _SettingsColors.border(context)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: [
+                    for (var index = 0; index < options.length; index++) ...[
+                      _PickerRow<T>(
+                        option: options[index],
+                        selected: value == options[index].value,
+                        onTap: (selected) {
+                          Navigator.of(sheetContext).pop();
+                          onSelected(selected);
+                        },
+                      ),
+                      if (index != options.length - 1)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: _IconBadge.size + AppSpacing.md,
+                          ),
+                          child: Divider(
+                            height: 1,
+                            color: _SettingsColors.border(context),
+                          ),
+                        ),
+                    ],
+                  ],
+                ),
               ),
             ],
           ),
