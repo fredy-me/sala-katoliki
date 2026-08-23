@@ -720,8 +720,6 @@ abstract final class _SettingsText {
   static TextStyle? body(BuildContext context) =>
       Theme.of(context).textTheme.bodyMedium;
 
-  static TextStyle? bodySmall(BuildContext context) => body(context);
-
   static TextStyle? section(BuildContext context) => Theme.of(
     context,
   ).textTheme.labelSmall?.copyWith(color: _SettingsColors.mutedText(context));
