@@ -59,12 +59,12 @@ class SettingsScreen extends ConsumerWidget {
                           title: strings.language,
                           value: selectedLanguage,
                           options: [
-                            _SegmentOption(
+                            _PickerOption(
                               value: SupportedLanguages.english.code,
                               label: SupportedLanguages.english.name,
                               icon: Icons.translate,
                             ),
-                            _SegmentOption(
+                            _PickerOption(
                               value: SupportedLanguages.kiswahili.code,
                               label: SupportedLanguages.kiswahili.name,
                               icon: Icons.record_voice_over_outlined,
@@ -111,17 +111,17 @@ class SettingsScreen extends ConsumerWidget {
                           title: strings.fontSize,
                           value: _textSizeValue(settings.fontScale),
                           options: [
-                            _SegmentOption(
+                            _PickerOption(
                               value: _TextSizeValue.small,
                               label: strings.small,
                               icon: Icons.text_decrease,
                             ),
-                            _SegmentOption(
+                            _PickerOption(
                               value: _TextSizeValue.medium,
                               label: strings.medium,
                               icon: Icons.text_fields,
                             ),
-                            _SegmentOption(
+                            _PickerOption(
                               value: _TextSizeValue.large,
                               label: strings.large,
                               icon: Icons.text_increase,
@@ -144,17 +144,17 @@ class SettingsScreen extends ConsumerWidget {
                           title: strings.theme,
                           value: settings.themeMode,
                           options: [
-                            _SegmentOption(
+                            _PickerOption(
                               value: ThemeMode.system,
                               label: strings.system,
                               icon: Icons.phone_android,
                             ),
-                            _SegmentOption(
+                            _PickerOption(
                               value: ThemeMode.light,
                               label: strings.light,
                               icon: Icons.light_mode_outlined,
                             ),
-                            _SegmentOption(
+                            _PickerOption(
                               value: ThemeMode.dark,
                               label: strings.dark,
                               icon: Icons.dark_mode_outlined,
@@ -599,58 +599,14 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _SegmentedControl<T> extends StatelessWidget {
-  const _SegmentedControl({
-    required this.value,
-    required this.options,
-    required this.onSelected,
-  });
-
-  final T value;
-  final List<_SegmentOption<T>> options;
-  final ValueChanged<T> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: _SettingsColors.border(context)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            for (var index = 0; index < options.length; index++) ...[
-              Expanded(
-                child: _SegmentButton<T>(
-                  option: options[index],
-                  selected: value == options[index].value,
-                  onTap: onSelected,
-                ),
-              ),
-              if (index != options.length - 1)
-                VerticalDivider(
-                  width: 1,
-                  thickness: 1,
-                  color: _SettingsColors.border(context),
-                ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SegmentButton<T> extends StatelessWidget {
-  const _SegmentButton({
+class _PickerRow<T> extends StatelessWidget {
+  const _PickerRow({
     required this.option,
     required this.selected,
     required this.onTap,
   });
 
-  final _SegmentOption<T> option;
+  final _PickerOption<T> option;
   final bool selected;
   final ValueChanged<T> onTap;
 
@@ -658,33 +614,28 @@ class _SegmentButton<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => onTap(option.value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        constraints: const BoxConstraints(minHeight: 64),
+      child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
         ),
-        decoration: BoxDecoration(
-          color: selected ? _SettingsColors.accent(context) : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
-            Icon(
-              option.icon,
-              color: selected
-                  ? _SettingsColors.selectedText(context)
-                  : _SettingsColors.text(context),
-              size: 24,
+            _IconBadge(icon: option.icon),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Text(
+                option.label,
+                style: selected
+                    ? _SettingsText.titleSmall(context)
+                    : _SettingsText.body(context),
+              ),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              option.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: _SettingsText.segmentLabel(context, selected: selected),
-            ),
+            if (selected)
+              Icon(
+                Icons.check_rounded,
+                color: Theme.of(context).colorScheme.primary,
+              ),
           ],
         ),
       ),
@@ -692,8 +643,8 @@ class _SegmentButton<T> extends StatelessWidget {
   }
 }
 
-class _SegmentOption<T> {
-  const _SegmentOption({
+class _PickerOption<T> {
+  const _PickerOption({
     required this.value,
     required this.label,
     required this.icon,
@@ -752,16 +703,6 @@ abstract final class _SettingsText {
         color: _SettingsColors.text(context),
         fontWeight: FontWeight.w700,
       );
-
-  static TextStyle? segmentLabel(
-    BuildContext context, {
-    required bool selected,
-  }) => Theme.of(context).textTheme.labelSmall?.copyWith(
-    color: selected
-        ? _SettingsColors.selectedText(context)
-        : _SettingsColors.text(context),
-    fontWeight: FontWeight.w700,
-  );
 }
 
 class _SettingsStrings {
