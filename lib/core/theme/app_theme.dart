@@ -116,6 +116,41 @@ abstract final class AppTheme {
         labelSmall: AppTextStyles.label,
       ),
       dividerTheme: DividerThemeData(color: border),
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+          side: BorderSide(color: border),
+        ),
+        hourMinuteShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          side: BorderSide(color: border),
+        ),
+        hourMinuteColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? primary.withValues(alpha: 0.12)
+              : inputFill,
+        ),
+        hourMinuteTextColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? primary : text,
+        ),
+        dialBackgroundColor: inputFill,
+        dialHandColor: primary,
+        dialTextColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? primary : text,
+        ),
+        dayPeriodColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? primary.withValues(alpha: 0.12)
+              : inputFill,
+        ),
+        dayPeriodTextColor: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? primary : mutedText,
+        ),
+        entryModeIconColor: mutedText,
+      ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: primary,
         linearTrackColor: border,
