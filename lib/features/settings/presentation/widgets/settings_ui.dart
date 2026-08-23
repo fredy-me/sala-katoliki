@@ -97,6 +97,9 @@ abstract final class SettingsTextStyles {
   static TextStyle? display(BuildContext context) =>
       Theme.of(context).textTheme.headlineLarge;
 
+  static TextStyle? heading(BuildContext context) =>
+      Theme.of(context).textTheme.headlineMedium;
+
   static TextStyle? title(BuildContext context) =>
       Theme.of(context).textTheme.titleLarge;
 
