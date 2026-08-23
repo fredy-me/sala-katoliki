@@ -52,7 +52,7 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 'Sala Katoliki',
                 textAlign: TextAlign.center,
-                style: _AboutText.display(context),
+                style: SettingsTextStyles.display(context),
               ),
 
               const SizedBox(height: AppSpacing.xs),
@@ -60,7 +60,7 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 strings.version,
                 textAlign: TextAlign.center,
-                style: _AboutText.body(context),
+                style: SettingsTextStyles.body(context),
               ),
 
               const SizedBox(height: AppSpacing.xl),
@@ -68,7 +68,7 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 strings.introduction,
                 textAlign: TextAlign.center,
-                style: _AboutText.body(context),
+                style: SettingsTextStyles.body(context),
               ),
 
               const SizedBox(height: AppSpacing.section),
@@ -116,7 +116,7 @@ class AboutScreen extends ConsumerWidget {
               Text(
                 strings.copyright,
                 textAlign: TextAlign.center,
-                style: _AboutText.bodySmall(context),
+                style: SettingsTextStyles.bodySmall(context),
               ),
             ],
           ),
@@ -167,9 +167,9 @@ class AboutScreen extends ConsumerWidget {
               ),
 
               children: [
-                Text(title, style: _AboutText.heading(context)),
+                Text(title, style: SettingsTextStyles.heading(context)),
                 const SizedBox(height: AppSpacing.lg),
-                Text(body, style: _AboutText.body(context)),
+                Text(body, style: SettingsTextStyles.body(context)),
               ],
             ),
           ),
@@ -224,7 +224,7 @@ class _AboutHeader extends StatelessWidget {
           child: Text(
             strings.title,
             textAlign: TextAlign.center,
-            style: _AboutText.heading(context),
+            style: SettingsTextStyles.heading(context),
           ),
         ),
         const SizedBox(width: AppSpacing.minTouchTarget),
@@ -261,9 +261,9 @@ class _InfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
-                Text(title, style: _AboutText.title(context)),
+                Text(title, style: SettingsTextStyles.title(context)),
                 const SizedBox(height: AppSpacing.xs),
-                Text(body, style: _AboutText.bodySmall(context)),
+                Text(body, style: SettingsTextStyles.bodySmall(context)),
               ],
             ),
           ),
@@ -303,14 +303,14 @@ class _DeveloperCard extends StatelessWidget {
                 children: [
                   Text(
                     strings.developerTitle,
-                    style: _AboutText.title(context),
+                    style: SettingsTextStyles.title(context),
                   ),
 
                   const SizedBox(height: AppSpacing.xs),
 
                   Text(
                     strings.developerBody,
-                    style: _AboutText.bodySmall(context),
+                    style: SettingsTextStyles.bodySmall(context),
                   ),
                 ],
               ),
@@ -357,9 +357,9 @@ class _ContactCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(strings.contactTitle, style: _AboutText.title(context)),
+          Text(strings.contactTitle, style: SettingsTextStyles.title(context)),
           const SizedBox(height: AppSpacing.xs),
-          Text(strings.contactBody, style: _AboutText.bodySmall(context)),
+          Text(strings.contactBody, style: SettingsTextStyles.bodySmall(context)),
           const SizedBox(height: AppSpacing.lg),
 
           _ContactAction(
@@ -456,10 +456,10 @@ class _ContactAction extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  Text(title, style: _AboutText.title(context)),
+                  Text(title, style: SettingsTextStyles.title(context)),
                   const SizedBox(height: AppSpacing.xs),
 
-                  Text(subtitle, style: _AboutText.bodySmall(context)),
+                  Text(subtitle, style: SettingsTextStyles.bodySmall(context)),
                 ],
               ),
             ),
@@ -519,7 +519,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: _AboutText.section(context));
+    return Text(label.toUpperCase(), style: SettingsTextStyles.section(context));
   }
 }
 
