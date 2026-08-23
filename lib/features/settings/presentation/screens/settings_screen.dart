@@ -370,314 +370,121 @@ class _SettingsError extends StatelessWidget {
   }
 }
 
-class _LanguageCard extends StatelessWidget {
-  const _LanguageCard({
-    required this.selectedLanguage,
-    required this.strings,
-    required this.onSelected,
-  });
-
-  final String selectedLanguage;
-  final _SettingsStrings strings;
-  final ValueChanged<String> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SettingsPanel(
-      child: Column(
-        children: [
-          _CardHeader(
-            icon: Icons.language,
-            title: strings.language,
-            subtitle: strings.languageSubtitle,
-            trailing: Text(
-              _languageLabel(selectedLanguage),
-              style: _SettingsText.value(context),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          _SegmentedControl<String>(
-            value: selectedLanguage,
-            options: [
-              _SegmentOption(
-                value: SupportedLanguages.english.code,
-                label: SupportedLanguages.english.name,
-                icon: Icons.translate,
-              ),
-              _SegmentOption(
-                value: SupportedLanguages.kiswahili.code,
-                label: SupportedLanguages.kiswahili.name,
-                icon: Icons.record_voice_over_outlined,
-              ),
-            ],
-            onSelected: onSelected,
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _languageLabel(String languageCode) {
-    if (languageCode == SupportedLanguages.kiswahili.code) {
-      return SupportedLanguages.kiswahili.name;
-    }
-    return SupportedLanguages.english.name;
-  }
-}
-
-class _ReminderCard extends ConsumerWidget {
-  const _ReminderCard({required this.settings, required this.strings});
-
-  final UserSettings settings;
-  final _SettingsStrings strings;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return _SettingsPanel(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: _CardHeader(
-              icon: Icons.alarm,
-              title: strings.dailyReminder,
-              subtitle: strings.reminderSubtitle,
-              trailing: Switch(
-                value: settings.reminderEnabled,
-                activeThumbColor: _SettingsColors.selectedText(context),
-                activeTrackColor: _SettingsColors.accent(context),
-                onChanged: (value) => ref
-                    .read(userSettingsProvider.notifier)
-                    .setReminderEnabled(value),
-              ),
-            ),
-          ),
-          Divider(height: 1, color: _SettingsColors.border(context)),
-          InkWell(
-            onTap: () => _pickTime(context, ref, settings.reminderTime),
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: settings.reminderEnabled ? 1 : 0.45,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.lg,
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(width: _IconBadge.size + AppSpacing.md),
-                    Expanded(
-                      child: Text(
-                        strings.changeTime,
-                        style: _SettingsText.titleSmall(context),
-                      ),
-                    ),
-                    Text(
-                      _formatDisplayTime(settings.reminderTime),
-                      style: _SettingsText.body(context),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Icon(
-                      Icons.chevron_right,
-                      color: _SettingsColors.mutedText(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickTime(
-    BuildContext context,
-    WidgetRef ref,
-    String currentValue,
-  ) async {
-    final parts = currentValue.split(':');
-    final current = TimeOfDay(
-      hour: int.tryParse(parts.first) ?? 19,
-      minute: int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0,
-    );
-    final selected = await showTimePicker(
-      context: context,
-      initialTime: current,
-    );
-    if (selected == null) {
-      return;
-    }
-
-    await ref
-        .read(userSettingsProvider.notifier)
-        .setReminderTime(
-          '${selected.hour.toString().padLeft(2, '0')}:${selected.minute.toString().padLeft(2, '0')}',
-        );
-  }
-
-  String _formatDisplayTime(String value) {
-    final parts = value.split(':');
-    final hour = int.tryParse(parts.first) ?? 19;
-    final minute = int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0;
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
-    return '$displayHour:${minute.toString().padLeft(2, '0')} $period';
-  }
-}
-
-class _TextSizeCard extends ConsumerWidget {
-  const _TextSizeCard({required this.settings, required this.strings});
-
-  final UserSettings settings;
-  final _SettingsStrings strings;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selected = _textSizeValue(settings.fontScale);
-
-    return _SettingsPanel(
-      child: Column(
-        children: [
-          _CardHeader(
-            icon: Icons.text_fields,
-            title: strings.fontSize,
-            subtitle: strings.fontSizeSubtitle,
-            trailing: Text(
-              strings.textSizeLabel(selected),
-              style: _SettingsText.value(context),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          _SegmentedControl<_TextSizeValue>(
-            value: selected,
-            options: [
-              _SegmentOption(
-                value: _TextSizeValue.small,
-                label: strings.small,
-                icon: Icons.text_decrease,
-              ),
-              _SegmentOption(
-                value: _TextSizeValue.medium,
-                label: strings.medium,
-                icon: Icons.text_fields,
-              ),
-              _SegmentOption(
-                value: _TextSizeValue.large,
-                label: strings.large,
-                icon: Icons.text_increase,
-              ),
-            ],
-            onSelected: (value) => ref
-                .read(userSettingsProvider.notifier)
-                .setFontScale(_fontScaleFor(value)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _TextSizeValue _textSizeValue(double scale) {
-    if (scale < 0.98) {
-      return _TextSizeValue.small;
-    }
-    if (scale > 1.12) {
-      return _TextSizeValue.large;
-    }
-    return _TextSizeValue.medium;
-  }
-
-  double _fontScaleFor(_TextSizeValue value) {
-    return switch (value) {
-      _TextSizeValue.small => 0.9,
-      _TextSizeValue.medium => 1.0,
-      _TextSizeValue.large => 1.3,
-    };
-  }
-}
-
-class _ThemeCard extends ConsumerWidget {
-  const _ThemeCard({required this.settings, required this.strings});
-
-  final UserSettings settings;
-  final _SettingsStrings strings;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return _SettingsPanel(
-      child: Column(
-        children: [
-          _CardHeader(
-            icon: Icons.contrast,
-            title: strings.theme,
-            subtitle: strings.themeSubtitle,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          _SegmentedControl<ThemeMode>(
-            value: settings.themeMode,
-            options: [
-              _SegmentOption(
-                value: ThemeMode.system,
-                label: strings.system,
-                icon: Icons.phone_android,
-              ),
-              _SegmentOption(
-                value: ThemeMode.light,
-                label: strings.light,
-                icon: Icons.light_mode_outlined,
-              ),
-              _SegmentOption(
-                value: ThemeMode.dark,
-                label: strings.dark,
-                icon: Icons.dark_mode_outlined,
-              ),
-            ],
-            onSelected: (value) =>
-                ref.read(userSettingsProvider.notifier).setThemeMode(value),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NavigationCard extends StatelessWidget {
-  const _NavigationCard({
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({
     required this.icon,
     required this.title,
-    required this.subtitle,
-    required this.onTap,
+    this.trailing,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
-  final String subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  static const double contentIndent =
+      AppSpacing.lg + _IconBadge.size + AppSpacing.md;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
+        child: Row(
+          children: [
+            _IconBadge(icon: icon),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Text(title, style: _SettingsText.titleSmall(context)),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: AppSpacing.sm),
+              trailing!,
+            ] else if (onTap != null) ...[
+              const SizedBox(width: AppSpacing.sm),
+              Icon(
+                Icons.chevron_right,
+                color: _SettingsColors.mutedText(context),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TileDivider extends StatelessWidget {
+  const _TileDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: _SettingsTile.contentIndent),
+      child: Divider(height: 1, color: _SettingsColors.border(context)),
+    );
+  }
+}
+
+class _TileValue extends StatelessWidget {
+  const _TileValue({required this.value});
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(value, style: _SettingsText.value(context)),
+        const SizedBox(width: AppSpacing.xs),
+        Icon(
+          Icons.chevron_right,
+          size: 20,
+          color: _SettingsColors.mutedText(context),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReminderTimeTile extends StatelessWidget {
+  const _ReminderTimeTile({
+    required this.enabled,
+    required this.label,
+    required this.time,
+    required this.onTap,
+  });
+
+  final bool enabled;
+  final String label;
+  final String time;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return _SettingsPanel(
-      padding: EdgeInsets.zero,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        onTap: onTap,
+    return InkWell(
+      onTap: onTap,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: enabled ? 1 : 0.45,
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.lg,
+          ),
           child: Row(
             children: [
-              _IconBadge(icon: icon),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: _IconBadge.size + AppSpacing.md),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: _SettingsText.titleSmall(context)),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(subtitle, style: _SettingsText.bodySmall(context)),
-                  ],
-                ),
+                child: Text(label, style: _SettingsText.titleSmall(context)),
               ),
+              Text(time, style: _SettingsText.body(context)),
               const SizedBox(width: AppSpacing.sm),
               Icon(
                 Icons.chevron_right,
@@ -691,42 +498,22 @@ class _NavigationCard extends StatelessWidget {
   }
 }
 
-class _CardHeader extends StatelessWidget {
-  const _CardHeader({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    this.trailing,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _IconBadge(icon: icon),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: _SettingsText.titleSmall(context)),
-              const SizedBox(height: AppSpacing.xs),
-              Text(subtitle, style: _SettingsText.bodySmall(context)),
-            ],
-          ),
-        ),
-        if (trailing != null) ...[
-          const SizedBox(width: AppSpacing.sm),
-          trailing!,
-        ],
-      ],
-    );
+_TextSizeValue _textSizeValue(double scale) {
+  if (scale < 0.98) {
+    return _TextSizeValue.small;
   }
+  if (scale > 1.12) {
+    return _TextSizeValue.large;
+  }
+  return _TextSizeValue.medium;
+}
+
+double _fontScaleFor(_TextSizeValue value) {
+  return switch (value) {
+    _TextSizeValue.small => 0.9,
+    _TextSizeValue.medium => 1.0,
+    _TextSizeValue.large => 1.3,
+  };
 }
 
 class _SettingsPanel extends StatelessWidget {
@@ -762,7 +549,7 @@ class _IconBadge extends StatelessWidget {
 
   final IconData icon;
 
-  static const size = 54.0;
+  static const size = 40.0;
 
   @override
   Widget build(BuildContext context) {
