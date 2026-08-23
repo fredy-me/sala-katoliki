@@ -81,8 +81,9 @@ class SettingsScreen extends ConsumerWidget {
                         title: strings.dailyReminder,
                         trailing: Switch(
                           value: settings.reminderEnabled,
-                          activeThumbColor:
-                              _SettingsColors.selectedText(context),
+                          activeThumbColor: _SettingsColors.selectedText(
+                            context,
+                          ),
                           activeTrackColor: _SettingsColors.accent(context),
                           onChanged: (value) => ref
                               .read(userSettingsProvider.notifier)
@@ -105,8 +106,7 @@ class SettingsScreen extends ConsumerWidget {
                             _textSizeValue(settings.fontScale),
                           ),
                         ),
-                        onTap: () =>
-                            _showOptionPickerSheet<_TextSizeValue>(
+                        onTap: () => _showOptionPickerSheet<_TextSizeValue>(
                           context,
                           title: strings.fontSize,
                           value: _textSizeValue(settings.fontScale),
@@ -751,15 +751,11 @@ class _SettingsStrings {
   bool get _sw => languageCode == 'sw';
 
   String get title => _sw ? 'Mipangilio' : 'Settings';
-  String get subtitle => _sw
-      ? 'Binafsisha matumizi yako na uendelee na safari ya sala kwa utulivu.'
-      : 'Customize your experience and keep your prayer journey focused.';
   String get loading => _sw ? 'Inapakia mipangilio...' : 'Loading settings...';
   String get loadError => _sw
       ? 'Kuna tatizo kusoma mipangilio.'
       : 'There was a problem reading settings.';
   String get preferences => _sw ? 'Mapendeleo' : 'Preferences';
-  String get appearance => _sw ? 'Mwonekano' : 'Appearance';
   String get supportInfo => _sw ? 'Msaada na Taarifa' : 'Support & Info';
   String get language => _sw ? 'Lugha' : 'Language';
   String get languageSubtitle =>
