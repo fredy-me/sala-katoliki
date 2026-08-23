@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/localization/supported_languages.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/app_card.dart';
