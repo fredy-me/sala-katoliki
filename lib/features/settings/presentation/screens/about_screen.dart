@@ -11,6 +11,7 @@ import '../../../../core/utils/navigation_utils.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/legal_links.dart';
 import '../../../../shared/widgets/sala_logo_mark.dart';
+import '../widgets/settings_ui.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
