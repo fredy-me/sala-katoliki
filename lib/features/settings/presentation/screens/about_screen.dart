@@ -43,7 +43,7 @@ class AboutScreen extends ConsumerWidget {
                   size: 116,
                   padding: 4,
                   backgroundColor: Theme.of(context).colorScheme.surface,
-                  borderColor: _AboutColors.accent(context),
+                  borderColor: SettingsColors.accent(context),
                 ),
               ),
 
@@ -217,7 +217,7 @@ class _AboutHeader extends StatelessWidget {
         IconButton(
           tooltip: strings.back,
           onPressed: () => context.popOrGo('/settings'),
-          icon: Icon(Icons.arrow_back, color: _AboutColors.accent(context)),
+          icon: Icon(Icons.arrow_back, color: SettingsColors.accent(context)),
         ),
 
         Expanded(
@@ -270,7 +270,7 @@ class _InfoCard extends StatelessWidget {
 
           if (onTap != null) ...[
             const SizedBox(width: AppSpacing.sm),
-            Icon(actionIcon, color: _AboutColors.mutedText(context)),
+            Icon(actionIcon, color: SettingsColors.mutedText(context)),
           ],
         ],
       ),
@@ -318,7 +318,7 @@ class _DeveloperCard extends StatelessWidget {
 
             const SizedBox(width: AppSpacing.sm),
 
-            Icon(Icons.open_in_new, color: _AboutColors.accent(context)),
+            Icon(Icons.open_in_new, color: SettingsColors.accent(context)),
           ],
         ),
       ),
@@ -369,7 +369,7 @@ class _ContactCard extends StatelessWidget {
             onTap: () => _openPlayStore(context, strings),
           ),
 
-          Divider(height: AppSpacing.xl, color: _AboutColors.border(context)),
+          Divider(height: AppSpacing.xl, color: SettingsColors.border(context)),
 
           _ContactAction(
             icon: Icons.email_outlined,
@@ -449,7 +449,7 @@ class _ContactAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            _IconBadge(icon: icon, foreground: _AboutColors.text(context)),
+            _IconBadge(icon: icon, foreground: SettingsColors.text(context)),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -463,7 +463,7 @@ class _ContactAction extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.open_in_new, color: _AboutColors.accent(context)),
+            Icon(Icons.open_in_new, color: SettingsColors.accent(context)),
           ],
         ),
       ),
@@ -499,13 +499,13 @@ class _IconBadge extends StatelessWidget {
       width: 58,
       height: 58,
       decoration: BoxDecoration(
-        color: _AboutColors.iconBackground(context),
+        color: SettingsColors.iconBackground(context),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
 
       child: Icon(
         icon,
-        color: foreground ?? _AboutColors.accent(context),
+        color: foreground ?? SettingsColors.accent(context),
         size: 30,
       ),
     );
