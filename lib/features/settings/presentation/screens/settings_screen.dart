@@ -246,6 +246,95 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showOptionPickerSheet<T>(
+    BuildContext context, {
+    required String title,
+    required T value,
+    required List<_SegmentOption<T>> options,
+    required ValueChanged<T> onSelected,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xl,
+            0,
+            AppSpacing.xl,
+            AppSpacing.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: _SettingsText.title(context)),
+              const SizedBox(height: AppSpacing.lg),
+              _SegmentedControl<T>(
+                value: value,
+                options: options,
+                onSelected: (selected) {
+                  Navigator.of(sheetContext).pop();
+                  onSelected(selected);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickTime(
+    BuildContext context,
+    WidgetRef ref,
+    String currentValue,
+  ) async {
+    final parts = currentValue.split(':');
+    final current = TimeOfDay(
+      hour: int.tryParse(parts.first) ?? 19,
+      minute: int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0,
+    );
+    final selected = await showTimePicker(
+      context: context,
+      initialTime: current,
+    );
+    if (selected == null) {
+      return;
+    }
+
+    await ref
+        .read(userSettingsProvider.notifier)
+        .setReminderTime(
+          '${selected.hour.toString().padLeft(2, '0')}:${selected.minute.toString().padLeft(2, '0')}',
+        );
+  }
+
+  String _languageLabel(String languageCode) {
+    if (languageCode == SupportedLanguages.kiswahili.code) {
+      return SupportedLanguages.kiswahili.name;
+    }
+    return SupportedLanguages.english.name;
+  }
+
+  String _themeLabel(ThemeMode mode, _SettingsStrings strings) {
+    return switch (mode) {
+      ThemeMode.light => strings.light,
+      ThemeMode.dark => strings.dark,
+      ThemeMode.system => strings.system,
+    };
+  }
+
+  String _formatDisplayTime(String value) {
+    final parts = value.split(':');
+    final hour = int.tryParse(parts.first) ?? 19;
+    final minute = int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0;
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+    return '$displayHour:${minute.toString().padLeft(2, '0')} $period';
+  }
 }
 
 SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
@@ -259,14 +348,7 @@ class _SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(strings.title, style: _SettingsText.display(context)),
-        const SizedBox(height: AppSpacing.md),
-        Text(strings.subtitle, style: _SettingsText.body(context)),
-      ],
-    );
+    return Text(strings.title, style: _SettingsText.display(context));
   }
 }
 
