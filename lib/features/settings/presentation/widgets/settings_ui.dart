@@ -80,15 +80,13 @@ abstract final class SettingsColors {
       ? const Color(0xFFE58F98)
       : AppColors.danger;
 
-  static Color dangerBackground(BuildContext context) => Theme.of(
-    context,
-  ).brightness == Brightness.dark
+  static Color dangerBackground(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
       ? AppColors.danger.withValues(alpha: 0.16)
       : AppColors.danger.withValues(alpha: 0.08);
 
-  static Color dangerBorder(BuildContext context) => Theme.of(
-    context,
-  ).brightness == Brightness.dark
+  static Color dangerBorder(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
       ? AppColors.danger.withValues(alpha: 0.45)
       : AppColors.danger.withValues(alpha: 0.28);
 }
@@ -111,10 +109,9 @@ abstract final class SettingsTextStyles {
 
   static TextStyle? bodySmall(BuildContext context) => body(context);
 
-  static TextStyle? section(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: SettingsColors.mutedText(context),
-      );
+  static TextStyle? section(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.labelSmall?.copyWith(color: SettingsColors.mutedText(context));
 
   static TextStyle? value(BuildContext context) =>
       Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -122,8 +119,7 @@ abstract final class SettingsTextStyles {
         fontWeight: FontWeight.w700,
       );
 
-  static TextStyle? labelText(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: AppTextStyles.label.color,
-      );
+  static TextStyle? labelText(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.labelSmall?.copyWith(color: AppTextStyles.label.color);
 }
