@@ -14,6 +14,13 @@ import '../../../../shared/widgets/legal_links.dart';
 import '../providers/settings_providers.dart';
 import '../widgets/settings_ui.dart';
 
+const EdgeInsets _listPadding = EdgeInsets.fromLTRB(
+  AppSpacing.screenHorizontal,
+  AppSpacing.screenTop,
+  AppSpacing.screenHorizontal,
+  AppSpacing.screenBottom,
+);
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -31,15 +38,27 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: settingsState.when(
-            loading: () => AppLoading(label: strings.loading),
-            error: (error, stackTrace) => _SettingsError(strings: strings),
+            loading: () => ListView(
+              padding: _listPadding,
+              children: [
+                _SettingsHeader(strings: strings),
+                const SizedBox(height: AppSpacing.section),
+                AppLoading(label: strings.loading),
+              ],
+            ),
+            error: (error, stackTrace) => ListView(
+              padding: _listPadding,
+              children: [
+                _SettingsHeader(strings: strings),
+                const SizedBox(height: AppSpacing.section),
+                _NoticeCard(
+                  message: strings.loadError,
+                  icon: Icons.error_outline_rounded,
+                ),
+              ],
+            ),
             data: (settings) => ListView(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenHorizontal,
-                AppSpacing.screenTop,
-                AppSpacing.screenHorizontal,
-                AppSpacing.screenBottom,
-              ),
+              padding: _listPadding,
               children: [
                 _SettingsHeader(strings: strings),
                 const SizedBox(height: AppSpacing.section),
@@ -293,7 +312,7 @@ class SettingsScreen extends ConsumerWidget {
                       if (index != options.length - 1)
                         Padding(
                           padding: const EdgeInsets.only(
-                            left: _IconBadge.size + AppSpacing.md,
+                            left: SettingsIconBadge.defaultSize + AppSpacing.md,
                           ),
                           child: Divider(
                             height: 1,
@@ -408,7 +427,7 @@ class _SettingsTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   static const double contentIndent =
-      AppSpacing.lg + _IconBadge.size + AppSpacing.md;
+      AppSpacing.lg + SettingsIconBadge.defaultSize + AppSpacing.md;
 
   @override
   Widget build(BuildContext context) {
@@ -504,7 +523,7 @@ class _ReminderTimeTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(width: _IconBadge.size + AppSpacing.md),
+              const SizedBox(width: SettingsIconBadge.defaultSize + AppSpacing.md),
               Expanded(
                 child: Text(label, style: SettingsTextStyles.titleSmall(context)),
               ),
@@ -568,38 +587,6 @@ class _NoticeCard extends StatelessWidget {
   }
 }
 
-class _IconBadge extends StatelessWidget {
-  const SettingsIconBadge({required this.icon});
-
-  final IconData icon;
-
-  static const size = 40.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: SettingsColors.iconBackground(context),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-      ),
-      child: Icon(icon, color: SettingsColors.accent(context), size: 28),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  const SettingsSectionLabel(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(label.toUpperCase(), style: SettingsTextStyles.section(context));
-  }
-}
-
 class _PickerRow<T> extends StatelessWidget {
   const _PickerRow({
     required this.option,
@@ -657,54 +644,6 @@ class _PickerOption<T> {
 }
 
 enum _TextSizeValue { small, medium, large }
-
-abstract final class _SettingsColors {
-  static Color iconBackground(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
-      ? AppColors.darkSurfaceElevated
-      : AppColors.surfaceWarm;
-
-  static Color border(BuildContext context) =>
-      Theme.of(context).dividerTheme.color ??
-      Theme.of(context).colorScheme.outlineVariant;
-
-  static Color text(BuildContext context) =>
-      Theme.of(context).colorScheme.onSurface;
-
-  static Color mutedText(BuildContext context) =>
-      Theme.of(context).colorScheme.onSurfaceVariant;
-
-  static Color accent(BuildContext context) =>
-      Theme.of(context).textTheme.labelSmall?.color ??
-      Theme.of(context).colorScheme.secondary;
-
-  static Color selectedText(BuildContext context) =>
-      Theme.of(context).colorScheme.onSecondary;
-}
-
-abstract final class _SettingsText {
-  static TextStyle? display(BuildContext context) =>
-      Theme.of(context).textTheme.headlineLarge;
-
-  static TextStyle? title(BuildContext context) =>
-      Theme.of(context).textTheme.titleLarge;
-
-  static TextStyle? titleSmall(BuildContext context) =>
-      Theme.of(context).textTheme.titleMedium;
-
-  static TextStyle? body(BuildContext context) =>
-      Theme.of(context).textTheme.bodyMedium;
-
-  static TextStyle? section(BuildContext context) => Theme.of(
-    context,
-  ).textTheme.labelSmall?.copyWith(color: SettingsColors.mutedText(context));
-
-  static TextStyle? value(BuildContext context) =>
-      Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: SettingsColors.text(context),
-        fontWeight: FontWeight.w700,
-      );
-}
 
 class _SettingsStrings {
   const _SettingsStrings(this.languageCode);
