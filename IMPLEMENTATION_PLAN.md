@@ -104,7 +104,7 @@ The MVP must not depend on authentication, a backend or CMS, cloud sync, payment
 ### 6. Android internal testing — in progress
 
 - Current app identity: `com.busaradigital.salakatoliki`.
-- Current app version: `1.0.8+8` / `1.0.8`.
+- Current app version: `1.0.9+9` / `1.0.9`.
 - Current target SDK: 36 (Android 16); minimum SDK is 24 (Android 7.0), inherited from the Flutter toolchain.
 - Release signing configuration is supported through `android/key.properties`; never commit the keystore or credentials.
 - Produce and test a release-signed AAB before internal upload.
