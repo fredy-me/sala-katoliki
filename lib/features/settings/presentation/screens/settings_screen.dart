@@ -583,19 +583,6 @@ class _SettingsPanel extends StatelessWidget {
   }
 }
 
-class _NoticeCard extends StatelessWidget {
-  const _NoticeCard({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SettingsPanel(
-      child: Text(message, style: SettingsTextStyles.body(context)),
-    );
-  }
-}
-
 class _PickerRow<T> extends StatelessWidget {
   const _PickerRow({
     required this.option,
