@@ -194,5 +194,19 @@
     "version": 1,
     "last_updated": "2026-08-02",
     "is_offline_available": true
+  },
+  {
+    "id": "holy_face_of_jesus_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "en",
+    "title": "Litany of the Holy Face of Jesus",
+    "description": "A litany honoring the Holy Face of Jesus, adored from Bethlehem to Calvary.",
+    "body": "Litany of the Holy Face of Jesus\n\nLord, have mercy on us.\nLord, have mercy on us.\nChrist, have mercy on us.\nChrist, have mercy on us.\nLord, have mercy on us.\nLord, have mercy on us.\nLord Jesus, hear us.\nLord Jesus, graciously hear us.\n\nResponse: Have mercy on us\n\nGod, the Father of Heaven,\nGod the Son, Redeemer of the world,\nGod the Holy Spirit,\nHoly Trinity, One God,\n\nResponse: Have mercy on us\n\nHoly Face of Jesus, which took Flesh and became Man,\nHoly Face of Jesus, which shone forth in the manger of Bethlehem,\nHoly Face of Jesus, adored by the Virgin Mother Mary in the cave,\nHoly Face of Jesus, adored by Saint Joseph in the cave,\nHoly Face of Jesus, adored by the Angels,\nHoly Face of Jesus, adored by the Shepherds,\nHoly Face of Jesus, which has mercy on sinners,\nHoly Face of Jesus, which wept tears of Blood during Thy Passion,\nHoly Face of Jesus, transfigured and shining on Mount Tabor,\nHoly Face of Jesus, bathed in Blood in the Garden of Gethsemane,\nHoly Face of Jesus, comforted by an Angel in Thine agony,\nHoly Face of Jesus, spat upon one hundred and eighty times,\nHoly Face of Jesus, comforted by Veronica,\nHoly Face of Jesus, so greatly despised,\nHoly Face of Jesus, smitten with blows and buffeted,\nHoly Face of Jesus, dimmed by most bitter suffering,\nHoly Face of Jesus, wounded by the piercing of thorns,\nHoly Face of Jesus, upon which the Angels desire to gaze,\nHoly Face of Jesus, which is the eternal light,\nHoly Face of Jesus, the joy of the Angels,\nHoly Face of Jesus, which shines upon us all,\nHoly Face of Jesus, the first chamber of heaven,\nHoly Face of Jesus, looking upon us with goodness and mercy,\nHoly Face of Jesus, eternal name,\nHoly Face of Jesus, which is most meek,\n\nResponse: Have mercy on us\n\nLamb of God, who takest away the sins of the world, Spare us, O Lord.\nLamb of God, who takest away the sins of the world, Graciously hear us, O Lord.\nLamb of God, who takest away the sins of the world, Have mercy on us.\n\nLET US PRAY.\n\nO God, who didst give Thine only-begotten Son to be the Savior of all mankind, we beseech Thee to accept the sacrifice of His most bitter passion; look not upon our sins, but only upon the most amiable Face of Thine only-begotten Son. We adore the Holy Face of our Lord Jesus Christ, our Savior, whose love is infinite and whose mercy is beyond measure. May He Himself grant us the forgiveness of our sins, and may we comfort His Holy Face by living holily and witnessing to our faith through love, without fear. Amen.\n\nO Holy Face, from which blood flowed, O Holy Face of the Lord Jesus, be adored forever. Amen.",
+    "tags": ["litany", "holy face", "jesus", "passion", "veronica"],
+    "source": "Litany.txt",
+    "version": 1,
+    "last_updated": "2026-08-24",
+    "is_offline_available": true
   }
 ]
