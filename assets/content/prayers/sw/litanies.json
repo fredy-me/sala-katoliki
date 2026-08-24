@@ -194,5 +194,19 @@
     "version": 1,
     "last_updated": "2026-08-02",
     "is_offline_available": true
+  },
+  {
+    "id": "holy_face_of_jesus_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "sw",
+    "title": "Litania ya Uso Mtakatifu wa Yesu",
+    "description": "Litania ya kuheshimu Uso Mtakatifu wa Yesu, ulioabudiwa kutoka Bethlehemu hadi Msalaba.",
+    "body": "Litania ya Uso Mtakatifu wa Yesu\n\nBwana utuhurumie.\nBwana utuhurumie.\nKristo utuhurumie.\nKristo utuhurumie.\nBwana utuhurumie.\nBwana utuhurumie.\nBwana Yesu, utusikie.\nBwana Yesu, utusikilize.\n\nKiitikio: Utuhurumie\n\nMUNGU Baba wa mbinguni,\nMUNGU Mwana, Mkombozi wetu,\nMUNGU Roho Mtakatifu,\nMUNGU Mmoja katika Nafsi Tatu,\n\nKiitikio: Utuhurumie\n\nUso Mtakatifu wa Yesu ulitwaa Mwili na kuwa Mwanadamu,\nUso Mtakatifu wa Yesu uling'ara Bethlehemu angoni,\nUso Mtakatifu wa Yesu ulioabudiwa na Mama Bikira Maria pangoni,\nUso Mtakatifu wa Yesu ulioabudiwa na Mtakatifu Yosefu pangoni,\nUso Mtakatifu wa Yesu ulioabudiwa na Malaika,\nUso Mtakatifu wa Yesu ulioabudiwa na Wachungaji,\nUso Mtakatifu wa Yesu unaowahurumia wakosefu,\nUso Mtakatifu wa Yesu uliolia machozi ya Damu katika mateso,\nUso Mtakatifu wa Yesu uling'ara na kugeuka mlimani Tabori,\nUso Mtakatifu wa Yesu ulioloweshwa Damu Bustanini Getsemane,\nUso Mtakatifu wa Yesu ulioarijiwa na Malaika katika mahututi yako,\nUso Mtakatifu wa Yesu ulitemewa mate mara 180,\nUso Mtakatifu wa Yesu ulioarijiwa na Veronika,\nUso Mtakatifu wa Yesu uliodharauliwa sana,\nUso Mtakatifu wa Yesu uliopigwa makofi,\nUso Mtakatifu wa Yesu uliofifia kwa mateso makali sana,\nUso Mtakatifu wa Yesu ulioumizwa kwa kuchomwa na miiba,\nUso Mtakatifu wa Yesu ambao malaika hupenda kutazama,\nUso Mtakatifu wa Yesu ulio mwanga wa milele,\nUso Mtakatifu wa Yesu furaha ya Malaika,\nUso Mtakatifu wa Yesu unaotuangazia wote,\nUso Mtakatifu wa Yesu chumba cha kwanza mbinguni,\nUso Mtakatifu wa Yesu unaotutazama kwa wema na huruma,\nUso Mtakatifu wa Yesu jina la milele,\nUso Mtakatifu wa Yesu ulio mpole sana,\n\nKiitikio: Utuhurumie\n\nMwanakondoo wa Mungu, aondoaye dhambi za ulimwengu, Utusamehe Bwana.\nMwanakondoo wa Mungu, aondoaye dhambi za ulimwengu, Utusikilize Bwana.\nMwanakondoo wa Mungu, aondoaye dhambi za ulimwengu, Utuhurumie.\n\nTUOMBE\n\nEe Mungu, uliyemtoa Mwanao wa pekee awe Mwokozi wa watu wote, tunakuomba upokee sadaka ya mateso yake makali mno, na usizitazame dhambi zetu bali tu uso mpendevu wa Mwanao wa pekee. Tunaabudu Uso Mtakatifu wa Bwana wetu Yesu Kristo, Mwokozi wetu, aliye na mapendo yasiyo na mwisho na huruma isiyopimika. Yeye mwenyewe atujalie msamaha wa dhambi zetu, nasi tuufariji uso wake Mtakatifu kwa kuishi vyema na kuishuhudia imani yetu kwa mapendo bila hofu. Amina.\n\nEe Uso Mtakatifu uliotoka damu, Ee Uso Mtakatifu wa Bwana Yesu, uabudiwe milele. Amina.",
+    "tags": ["litania", "uso mtakatifu", "yesu", "mateso", "veronika"],
+    "source": "Litany.txt",
+    "version": 1,
+    "last_updated": "2026-08-24",
+    "is_offline_available": true
   }
 ]
