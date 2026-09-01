@@ -222,5 +222,19 @@
     "version": 1,
     "last_updated": "2026-08-24",
     "is_offline_available": true
+  },
+  {
+    "id": "seven_sorrows_mary_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "sw",
+    "title": "Litania ya Mama Yetu wa Mateso Saba",
+    "description": "Litania ya kumheshimu Bikira Maria, Mama wa Mateso Saba, iliyoandikwa na Papa Pius VII.",
+    "body": "Litania ya Mama Yetu wa Mateso Saba\n\nBwana, utuhurumie.\nBwana, utuhurumie.\nKristo, utuhurumie.\nKristo, utuhurumie.\nBwana, utuhurumie.\nBwana, utuhurumie.\nKristo, utusikie.\nKristo, utusikilize.\nMungu Baba wa Mbinguni, Utuhurumie.\nMungu Mwana, Mkombozi wa dunia, Utuhurumie.\nMungu Roho Mtakatifu, Utuhurumie.\nUtatu Mtakatifu Mungu Mmoja, Utuhurumie.\n\nKiitikio: Utuombee\n\nMaria Mtakatifu Mama wa Mungu,\nBikira Mtakatifu wa Mabikira,\nMama wa Msulubiwa,\nMama mwenye uchungu mwingi,\nMama uliyejaa huzuni,\nMama mwenye majonzi,\nKioo cha uvumilivu,\nMwamba wa udumifu,\nDawa ya mfadhaiko,\nFuraha ya wenye huzuni,\nSafina ya waliotelekezwa,\nMakimbilio ya wapweke,\nNgao ya wanaokandamizwa,\nMshindaji wa wasioamini,\nFaraja ya wanyonge,\nDawa ya wagonjwa,\nMkingaji wa wapiganaji,\nBandari salama kwa meli iliyovunjika,\nMtuliza tufani,\nMwenzi wa wenye uchungu mwingi,\nKimbilio la walioelemewa,\nKitisho cha wasaliti,\nTaji la Mashahidi,\nHazina bora ya waamini,\nMwanga wa Waungama,\nLulu bora ya Mabikira,\nMfariji wa Wajane,\nFuraha ya Watakatifu wote,\nMalkia wa Watumishi wako,\nMaria Mtakatifu, ambaye ni pekee uliyefananishwa,\nUtuombee.\n\nK. Utuombee, Bikira mwenye Uchungu mwingi,\nM. Ili tuweze kustahiki ahadi za Kristo.\n\nTUOMBE:\n\nEe Mungu ambaye kwa mateso yake, kulingana na unabii wa Simeoni, upanga wa uchungu ulichoma moyo mtakatifu sana wa Bikira Maria, Mama yako mtukufu; utujalie sisi tunaokumbuka kwa heshima uchungu wake, tupate matunda yenye heri ya mateso yako. Unayeishi na kutawala milele na milele. Amina.",
+    "tags": ["litania", "bikira maria", "mama yetu", "mateso saba", "papa pius vii"],
+    "source": "Litany.txt",
+    "version": 1,
+    "last_updated": "2026-09-01",
+    "is_offline_available": true
   }
 ]
