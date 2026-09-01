@@ -91,7 +91,12 @@
     "title": "Commandments of the Church",
     "description": "The commandments of the Catholic Church for the faithful.",
     "body": "THE COMMANDMENTS OF THE CHURCH.\n\n1. Attend Holy Mass on Sundays and holy days of obligation.\n2. Fast on Ash Wednesday; do not eat meat on Good Friday.\n3. Confess your sins at least once each year.\n4. Receive the Holy Eucharist especially during Easter.\n5. Support the Catholic Church with offerings.\n6. Observe Catholic marriage law.",
-    "tags": ["commandments", "church commandments", "catholic church", "teaching"],
+    "tags": [
+      "commandments",
+      "church commandments",
+      "catholic church",
+      "teaching"
+    ],
     "source": "Sala za Kawaida.txt",
     "version": 1,
     "last_updated": "2026-06-07",
