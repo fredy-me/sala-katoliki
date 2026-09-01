@@ -222,5 +222,19 @@
     "version": 1,
     "last_updated": "2026-08-24",
     "is_offline_available": true
+  },
+  {
+    "id": "seven_sorrows_mary_litany",
+    "type": "prayer",
+    "category": "litanies",
+    "language": "en",
+    "title": "Litany of Our Lady of Seven Sorrows",
+    "description": "A litany honoring the Blessed Virgin Mary, Mother of Sorrows, approved by Pope Pius VII.",
+    "body": "Litany of Our Lady of Seven Sorrows\n\nLord, have mercy on us.\nChrist, have mercy on us.\nLord, have mercy on us.\n\nChrist, hear us.\nChrist, graciously hear us.\n\nGod, the Father of heaven,\nhave mercy on us.\nGod the Son, Redeemer of the world,\nhave mercy on us.\nGod the Holy Ghost,\nhave mercy on us.\nHoly Trinity, One God,\nhave mercy on us.\n\nPray for us.\n\nHoly Mary, Mother of God,\nHoly Virgin of virgins,\nMother of the Crucified,\nSorrowful Mother,\nMournful Mother,\nSighing Mother,\nAfflicted Mother,\nForsaken Mother,\nDesolate Mother,\nMother most sad,\nMother set around with anguish,\nMother overwhelmed by grief,\nMother transfixed by a sword,\nMother crucified in thy heart,\nMother bereaved of thy Son,\nSighing Dove,\nMother of Dolors,\nFount of tears,\nSea of bitterness,\nField of tribulation,\nMass of suffering,\nMirror of patience,\nRock of constancy,\nRemedy in perplexity,\nJoy of the afflicted,\nArk of the desolate,\nRefuge of the abandoned,\nShield of the oppressed,\nConqueror of the incredulous,\nSolace of the wretched,\nMedicine of the sick,\nHelp of the faint,\nStrength of the weak,\nProtectress of those who fight,\nHaven of the shipwrecked,\nCalmer of tempests,\nCompanion of the sorrowful,\nRetreat of those who groan,\nTerror of the treacherous,\nStandard-bearer of the Martyrs,\nTreasure of the Faithful,\nLight of Confessors,\nPearl of Virgins,\nComfort of Widows,\nJoy of all Saints,\nQueen of thy Servants,\nHoly Mary, who alone art unexampled,\nPray for us.\n\nPray for us, most Sorrowful Virgin,\nThat we may be made worthy of the promises of Christ.\n\nLET US PRAY:\n\nO God, in whose Passion, according to the prophecy of Simeon, a sword of grief pierced through the most sweet soul of Thy glorious Blessed Virgin Mother Mary: grant that we, who celebrate the memory of her Seven Sorrows, may obtain the happy effect of Thy Passion, Who lives and reigns world without end. Amen.",
+    "tags": ["litany", "mary", "seven sorrows", "dolors", "pope pius vii"],
+    "source": "EWTN / Catholic.org",
+    "version": 1,
+    "last_updated": "2026-09-01",
+    "is_offline_available": true
   }
 ]
