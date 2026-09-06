@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,8 @@ import 'features/prayers/domain/entities/prayer_entity.dart';
 import 'features/prayers/presentation/providers/prayer_providers.dart';
 import 'features/settings/presentation/providers/settings_providers.dart';
 import 'routes/app_router.dart';
+import 'shared/services/deep_link_providers.dart';
+import 'shared/services/deep_link_service.dart';
 import 'shared/services/home_widget_service.dart';
 
 class SalaKatolikiApp extends ConsumerStatefulWidget {
@@ -21,12 +24,16 @@ class SalaKatolikiApp extends ConsumerStatefulWidget {
 }
 
 class _SalaKatolikiAppState extends ConsumerState<SalaKatolikiApp> {
+  final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri?>? _widgetClickSub;
+  StreamSubscription<Uri>? _appLinkSub;
+  String? _pendingAppLink;
 
   @override
   void initState() {
     super.initState();
     _listenForWidgetLaunches();
+    _listenForAppLinks();
   }
 
   void _listenForWidgetLaunches() {
@@ -47,9 +54,38 @@ class _SalaKatolikiAppState extends ConsumerState<SalaKatolikiApp> {
     });
   }
 
+  void _listenForAppLinks() {
+    _appLinkSub = _appLinks.uriLinkStream.listen(
+      _onAppLink,
+      onError: (Object error, StackTrace stackTrace) {
+        // Link delivery is unavailable (for example, in tests).
+      },
+    );
+  }
+
+  void _onAppLink(Uri uri) {
+    final raw = uri.toString();
+    final context = ref.read(deepLinkContextProvider).value;
+    if (context == null) {
+      _pendingAppLink = raw;
+      ref.read(deepLinkContextProvider);
+      return;
+    }
+    _navigateToDeepLink(raw, context);
+  }
+
+  void _navigateToDeepLink(String raw, DeepLinkService context) {
+    final route = context.resolve(raw);
+    if (route == null) {
+      return;
+    }
+    ref.read(appRouterProvider).go(route);
+  }
+
   @override
   void dispose() {
     _widgetClickSub?.cancel();
+    _appLinkSub?.cancel();
     super.dispose();
   }
 
@@ -70,6 +106,13 @@ class _SalaKatolikiAppState extends ConsumerState<SalaKatolikiApp> {
           languageCode: ref.read(activeLanguageProvider),
         ),
       );
+    });
+
+    ref.listen(deepLinkContextProvider, (previous, next) {
+      if (next is AsyncData<DeepLinkService> && _pendingAppLink != null) {
+        _navigateToDeepLink(_pendingAppLink!, next.value);
+        _pendingAppLink = null;
+      }
     });
 
     final router = ref.watch(appRouterProvider);
