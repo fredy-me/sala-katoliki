@@ -87,9 +87,6 @@ class DeepLinkService {
     }
 
     var path = uri.path;
-    if (path.isEmpty) {
-      path = '/';
-    }
     if (path.startsWith(sitePathPrefix)) {
       path = path.length == sitePathPrefix.length
           ? '/'
