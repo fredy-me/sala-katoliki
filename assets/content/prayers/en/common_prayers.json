@@ -157,5 +157,19 @@
     "version": 1,
     "last_updated": "2026-09-21",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_to_discern_vocation",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Prayer to Saint Joseph to Discern One's Vocation",
+    "description": "A prayer to St. Joseph to discern and embrace the state of life God wills for us.",
+    "body": "O glorious Saint Joseph, who didst perfectly obey the guidance of the Holy Ghost, obtain for me the grace to know the state of life which Almighty God willeth me to embrace.\n\nSuffer me not to be deceived in a matter so momentous, whereon my happiness here below, and even the eternal salvation of my soul, depend.\n\nGrant that, being enlightened by the divine will and remaining faithful in fulfilling it, I may embrace the path which God hath prepared for me, and which shall lead me to everlasting bliss.\n\nAmen.",
+    "tags": ["joseph", "st joseph", "vocation", "discernment", "guidance"],
+    "source": "Book / Public source",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
