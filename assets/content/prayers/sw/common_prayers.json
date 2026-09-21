@@ -152,5 +152,19 @@
     "version": 1,
     "last_updated": "2026-09-21",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_to_discern_vocation",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Sala Kwa Mt. Yosefu Kuomba Kufahamu Wito Wako",
+    "description": "Sala kwa Mt. Yosefu ili kufahamu na kukumbatia wito wa maisha ambayo Mungu ameandaa.",
+    "body": "Ee uliye Mkuu, Mt. Yosefu, uliyatii kabisa maongozi ya Roho Mt.\n\nUnijalie neema ya kufahamu aina ya maisha ambayo Mungu anapenda mimi niishi. Usiniache nidanganyike katika jambo muhimu kama hili, ambalo furaha yangu hapa duniani inalitegemea, na hata pia wokovu wa roho yangu.\n\nUnijalie, nikiangazwa na matakwa matakatifu na nikiwa mwaminifu katika kuyatimiza, nikumbatie aina ya maisha ambayo Mungu ameniandalia na yatakayoniongoza kwenye furaha ya milele.\n\nAmina.",
+    "tags": ["yosefu", "mtakatifu yosefu", "wito", "kufahamu", "maongozi"],
+    "source": "Kitabu / Chanzo cha umma",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
