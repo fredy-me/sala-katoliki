@@ -115,5 +115,19 @@
     "version": 1,
     "last_updated": "2026-06-07",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_pilgrim_church",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Prayer to St. Joseph for the Pilgrim Church",
+    "description": "A prayer to St. Joseph as heavenly Patron and Protector of the Church.",
+    "body": "O glorious Saint Joseph, chosen by Almighty God to be the Foster-Father of Jesus, the most chaste Spouse of Mary Ever-Virgin, and the Head of the Holy Family. Thou hast been chosen by the Vicar of Christ as the heavenly Patron and Protector of the Church founded by Christ. Therefore, with greatest confidence, I implore thy powerful assistance for the entire Church throughout the world.\n\nGuard with a truly fatherly love, in a special manner, the Sovereign Pontiff, and all Bishops and Priests in communion with the See of Peter. Be thou the protector of all who labor for the salvation of souls amidst the trials and tribulations of this life; and grant that all peoples of the earth may follow Christ and the Church which He established.\n\nBeloved Saint Joseph, accept the offering of myself which I now make. I consecrate myself to thy service, that thou mayest ever be my father, my protector, and my guide in the way of salvation. Obtain for me a great purity of heart and a fervent desire for the spiritual life. Grant that all my actions, after thine own example, may be directed to the praise and glory of God, in union with the Divine Heart of Jesus, the Immaculate Heart of Mary, and thy fatherly heart. Intercede for me, that I may share in thy happy and holy death.\n\nAmen.",
+    "tags": ["joseph", "st joseph", "church", "pilgrim church", "protection"],
+    "source": "Traditional Catholic prayer",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
