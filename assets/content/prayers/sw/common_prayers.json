@@ -138,5 +138,19 @@
     "version": 1,
     "last_updated": "2026-09-21",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_for_the_unemployed",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Sala Kwa Mt. Yosefu Kwa Wasio Na Ajira Wapate Ajira",
+    "description": "Sala kwa Mt. Yosefu, Msimamizi wa wafanyakazi, kwa wasio na ajira na wanaotafuta kazi halali.",
+    "body": "Ee Mt. Yosefu, tunakuomba kwa ajili ya wale asio na ajira, kwa ajili ya wale wanaotaka kujipatia kipato chao na kulisha familia zao.\n\nWewe u Msimamizi wa wafanyakazi, tujalie kwamba pasiwepo kati yetu mtu asiye na ajira, na kwamba wale wote ambao wako tayari kufanya kazi waweze kuelekeza nguvu zao na uwezo wao katika kuwatumikia wanadamu wenzao na kujipatia kipato halali.\n\nWewe u Msimamizi wa familia, usiwaache wale wenye watoto wa kuwatunza na kuwalea wakose namna ya kufanya hivyo. Uwahurumie ndugu zetu waliokosa ajira na kugubikwa na umasikini kwa sababu ya magonjwa au mipango mibaya ya kijamii. Wasaidie viongozi wetu wa kisiasa na walioshika usukani katika nyanja mbalimbali za kiuzalishaji wavumbue suluhu mpya na za haki za jambo hili.\n\nUtujalie ili kila mmoja wetu apate kujipatia kipato halali na kufurahia fursa ya kushiriki kadri ya uwezo wake, katika maisha bora zaidi kwa wote. Utujalie ili wote tushiriki pamoja katika raslimali alizotujalia Mungu, na pia utujalie tuwe tayari daima kuwasaidia wale walio wahitaji kuliko sisi.\n\nAmina.",
+    "tags": ["yosefu", "mtakatifu yosefu", "ajira", "kazi", "wafanyakazi", "wasio na ajira"],
+    "source": "Kitabu / Chanzo cha umma",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
