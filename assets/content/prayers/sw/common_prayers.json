@@ -110,5 +110,33 @@
     "version": 1,
     "last_updated": "2026-06-07",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_pilgrim_church",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Sala Kwa Mt. Yosefu Kwa Ajili Ya Kuliombea Kanisa La Mahujaji",
+    "description": "Sala kwa Mt. Yosefu kama msimamizi na mlinzi wa Kanisa la mahujaji.",
+    "body": "Ee Mtukufu Mt. Yosefu, ulichaguliwa na Mungu kuwa Baba Mlishi wa Yesu, mchumba safi kabisa wa Maria Bikira Milele, na mkubwa wa Familia Takatifu. Umechaguliwa na Mwakilishi wa Kristu kama Msimamizi wa kimbingu na mlinzi wa Kanisa alilolianzisha Kristu. Ndiyo maana ninakuomba kwa matumaini makuu usaidizi wako wenye nguvu kwa ajili ya Kanisa zima duniani.\n\nMlinde kwa namna ya pekee, kwa upendo wa kikweli wa ki-baba, Baba Mtakatifu na Maaskofu wote na Mapadre wenye ushirika na Kiti cha Petro. Uwe mlinzi wao wote wanaotumikia wokovu wa wanadamu kati ya majaribu na mahangaiko ya maisha haya, na utujalie kwamba watu wote wa dunia hii wamfuate Kristu na Kanisa alilolianzisha.\n\nMpendwa Mtakatifu Yosefu, ukubali majitoleo ya nafsi yangu ambayo sasa ninafanya. Ninajiweka wakfu kwako kwa ajili ya utumishi wako, ili daima wewe uwe baba yangu, mlinzi wangu, na kiongozi wangu katika njia ya wokovu. Unijalie usafi mkuu wa moyo na matamanio makuu ya maisha ya kiroho. Unijalie ili matendo yangu yote, kwa mfano wako, yawe kwa ajili ya sifa na utukufu wa Mungu, pamoja na Moyo wa kimungu wa Yesu, moyo safi wa Maria, na moyo wako wa ki-baba. Uniombee, nami nishiriki kifo chako cha furaha na kitakatifu.\n\nAmina.",
+    "tags": ["yosefu", "mtakatifu yosefu", "kanisa", "kanisa la mahujaji", "ulinzi"],
+    "source": "Kitabu / Chanzo cha umma",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
+  },
+  {
+    "id": "act_of_entrustment_to_st_joseph",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "sw",
+    "title": "Kujiweka Chini Ya Ulinzi Wa Mt. Yosefu",
+    "description": "Kitendo cha kujiweka chini ya ulinzi wa Mt. Yosefu.",
+    "body": "Ee Mt. Yosefu, Baba Mlishi wa Mwokozi wangu, na mchumba safi wa Mama wa Mungu, leo ninakuchagua wewe, kama mwombezi wangu kwa Mungu Mwenyezi, na pia kama mfano wangu, na mlinzi wangu, na baba yangu, katika bonde hili la ugenini.\n\nEe Mt. Yosefu, ambaye Bwana alikufanya mlinzi wa Familia yake, ninakuomba uwe mlinzi wangu mwema katika mambo yangu yote. Uniwashie moyoni mwangu moto wa mapendo makuu kwa Yesu, na uniwezeshe kumtumikia kwa bidii na kwa uaminifu kwa mfano wako. Nisaidie katika udhaifu wangu katika kumheshimu Mama Maria kama Mwombezi wangu.\n\nDaima uwe kiongozi wangu katika njia ya fadhila na ibada, na unijalie, baada ya kukufuasa kwa uaminifu katika njia ya haki, nipate ulinzi wako wenye nguvu katika saa ya kufa kwangu.\n\nAmina",
+    "tags": ["yosefu", "mtakatifu yosefu", "kujiweka", "ulinzi", "wakfu"],
+    "source": "Kitabu / Chanzo cha umma",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
