@@ -64,6 +64,7 @@ Sala Katoliki — web URL scheme for App Indexing.
 | `https://busaradigital.com/salakatoliki/prayers/common/sala-kwa-mt-yosefu-kwa-ajili-ya-kuliombea-kanisa-la-mahujaji` | `prayer_to_st_joseph_pilgrim_church` |
 | `https://busaradigital.com/salakatoliki/prayers/common/kujiweka-chini-ya-ulinzi-wa-mt-yosefu` | `act_of_entrustment_to_st_joseph` |
 | `https://busaradigital.com/salakatoliki/prayers/common/sala-kwa-mt-yosefu-kwa-wasio-na-ajira-wapate-ajira` | `prayer_to_st_joseph_for_the_unemployed` |
+| `https://busaradigital.com/salakatoliki/prayers/common/sala-kwa-mt-yosefu-kuomba-kufahamu-wito-wako` | `prayer_to_st_joseph_to_discern_vocation` |
 
 ### 4.2 Marian Prayers — `/prayers/marian/{slug}` → `/prayers/{prayerId}`
 
