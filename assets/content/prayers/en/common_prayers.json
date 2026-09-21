@@ -125,7 +125,21 @@
     "description": "A prayer to St. Joseph as heavenly Patron and Protector of the Church.",
     "body": "O glorious Saint Joseph, chosen by Almighty God to be the Foster-Father of Jesus, the most chaste Spouse of Mary Ever-Virgin, and the Head of the Holy Family. Thou hast been chosen by the Vicar of Christ as the heavenly Patron and Protector of the Church founded by Christ. Therefore, with greatest confidence, I implore thy powerful assistance for the entire Church throughout the world.\n\nGuard with a truly fatherly love, in a special manner, the Sovereign Pontiff, and all Bishops and Priests in communion with the See of Peter. Be thou the protector of all who labor for the salvation of souls amidst the trials and tribulations of this life; and grant that all peoples of the earth may follow Christ and the Church which He established.\n\nBeloved Saint Joseph, accept the offering of myself which I now make. I consecrate myself to thy service, that thou mayest ever be my father, my protector, and my guide in the way of salvation. Obtain for me a great purity of heart and a fervent desire for the spiritual life. Grant that all my actions, after thine own example, may be directed to the praise and glory of God, in union with the Divine Heart of Jesus, the Immaculate Heart of Mary, and thy fatherly heart. Intercede for me, that I may share in thy happy and holy death.\n\nAmen.",
     "tags": ["joseph", "st joseph", "church", "pilgrim church", "protection"],
-    "source": "Traditional Catholic prayer",
+    "source": "Book / Public source",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
+  },
+  {
+    "id": "act_of_entrustment_to_st_joseph",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Act of Entrustment to the Protection of Saint Joseph",
+    "description": "An act of entrustment placing oneself under the protection of St. Joseph.",
+    "body": "O Saint Joseph, Foster-Father of my Savior, and most chaste Spouse of the Mother of God, this day I choose thee to be my advocate before Almighty God, as well as my model, my protector, and my father in this valley of exile.\n\nO Saint Joseph, whom the Lord didst constitute the guardian of His own Holy Family, I beseech thee to be my good protector in all my affairs. Kindle within my heart the fire of a great love for Jesus, and enable me to serve Him with zeal and fidelity after thine own example. Aid me in my weakness to honor the Blessed Mother Mary as my Mediatrix.\n\nBe thou ever my guide in the path of virtue and piety; and grant that, having faithfully followed thee in the way of righteousness, I may receive thy powerful protection in the hour of my death.\n\nAmen.",
+    "tags": ["joseph", "st joseph", "entrustment", "protection", "consecration"],
+    "source": "Book / Public source",
     "version": 1,
     "last_updated": "2026-09-21",
     "is_offline_available": true
