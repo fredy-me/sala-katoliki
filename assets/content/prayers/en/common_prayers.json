@@ -143,5 +143,19 @@
     "version": 1,
     "last_updated": "2026-09-21",
     "is_offline_available": true
+  },
+  {
+    "id": "prayer_to_st_joseph_for_the_unemployed",
+    "type": "prayer",
+    "category": "common_prayers",
+    "language": "en",
+    "title": "Prayer to Saint Joseph for the Unemployed",
+    "description": "A prayer to St. Joseph, Patron of workers, for the unemployed and for those seeking honest work.",
+    "body": "O Saint Joseph, we beseech thee on behalf of those who are without employment, and for those who desire to earn their living and provide sustenance for their families.\n\nThou art the Patron of workers; grant that there may be none among us lacking employment, and that all who stand ready to labor may direct their strength and talents to the service of their fellow men and the earning of an honest livelihood.\n\nThou art the Patron of families; leave not those who have children to cherish and bring up without the means to do so. Have compassion upon our brethren who are unemployed and cast down into poverty by reason of sickness or unjust social structures. Assist our political leaders and those who hold the reins of industry and production, that they may devise new and just solutions to this affliction.\n\nGrant that each of us may obtain a lawful income and rejoice in the opportunity to share, according to our ability, in a better life for all. Grant that we may all partake together of the resources wherewith Almighty God hath blessed us, and vouchsafe that we may ever be ready to succor those whose need is greater than our own.\n\nAmen.",
+    "tags": ["joseph", "st joseph", "unemployed", "work", "employment", "workers"],
+    "source": "Book / Public source",
+    "version": 1,
+    "last_updated": "2026-09-21",
+    "is_offline_available": true
   }
 ]
