@@ -91,12 +91,22 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
                       ),
                     ),
                   const SizedBox(height: AppSpacing.lg),
-                  NovenaTextView(
-                    text: section.body,
-                    showContainer: !isStRitaNovena,
-                    allSaintsStyle: isStRitaNovena,
-                    thanksgivingStyle: isStRitaNovena,
-                  ),
+                  if (isStRitaNovena)
+                    NovenaTextView(
+                      text: section.body,
+                      allSaintsStyle: isStRitaNovena,
+                      thanksgivingStyle: isStRitaNovena,
+                    )
+                  else
+                    AppCard(
+                      radius: AppSpacing.radiusXl,
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      child: NovenaTextView(
+                        text: section.body,
+                        allSaintsStyle: isStRitaNovena,
+                        thanksgivingStyle: isStRitaNovena,
+                      ),
+                    ),
                 ],
               );
             },
