@@ -91,11 +91,20 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                       ),
                     ),
                   const SizedBox(height: AppSpacing.lg),
-                  LitanyTextView(
-                    text: closingPrayer.body,
-                    showContainer: !isStRitaNovena,
-                    stRitaStyle: isStRitaNovena,
-                  ),
+                  if (isStRitaNovena)
+                    LitanyTextView(
+                      text: closingPrayer.body,
+                      stRitaStyle: isStRitaNovena,
+                    )
+                  else
+                    AppCard(
+                      radius: AppSpacing.radiusXl,
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      child: LitanyTextView(
+                        text: closingPrayer.body,
+                        stRitaStyle: isStRitaNovena,
+                      ),
+                    ),
                 ],
               );
             },
