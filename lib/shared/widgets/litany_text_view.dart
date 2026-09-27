@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import 'app_card.dart';
 
+/// Renders litany text line by line.
+///
+/// This widget is deliberately incapable of drawing a card, container,
+/// background or border. Any surface that needs a card must wrap this widget
+/// in [AppCard] at the call site, so a prayer can never be boxed by accident.
+/// See app_optimization.md section 0.1.
 class LitanyTextView extends StatelessWidget {
   const LitanyTextView({
     required this.text,
     this.fontScale = 1,
-    this.showContainer = true,
     this.stRitaStyle = false,
     super.key,
   });
 
   final String text;
   final double fontScale;
-  final bool showContainer;
   final bool stRitaStyle;
 
   @override
@@ -40,15 +43,7 @@ class LitanyTextView extends StatelessWidget {
       ],
     );
 
-    if (!showContainer) {
-      return content;
-    }
-
-    return AppCard(
-      radius: AppSpacing.radiusXl,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: content,
-    );
+    return content;
   }
 }
 
