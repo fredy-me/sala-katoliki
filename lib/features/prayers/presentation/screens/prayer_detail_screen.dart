@@ -143,7 +143,6 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         LitanyTextView(
                           text: prayer.text(activeLanguageCode),
                           fontScale: _textScale,
-                          showContainer: false,
                           stRitaStyle: const {
                             'st_rita_litany',
                             'bikira_maria_litany',
