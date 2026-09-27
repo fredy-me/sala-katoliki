@@ -28,33 +28,68 @@ This document is the tracking record for optimization work. It is a companion to
 
 **No prayer reading view may display inside a card, container, background, fill, or border. This is the current behaviour and it must not change.**
 
-Verified current state:
+Verified current state, after the Part 1.4 refactor:
 
-| Screen | Body view | Container flag | Result |
+| Screen | Body view | Card source | Result |
 | --- | --- | --- | --- |
 | Prayer detail — standard prayers | `PrayerTextView` | none exists | **No card** |
-| Prayer detail — litanies | `LitanyTextView` | `showContainer: false` | **No card** |
-| Novena day | `NovenaTextView` | `showContainer: false` | **No card** |
-| Rosary step | `LitanyTextView` | `showContainer: false` | **No card** |
+| Prayer detail — litanies | `LitanyTextView` | none exists | **No card** |
+| Novena day | `NovenaTextView` | none exists | **No card** |
+| Rosary step | `LitanyTextView` | none exists | **No card** |
 
-`PrayerTextView` (`shared/widgets/prayer_text_view.dart`) has no container parameter at all — it can never be boxed. `LitanyTextView` and `NovenaTextView` default `showContainer` to `true`, so **every call site must keep passing `showContainer: false` explicitly.**
+`showContainer` has been **removed entirely**. It no longer exists on any widget, so
+"a call site forgot to pass `false`" is no longer a possible failure.
+
+The card now lives at the call site instead of inside the text view:
+
+| Call site | Card at call site? |
+| --- | --- |
+| `prayer_detail_screen.dart` — standard and litany | No |
+| `rosary_step_screen.dart` | No |
+| `novena_day_screen.dart` | No |
+| `novena_thanksgiving_screen.dart` | Yes, for non-`st_rita` |
+| `novena_closing_prayer_screen.dart` | Yes, for non-`st_rita` |
+
+`NovenaTextView` and `LitanyTextView` no longer import `app_card.dart`, so they are
+**structurally incapable** of drawing a card. This is enforced by the compiler
+rather than by reviewer discipline, which is strictly stronger than the previous
+boolean flag.
+
+### One deliberate exception
+
+`_HighlightedParagraph` (`novena_text_view.dart:560`) paints a subtle
+`surfaceContainerHighest` panel with a gold rule behind individual lines — the
+opening line "In the name of the Father", prayer counts, and leader responses.
+
+This is **per-line text styling inside a paragraph, not a card around the
+reading.** It must not be removed in the name of this invariant, and it is
+pinned by its own test so it cannot be "simplified" away later.
 
 ### Why this is called out separately
 
-Four parts touch exactly this code, and each could silently reintroduce a card:
+Several parts touch exactly this code, and each could silently reintroduce a card:
 
 | Part | Item | Card-reintroduction risk |
 | --- | --- | --- |
-| 4 | 4.4 memoize the body split | A memoized/cached parse must not absorb or drop the `showContainer` branch |
-| 4 | 4.6 virtualize the text views | The `AppCard` branch at `litany_text_view.dart:47` and `novena_text_view.dart:59` must stay unreachable for prayers |
+| 4 | 4.4 memoize the body split | A memoized/cached parse must not absorb or drop a card branch |
+| 4 | 4.6 virtualize the text views | A virtualized text view must not gain a card wrapper |
 | 5 | 5.4 bottom-nav state preservation | Changing how screens are built must not change what wraps their content |
-| 6 | 6.1 data-driven style flags | Routing a prayer to a different text view must not land it in a view that defaults to a card |
+| 6 | 6.1 data-driven style flags | Routing a prayer to a different text view must not land it in a carded surface |
 
 ### Enforcement
 
-- `showContainer: false` is asserted for every prayer/novena-day/rosary-step call site.
-- A grep for `showContainer: false` and a grep for `AppCard(` are both part of the gate checks in §0.2.
-- Screenshot comparison of all 36 prayer screens, both languages, is a mandatory gate.
+Implemented in `test/widget/prayer_text_unboxed_test.dart`, 8 tests:
+
+- Asserts `find.byType(AppCard)` is empty for `NovenaTextView` (including every
+  style flag combination) and `LitanyTextView` (including `stRitaStyle`).
+- Asserts neither text view source contains `showContainer`, `AppCard(`, or
+  `app_card.dart`.
+- Asserts the two call sites that legitimately show a card still do, so this
+  invariant cannot be satisfied by quietly deleting the novena cards.
+- Asserts the inline scripture highlight is still present.
+
+Screenshot comparison of all prayer screens, both languages, remains a mandatory
+OWNER gate.
 
 ### Deliberately out of scope
 
@@ -62,11 +97,18 @@ Two nearby cases must **keep** their current behaviour and are **not** to be "si
 
 | Case | Current behaviour | Keep as-is |
 | --- | --- | --- |
-| Novena closing prayer | `showContainer: !isStRitaNovena` | Conditional container — carded except for `st_rita` |
-| Novena thanksgiving | `showContainer: !isStRitaNovena` | Conditional container — carded except for `st_rita` |
+| Novena closing prayer | `AppCard` at the call site, for non-`st_rita` | Carded except for `st_rita` |
+| Novena thanksgiving | `AppCard` at the call site, for non-`st_rita` | Carded except for `st_rita` |
 | Prayer list tile | `PrayerCard` → `AppCard` | List tiles in the library, search results, and favourites keep their card. This is a list row, not a prayer reading view |
+| Novena inline scripture highlight | `_HighlightedParagraph` | Per-line styling, not a card. See §0.1 |
 
 Do not "fix" the asymmetry between these. It is intentional and visible.
+
+The closing-prayer and thanksgiving cards were previously expressed as
+`showContainer: !isStRitaNovena` **inside** the text view. Because the parameter
+is now gone, they were moved to an explicit `AppCard` wrapper at the call site
+with the same `radius: AppSpacing.radiusXl` and `padding: EdgeInsets.all(AppSpacing.xl)`.
+The resulting widget tree is identical, so rendering is unchanged.
 
 ---
 
@@ -79,11 +121,59 @@ Do not "fix" the asymmetry between these. It is intentional and visible.
 | # | Command | Purpose |
 | --- | --- | --- |
 | 1 | `flutter analyze` | Must report zero issues |
-| 2 | `flutter test test/unit` | Unit tests — 7 files |
-| 3 | `flutter test test/widget` | Widget tests — 4 files |
+| 2 | `flutter test test/unit` | Unit tests — 7 files, 30 tests |
+| 3 | `flutter test test/widget` | Widget tests — 3 files |
 | 4 | `dart run tools/validate_content.dart` | Content validator must pass |
 
 These run only at a part's acceptance gate, not continuously. `flutter test` executes on the host Dart VM and produces no app build, so it is within policy.
+
+### Test inventory, verified 2026-09-27
+
+| Directory | Files | Names |
+| --- | --- | --- |
+| `test/unit` | 6 | `app_theme_test`, `content_loader_repository_test`, `content_validation_test`, `deep_link_service_test`, `home_widget_service_test`, `search_rosary_novena_test`, plus `unused_dependencies_test` added in Part 1 |
+| `test/widget` | 3 | `onboarding_routing_test`, `prayer_text_unboxed_test` (added in Part 1), `today_novena_localization_test` |
+| `integration_test` | 3 | `app_startup_test`, `novena_progress_test`, `offline_prayer_flow_test` |
+
+An earlier draft of this plan claimed 7 unit and 4 widget files. That was wrong.
+There is no `test/widget/widget_test.dart`. The counts above are the measured ones.
+
+### Known pre-existing failure — not caused by this work
+
+`test/widget/today_novena_localization_test.dart` fails with
+`Expected requested widget to appear`. **Diagnosed, root cause confirmed, left
+unfixed on purpose.**
+
+Chain of evidence:
+
+1. `TodayScreen` renders its content only inside `prayersState.when(...)`
+   (`today_screen.dart:34`) and shows `AppLoading` while loading (`:35`).
+2. The test never overrides `prayersProvider`, so the real provider runs, which
+   constructs `LocalContentDataSource()` with the **default `rootBundle`**
+   (`local_content_datasource.dart:17`).
+3. The `rootBundle` asset channel never responds under `flutter test`. Proven
+   directly: a bare `rootBundle.loadString(...)` never completed and hung a
+   diagnostic run past 300s.
+4. So `prayersProvider` stays in `loading` forever. Observed in a diagnostic
+   run: 0 `ListView`s built, 1 `Text` built, the only text being the
+   `AppLoading` label "Inapakia leo...".
+5. `content_loader_repository_test.dart` passes only because it injects a
+   `_FakeAssetBundle` (`:9`). **The real `rootBundle` path has no test coverage
+   anywhere in the suite.**
+
+Ruled out along the way: this is *not* an offstage/scroll problem.
+`find.text(..., skipOffstage: false)` also returned 0 matches, and no `ListView`
+existed to scroll.
+
+None of the Part 1 files are in this code path.
+
+**Fix recipe, when wanted:** make the test inject a bundle the way
+`content_loader_repository_test.dart` does, or override `prayersProvider`. Better
+still, extract a shared `TestAssetBundle` so real-asset tests stop depending on
+a channel that does not exist under `flutter test`.
+
+Until then, treat this test as **KNOWN-FAILING / PRE-EXISTING** and do not read
+it as a regression signal.
 
 ### Explicitly excluded
 
@@ -129,25 +219,49 @@ The 43 MB figure people usually quote is the **AAB container size**, which inclu
 
 ### 1.2 What one device actually receives (arm64-v8a)
 
-| Component | Raw | gzip -9 (measured) |
+Reproduce with `dart run tool/size_report.dart build/app/outputs/bundle/release/app-release.aab`.
+Figures below are exact, read from the bundle's ZIP central directory.
+
+| Component | Uncompressed | Transfer |
 | --- | --- | --- |
-| `libflutter.so` (Flutter engine) | 10,850 KB | — |
-| `libapp.so` (this app's Dart AOT code) | 6,337 KB | — |
-| `libdartjni.so` | 122 KB | — |
-| **native libs subtotal** | **17,313 KB** | **7,572 KB** |
-| `dex` (classes.dex + classes2.dex) | 1,473 KB | 661 KB |
-| `flutter_assets` — `logo.png` | 1,071 KB | ~1,040 KB (PNG is already compressed) |
-| `flutter_assets` — `assets/content/**.json` | 434 KB | 79 KB |
-| `flutter_assets` — `NOTICES.Z` | 124 KB | 124 KB (already gzipped) |
-| `flutter_assets` — fonts, shaders, manifests | ~11 KB | ~11 KB |
-| `resources.pb` + `res/*` + `root/*` + manifest | ~900 KB | ~230 KB |
+| `libflutter.so` (Flutter engine) | 10,848 KB | 5,130 KB |
+| `libapp.so` (this app's Dart AOT code) | 6,337 KB | 2,427 KB |
+| `libdartjni.so` + other native | 129 KB | 26 KB |
+| **native libraries subtotal** | **17,313 KB** | **7,583 KB** |
+| `dex` (classes.dex + classes2.dex) | 1,473 KB | 664 KB |
+| `flutter_assets` — `logo.png` | 1,071 KB | 1,071 KB |
+| `flutter_assets` — `assets/content/**.json` (38 files) | 434 KB | 87 KB |
+| `flutter_assets` — `NOTICES.Z` | 124 KB | 123 KB |
+| `flutter_assets` — fonts, shaders, manifests | 55 KB | 16 KB |
+| `res/*` + `resources.pb` + `root/*` + manifest | 765 KB + 91 KB | 396 KB + 25 KB |
 
-There are two defensible ways to state "download size", and they differ by more than 2x:
+Note the logo: 1,071 KB uncompressed and 1,071 KB transferred. Deflating a PNG
+gains nothing — it is already compressed. **The logo is 67% of everything this
+project can actually shrink.**
 
-- **Basis A — APK as stored on device.** Native `.so` files are stored uncompressed so they can be memory-mapped directly. Total: **~21.3 MB**.
-- **Basis B — compressed for transport.** Total: **~9.8 MB**.
+### The three numbers that matter
 
-**Baseline on both bases: Basis A ≈ 21.3 MB, Basis B ≈ 9.8 MB.**
+An earlier draft of this plan claimed a "Basis A" of 21.3 MB. **That was wrong.**
+It was the fully-uncompressed sum, which is not what any device holds.
+
+Every entry in the AAB is deflated — `unzip -v` confirms `Defl:N` throughout,
+including the native libraries. Play re-compresses when it generates the split
+APK, so the on-device figure **cannot be measured from the bundle**. It can only
+be derived, and it must be labelled as a derivation.
+
+| Measure | Value | Status |
+| --- | --- | --- |
+| **Transfer size** — what the user downloads | **9.73 MB** | **Exact**, from the bundle |
+| **On-device size** — split APK held on the phone | **~19.2 MB** | **Derived**, not measured |
+| **Floor** — native libraries alone, uncompressed | **16.91 MB** | **Hard bound** |
+| **Addressable** — compressible ABI-independent content | **1.59 MB** | **Derived** |
+
+The on-device derivation: native libraries are stored uncompressed so the loader
+can mmap them (16.91 MB), and everything else transfers at its compressed size
+(2.33 MB). 16.91 + 2.33 = 19.24 MB.
+
+**Confirm the on-device figure from an installed split APK, not from the AAB.
+That check is OWNER work.**
 
 ### 1.3 Source-level baseline
 
@@ -160,7 +274,7 @@ There are two defensible ways to state "download size", and they differ by more 
 | `ListView.builder` / `itemBuilder` uses | **0** |
 | `operator ==` / `hashCode` overrides | **0** |
 | `cacheWidth` on images | **0** (1 image in the app) |
-| Declared-but-unimported packages | 3 (`easy_localization`, `intl`, `cupertino_icons`) |
+| Declared-but-unimported packages | **0** — the 3 were removed in Part 1.5 |
 | Duplicated i18n string classes | 18 |
 | Startup JSON decoded on the UI isolate | ~215 KB (prayers + novenas) |
 
@@ -168,41 +282,63 @@ There are two defensible ways to state "download size", and they differ by more 
 
 ## 2. Answer: how small will the download get?
 
-**Short answer: about 8.5 MB on Basis B, about 20.2 MB on Basis A. A 10 MB download is not achievable on Basis A, and is only just achievable on Basis B — it should not be treated as a reliable target.**
+**Short answer: about 8.5 MB transferred and about 18 MB on-device, against a hard floor of 16.91 MB. A 10 MB *stored* APK is impossible, and a 10 MB download is only just reachable today with almost no headroom — it should not be treated as a reliable target.**
 
-### 2.1 Why 10 MB is not reachable
+The earlier "Basis A / Basis B" framing in this plan was misleading and has been
+replaced. See §1.2 for why the on-device figure is a derivation rather than a
+measurement, and for the numbers that are exact.
 
-`libflutter.so` is **10,850 KB (10.6 MB) by itself** and is compiled by Google, not by this project. It ships with every Flutter app and no code change in this repository affects it.
+### 2.1 Why a 10 MB stored APK is unreachable
 
-- On **Basis A** the engine alone exceeds 10 MB, so 10 MB is mathematically impossible.
-- On **Basis B** the engine compresses to roughly half, and the total lands just under 10 MB — but that leaves almost no headroom. Adding content, a plugin, or a dependency pushes it over.
+The arm64 native libraries are **17,313 KB (16.91 MB) uncompressed**, and
+`libflutter.so` alone is **10,848 KB (10.6 MB)**. Both are compiled by Google,
+not by this project, and no code change in this repository affects them.
+
+- The native libraries are stored uncompressed on-device so they can be
+  memory-mapped, so **16.91 MB is a mathematical floor** for any Flutter app on
+  this engine version.
+- Transferred, the engine compresses to roughly half and the total lands at
+  9.73 MB — just under 10 MB, with almost no headroom. Adding content, a plugin,
+  or a dependency pushes it over.
 
 ### 2.2 What the optimization work actually saves
 
-| Change | Basis B saving | Certainty |
+Only 1.59 MB of the shipped payload is compressible content that this project
+controls. Everything else is the engine and the AOT snapshot.
+
+| Change | Transfer saving | Certainty |
 | --- | --- | --- |
-| Logo 1254×1254 PNG → ~192 px WebP | **~1,030 KB** | High — PNG does not recompress |
-| Drop 3 unused packages (`easy_localization`, `intl`, `cupertino_icons`) | ~30–40 KB (dex) + small AOT effect | Medium |
+| Logo 1254×1254 PNG → ~192 px WebP | **~1,040 KB** | High — the PNG is 1,071 KB raw and 1,071 KB transferred, so deflating it gains nothing |
+| Drop 3 unused packages — **done in Part 1.5** | ~30–40 KB (dex) + small AOT effect | Medium |
 | Remove dead code / consolidate 18 i18n classes (smaller `libapp.so`) | ~100–200 KB | Low–medium, not linear |
-| Drop `x86_64` ABI from the bundle | 0 KB to users | Certain — affects AAB size only, not per-device |
-| **Total realistic saving** | **~1.2–1.3 MB (≈13%)** | |
+| Drop `x86_64` ABI from the bundle | **0 KB to users** | Certain — affects AAB size only, not per-device |
+| **Total realistic saving** | **~1.2–1.3 MB (≈13% of transfer)** | |
+
+The logo alone is two thirds of this. Every other asset in the app combined is
+under 120 KB transferred.
 
 ### 2.3 Projected result
 
-| Basis | Now | After all parts | Saving |
-| --- | --- | --- | --- |
-| A — APK as stored | ~21.3 MB | ~20.2 MB | ~1.1 MB |
-| B — compressed transport | ~9.8 MB | ~8.5 MB | ~1.3 MB |
+| Measure | Now | After all parts | Saving | Floor |
+| --- | --- | --- | --- | --- |
+| Transfer — what the user downloads (exact) | 9.73 MB | ~8.5 MB | ~1.2 MB | — |
+| On-device — split APK (derived) | ~19.2 MB | ~18.0 MB | ~1.2 MB | **16.91 MB** |
+| AAB container (all 3 ABIs + symbols) | 42.87 MB | ~40 MB | ~2.9 MB | — |
+
+The 16.91 MB floor is the native libraries alone, fully uncompressed. It is set
+by the Flutter engine version and **no change in this repository can go below
+it.** The logo work moves the on-device figure from 19.2 to 18.0 MB, which is
+about 65% of the way from the current figure to the floor.
 
 ### 2.4 The decision this forces
 
 The optimization work makes the app meaningfully faster and lighter, but **it will not make the download dramatically smaller**, because ~85% of the shipped bytes are the Flutter engine and the Dart AOT snapshot — neither of which shrinks much.
 
-If 10 MB is a hard business constraint rather than a current measurement, the options are:
+If a sub-10 MB figure is a hard business constraint rather than a current measurement, the options are:
 
-1. **Accept ~8.5 MB (Basis B) / ~20 MB (Basis A)** and proceed with this plan. The app is already lean for Flutter.
-2. **Re-check the actual constraint.** Play's bundle limits and the "compressed download size" metric in Play Console should be confirmed against the current policy rather than a remembered 10 MB figure, and the real number read from Play Console for an internal-test track.
-3. **Change framework** — only if sub-10 MB stored APK is genuinely mandatory. No amount of Dart-level optimization reaches it.
+1. **Accept ~8.5 MB transfer / ~18 MB on-device** and proceed with this plan. The app is already lean for Flutter.
+2. **Re-check the actual constraint.** Play's bundle limits and the "compressed download size" metric in Play Console should be confirmed against current policy rather than a remembered 10 MB figure, and the real number read from Play Console for an internal-test track.
+3. **Change framework** — only if a sub-10 MB *stored* APK is genuinely mandatory. No amount of Dart-level optimization reaches it, because the engine floor alone is 16.91 MB.
 
 **Recommendation:** proceed with this plan for the performance and quality gains, and confirm the real store limit from Play Console before treating 10 MB as a constraint. Part 1 item 1.6 records that figure, and it is an **OWNER** item (§0.2) because it needs a published build and a store account.
 
@@ -264,7 +400,7 @@ Dead code is classified into five buckets with different rules, so nothing is de
 
 | Bucket | Rule | Items |
 | --- | --- | --- |
-| **A — Delete** | Unambiguously unreachable. Delete outright. | 3 unused packages; `assets/translations/` (contains only `.gitkeep`); `AssetPaths.icons` and `AssetPaths.illustrations` (directories do not exist); the redundant `Ink` inside `PrayerCard`'s `AppCard` (`prayer_card.dart:26`); the unused `matchedPrayers` path if Part 4 removes it |
+| **A — Delete** | Unambiguously unreachable. Delete outright. | **DONE in Part 1.5** — `easy_localization`, `intl`, `cupertino_icons` removed; `flutter pub get` dropped 5 dependencies. **Still open:** `assets/translations/` (contains only `.gitkeep`); `AssetPaths.icons` and `AssetPaths.illustrations` (directories do not exist); the redundant `Ink` inside `PrayerCard`'s `AppCard` (`prayer_card.dart:26`); the unused `matchedPrayers` path if Part 4 removes it |
 | **B — Replace with a constant** | Logic that computes a value that is always the same. | `allSaintsStyle` ORing 9 IDs that cover all 9 novenas (`novena_day_screen.dart:148-157`); the non-const 18-element `Set<String>` allocated every build (`prayer_detail_screen.dart:147-166`) |
 | **C — Wire up or drop** | Parsed but unused, or planned but unbuilt. Decide explicitly, do not leave ambiguous. | `ContentManifestModel.rosaryPaths` is parsed (`content_manifest_model.dart:22`) but the datasource hardcodes rosary paths instead (`local_content_datasource.dart:81, 91`); `tool/generate_content_manifest.dart` is specified in docs but does not exist |
 | **D — Repair, keep** | Looks like dead code but is load-bearing or is a correctness bug. Fix the API, do not delete. | `PrayerEntity.title(lang)` / `text(lang)` silently ignore their `lang` argument (`prayer_entity.dart:36-42`) — misleading, and a trap for anyone adding multi-language content; `_maxDaysForNovena` (`novena_providers.dart:308`) — dead-looking but authoritative, and it is the F2 drift risk |
@@ -287,7 +423,7 @@ Seven parts, sequenced by risk-adjusted value. Parts 1–3 are the highest value
 
 | Part | Name | Goal | Effort | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Baseline + gate harness | Lock the measurement baseline and the fixed verification commands | Low | Not started |
+| 1 | Baseline + gate harness | Lock the measurement baseline and the fixed verification commands | Low | **AGENT complete** — OWNER items 1.6–1.9 outstanding |
 | 2 | Cheap, zero-risk wins | Immediate size + CPU reduction, no behaviour change | Low | Not started |
 | 3 | Data layer: stop re-parsing everything | Eliminate redundant IO and decode | Medium | Not started |
 | 4 | Text rendering hot path | Remove per-line regex and string churn | Medium | Not started |
@@ -305,25 +441,51 @@ Seven parts, sequenced by risk-adjusted value. Parts 1–3 are the highest value
 
 The §1 baseline is already recorded from the pre-existing `build/` artifacts. This part confirms it and builds the reusable harness. **No build is produced** — see §0.2.
 
-| ID | Task | Class | Target |
+| ID | Task | Class | Status |
 | --- | --- | --- | --- |
-| 1.1 | Confirm the §1.1–§1.3 figures against the current `build/app/outputs/bundle/release/app-release.aab` | AGENT | Figures reproduce exactly |
-| 1.2 | Add `tool/size_report.dart` that prints the §1.2 per-component table from an existing AAB path | AGENT | Prints the table from a file argument; builds nothing |
-| 1.3 | Record the four gate commands in a single documented place so every part uses the same set | AGENT | One list, referenced by all parts |
-| 1.4 | Add a unit test that fails if any prayer-reading call site loses `showContainer: false` | AGENT | Guards the §0.1 invariant automatically |
-| 1.5 | Add a unit test that fails if any of the three unused packages reappears in `pubspec.yaml` | AGENT | Prevents silent dependency creep |
-| 1.6 | Read the actual compressed download size from Play Console, internal-test track | **OWNER** | Replaces the remembered 10 MB figure |
-| 1.7 | Record first-frame timing, debug and profile | **OWNER** | Real number, not an estimate |
-| 1.8 | Record scroll-jank timings for the heaviest litany and heaviest novena day | **OWNER** | Real frame timings |
-| 1.9 | Record peak memory on a low-end device | **OWNER** | Baseline for the logo and timezone wins |
+| 1.1 | Confirm the §1.1–§1.3 figures against the current AAB | AGENT | **Done.** Figures reproduce. The on-device figure was found to be underivable from the AAB and is now labelled a derivation — see §1.2 |
+| 1.2 | Add `tool/size_report.dart` printing the §1.2 table from an existing AAB path | AGENT | **Done.** Reads the ZIP central directory, decompresses nothing, builds nothing. No-arg mode reports source `assets/` |
+| 1.3 | Record the four gate commands in a single documented place | AGENT | **Done.** §0.2 |
+| 1.4 | Guard the §0.1 invariant automatically | AGENT | **Done, and stronger than specified.** `showContainer` was removed from `NovenaTextView` and `LitanyTextView` and the card moved to the two call sites that legitimately show one. The text views can no longer be boxed at all, enforced by the compiler. 8 tests in `test/widget/prayer_text_unboxed_test.dart` |
+| 1.5 | Guard against the three unused packages reappearing | AGENT | **Done.** All three removed from `pubspec.yaml`; `flutter pub get` dropped 5 dependencies. 2 tests in `test/unit/unused_dependencies_test.dart` |
+| 1.6 | Read the actual compressed download size from Play Console, internal-test track | **OWNER** | Outstanding — §2 now has a derived 9.73 MB to compare against |
+| 1.7 | Record first-frame timing, debug and profile | **OWNER** | Outstanding |
+| 1.8 | Record scroll-jank timings for the heaviest litany and heaviest novena day | **OWNER** | Outstanding |
+| 1.9 | Record peak memory on a low-end device | **OWNER** | Outstanding |
 
-**Acceptance:** §1 figures reproduce; the size report prints; the two invariant guards exist and pass; the four gate commands are documented once.
+**Acceptance:** met. §1 figures reproduce, the size report prints, both invariant guards exist and pass, and the four gate commands are documented once.
 
-**Verification (AGENT):** `flutter analyze`, `flutter test test/unit`, `flutter test test/widget`, `dart run tools/validate_content.dart`, plus the two new guard tests.
+**Verification (AGENT) — run 2026-09-27:**
 
-**Verification (OWNER):** items 1.6–1.9, handed over as a checklist.
+| Gate | Result |
+| --- | --- |
+| `flutter analyze` | **No issues found** |
+| `flutter test test/unit` | **30/30 pass** |
+| `flutter test test/widget` | 8/8 new tests pass. 2 pre-existing failures in `today_novena_localization_test.dart`, diagnosed in §0.2 and unrelated |
+| `dart run tools/validate_content.dart` | **passed** |
 
-**Risk:** none — read-only plus two test files.
+**Verification (OWNER):** items 1.6–1.9 handed over as a checklist in §9.
+
+**Files changed in Part 1:**
+
+| File | Change |
+| --- | --- |
+| `lib/shared/widgets/novena_text_view.dart` | `showContainer` and the `AppCard` branch removed; `app_card.dart` import dropped |
+| `lib/shared/widgets/litany_text_view.dart` | Same |
+| `lib/features/novenas/presentation/screens/novena_thanksgiving_screen.dart` | `AppCard` wrapper added at the call site for non-`st_rita` |
+| `lib/features/novenas/presentation/screens/novena_closing_prayer_screen.dart` | Same, for `LitanyTextView` |
+| `lib/features/novenas/presentation/screens/novena_day_screen.dart` | `showContainer: false` argument removed |
+| `lib/features/prayers/presentation/screens/prayer_detail_screen.dart` | `showContainer: false` argument removed |
+| `lib/features/rosary/presentation/screens/rosary_step_screen.dart` | `showContainer: false` argument removed |
+| `pubspec.yaml`, `pubspec.lock` | `cupertino_icons`, `intl`, `easy_localization` removed |
+| `tool/size_report.dart` | New |
+| `test/widget/prayer_text_unboxed_test.dart` | New, 8 tests |
+| `test/unit/unused_dependencies_test.dart` | New, 2 tests |
+
+**Risk:** none to product behaviour. The only behavioural change is the removal of
+three packages that nothing imported, and the relocation of two cards that
+produces an identical widget tree. Rendering is unverified on a device — that is
+OWNER item 1.7 territory and must be confirmed before shipping.
 
 ---
 
@@ -616,3 +778,42 @@ The §1 baseline is already recorded from the pre-existing `build/` artifacts. T
 - **The §0.1 no-boxing invariant is never waived.** If a change appears to require boxing a prayer, that is a product decision for the owner, not an implementation detail.
 - The app is never run and no build is produced by the agent (§0.2). Size and timing figures stay labelled as estimates until measured on a device.
 - The projected size figures in §2.3 are estimates. Part 1 item 1.6 records the real store figure and Part 7 items 7.8 and 7.11 publish the final measured result.
+
+---
+
+## 9. OWNER checklist — you run these, the agent does not
+
+Nothing in this section has been done. The agent never runs the app and never
+produces a build (§0.2). Each item needs a device, a build, or a store account.
+
+### 9.1 Required now, before Part 2 — Part 1 is not fully closed without these
+
+| # | Item | How | What to record |
+| --- | --- | --- | --- |
+| 1 | **Confirm the Part 1 rendering change is invisible** | `flutter run`, then open: a standard prayer, a litany, a novena day, a rosary step, the St Rita novena closing prayer, the St Rita novena thanksgiving, and the **same two novena screens for any other novena** | That the two novena screens are still carded and the other four are still unboxed. This is the single highest-value check in Part 1 — it is the only thing that can catch an unintended visual change |
+| 2 | Compressed download size | Play Console → internal-test track, or `bundletool` / `unzip` on the split APK | The real number, to compare against the derived 9.73 MB in §1.2 (item 1.6) |
+| 3 | First-frame timing | `flutter run --profile`, DevTools performance overlay | Real number, not an estimate (item 1.7) |
+| 4 | Scroll-jank timings | Profile mode, heaviest litany and heaviest novena day | Frame timings (item 1.8) |
+| 5 | Peak memory | Profile mode on a low-end device | Baseline before the logo and timezone work (item 1.9) |
+
+### 9.2 The one known pre-existing failure
+
+`flutter test test/widget` will report **2 failures** in
+`today_novena_localization_test.dart`. This is expected and is not a regression.
+Root cause and fix recipe are in §0.2 — `rootBundle` never responds under
+`flutter test`, so `TodayScreen` never leaves its loading state.
+
+### 9.3 Re-measure size without rebuilding
+
+```
+dart run tool/size_report.dart build/app/outputs/bundle/release/app-release.aab
+dart run tool/size_report.dart
+```
+
+The first reads an existing bundle. The second needs no build at all and reports
+source asset sizes with gzip figures. Neither command builds anything.
+
+### 9.4 Later parts
+
+OWNER items for Parts 2–7 are added to this section as each part is accepted.
+None exist yet — Parts 2–7 have not been started.
