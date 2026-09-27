@@ -143,7 +143,6 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                         const SizedBox(height: AppSpacing.lg),
                         NovenaTextView(
                           text: dayContent.body,
-                          showContainer: false,
                           fontScale: _textScale,
                           allSaintsStyle:
                               novena.id == 'all_saints_day_novena' ||
