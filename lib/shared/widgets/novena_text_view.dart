@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
-import 'app_card.dart';
 
+/// Renders novena body text.
+///
+/// This widget is deliberately incapable of drawing a card, container,
+/// background or border. Any surface that needs a card must wrap this widget
+/// in [AppCard] at the call site, so a reading view can never be boxed by
+/// accident. See app_optimization.md section 0.1.
 class NovenaTextView extends StatelessWidget {
   const NovenaTextView({
     required this.text,
-    this.showContainer = true,
     this.fontScale = 1,
     this.allSaintsStyle = false,
     this.holySpiritStyle = false,
@@ -17,7 +21,6 @@ class NovenaTextView extends StatelessWidget {
   });
 
   final String text;
-  final bool showContainer;
   final double fontScale;
   final bool allSaintsStyle;
   final bool holySpiritStyle;
@@ -52,15 +55,7 @@ class NovenaTextView extends StatelessWidget {
       ],
     );
 
-    if (!showContainer) {
-      return content;
-    }
-
-    return AppCard(
-      radius: AppSpacing.radiusXl,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: content,
-    );
+    return content;
   }
 }
 
