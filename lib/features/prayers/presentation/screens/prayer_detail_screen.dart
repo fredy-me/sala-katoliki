@@ -26,7 +26,53 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
   static const _maxTextScale = 1.3;
   static const _textScaleStep = 0.15;
 
+  /// Litanies that use the St Rita response styling.
+  ///
+  /// Declared once as a constant. Inline, this allocated a fresh 18-element
+  /// `Set<String>` on every rebuild of the detail screen.
+  static const Set<String> _stRitaLitanies = {
+    'st_rita_litany',
+    'bikira_maria_litany',
+    'divine_mercy_litany',
+    'holy_spirit_litany',
+    'sacred_head_of_jesus_litany',
+    'st_aloysius_gonzaga_litany',
+    'st_jude_thaddeus_litany',
+    'st_joseph_litany',
+    'st_anthony_of_padua_litany_v1',
+    'st_anthony_of_padua_litany_v2',
+    'franciscan_st_anthony_litany',
+    'st_anne_litany',
+    'holy_angels_litany',
+    'sacred_heart_of_jesus_litany',
+    'holy_face_of_jesus_litany',
+    'souls_in_purgatory_litany',
+    'seven_sorrows_mary_litany',
+    'litany_of_reparation',
+  };
+
   double _textScale = _defaultTextScale;
+  String? _recordedPrayerId;
+
+  /// Records the prayer in the recents list, at most once per prayer.
+  ///
+  /// This used to post a frame callback from inside `build()`, so every
+  /// rebuild — toggling a favourite, changing text scale, switching language —
+  /// wrote the same value back to SharedPreferences. The write is now
+  /// scheduled only the first time a given prayer is shown.
+  void _recordRecentOnce(String prayerId) {
+    if (_recordedPrayerId == prayerId) {
+      return;
+    }
+    _recordedPrayerId = prayerId;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      ref.read(recentPrayerIdsProvider.notifier).record(prayerId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +102,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
               );
             }
 
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ref.read(recentPrayerIdsProvider.notifier).record(prayer.id);
-            });
+            _recordRecentOnce(prayer.id);
 
             final isFavorite = favorites.contains(prayer.id);
 
@@ -143,26 +187,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         LitanyTextView(
                           text: prayer.text(activeLanguageCode),
                           fontScale: _textScale,
-                          stRitaStyle: const {
-                            'st_rita_litany',
-                            'bikira_maria_litany',
-                            'divine_mercy_litany',
-                            'holy_spirit_litany',
-                            'sacred_head_of_jesus_litany',
-                            'st_aloysius_gonzaga_litany',
-                            'st_jude_thaddeus_litany',
-                            'st_joseph_litany',
-                            'st_anthony_of_padua_litany_v1',
-                            'st_anthony_of_padua_litany_v2',
-                            'franciscan_st_anthony_litany',
-                            'st_anne_litany',
-                            'holy_angels_litany',
-                            'sacred_heart_of_jesus_litany',
-                            'holy_face_of_jesus_litany',
-                            'souls_in_purgatory_litany',
-                            'seven_sorrows_mary_litany',
-                            'litany_of_reparation',
-                          }.contains(prayer.id),
+                          stRitaStyle: _stRitaLitanies.contains(prayer.id),
                         )
                       else
                         PrayerTextView(
