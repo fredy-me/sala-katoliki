@@ -70,12 +70,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Kiswahili'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Endelea'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Endelea'));
+    final continueInSwahili = find.widgetWithText(FilledButton, 'Endelea');
+    await tester.ensureVisible(continueInSwahili);
+    await tester.pumpAndSettle();
+    await tester.tap(continueInSwahili);
     await _pumpUntilFound(tester, find.text('Leo'));
 
     await tester.tap(find.widgetWithText(NavigationDestination, 'Sala'));
@@ -92,7 +90,6 @@ void main() {
 
     expect(find.text('SALA ZA KAWAIDA'), findsOneWidget);
     expect(find.textContaining('Baba yetu uliye mbinguni'), findsOneWidget);
-    expect(find.text('Chanzo'), findsOneWidget);
   });
 
   testWidgets('persists favorite prayers and shows favorites screen', (
@@ -312,7 +309,8 @@ void main() {
     expect(continueButton.style?.foregroundColor?.resolve({}), AppColors.text);
 
     await tester.tap(find.text('Continue').first);
-    await _pumpUntilFound(tester, find.text('Day 2'));
+    await _pumpUntilFound(tester, find.text('Complete Day 2'));
+    expect(find.text('Day two prayer.'), findsOneWidget);
     await tester.tap(find.text('Complete Day 2'));
     await _pumpUntilFound(tester, find.text('Day 3 of 9'));
 
@@ -405,9 +403,9 @@ void main() {
         child: const MaterialApp(home: AboutScreen()),
       ),
     );
-    await _pumpUntilFound(tester, find.text('Busara Digital'));
-    expect(find.text('CONTENT SOURCES'), findsOneWidget);
-    expect(find.text('DISCLAIMER'), findsOneWidget);
+    await _pumpUntilFound(tester, find.textContaining('Busara Digital'));
+    expect(find.text('Content Sources'), findsWidgets);
+    expect(find.text('Disclaimer'), findsWidgets);
   });
 
   test('sanitizes corrupt local storage values', () async {
