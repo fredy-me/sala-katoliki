@@ -26,6 +26,8 @@ import 'package:salakatoliki/features/today/presentation/providers/today_provide
 import 'package:salakatoliki/shared/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'helpers/test_asset_bundle.dart';
+
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
@@ -34,11 +36,18 @@ void main() {
   testWidgets('shows Sala Katoliki language selection', (tester) async {
     addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     await tester.pumpWidget(
-      ProviderScope(key: UniqueKey(), child: const SalaKatolikiApp()),
+      ProviderScope(
+        key: UniqueKey(),
+        overrides: [
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
+        ],
+        child: const SalaKatolikiApp(),
+      ),
     );
 
     await tester.pumpAndSettle();
-
     expect(find.text('Choose Your Prayer Language'), findsOneWidget);
     expect(find.text('English'), findsWidgets);
     expect(find.text('Kiswahili'), findsOneWidget);
@@ -47,7 +56,15 @@ void main() {
   testWidgets('opens offline prayer library and detail', (tester) async {
     addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     await tester.pumpWidget(
-      ProviderScope(key: UniqueKey(), child: const SalaKatolikiApp()),
+      ProviderScope(
+        key: UniqueKey(),
+        overrides: [
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
+        ],
+        child: const SalaKatolikiApp(),
+      ),
     );
 
     await tester.pumpAndSettle();
