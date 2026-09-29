@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Planning for Part 3 pending user approval.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Planning for Part 4 pending user approval.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -601,27 +601,41 @@ Fixing them is a separate decision and was left alone.
 | 3.1 | `prayerByIdProvider` reads from `prayersProvider.future` + an id→entity index instead of the repository | Removes a full corpus reload on every prayer detail open | `prayer_providers.dart:54-62`; `prayer_repository_impl.dart:20-31` |
 | 3.2 | Memoize manifest and categories in `LocalContentDataSource` | Manifest is currently re-read and re-decoded on every call; `getPrayers` triggers it twice | `local_content_datasource.dart:18-21,23-33,35-61` |
 | 3.3 | Build a language-keyed cache for prayers, novenas, rosary | One parse per language per session, not one per screen open | `local_content_datasource.dart:35-98` |
-| 3.4 | Move `jsonDecode` off the UI isolate | ~215 KB no longer decoded synchronously during first frame | `local_content_datasource.dart:100-106` |
+| 3.4 | ~~Move `jsonDecode` off the UI isolate~~ — **rejected, see note below** | Measured as a net loss, so the parse stays inline | `local_content_datasource.dart` |
 | 3.5 | Stop parsing novena day bodies for list views | 130 KB parsed and held to render 9 titles | `novena_model.dart:47-51` |
 | 3.6 | Reuse the same cache in `deepLinkContextProvider` | Stops parsing a second full copy when the active language is English | `deep_link_providers.dart:14-23` |
 
 **Note on 3.1:** novenas and rosary already use the correct cached pattern (`novena_providers.dart:25-36`). Part 3 makes prayers consistent with them rather than inventing a new approach.
 
+**Note on 3.4 (measured deviation):** the isolate hand-off was implemented, then measured, then removed. Decoding cost on this project:
+
+| Target | Bytes | Time |
+| --- | --- | --- |
+| All English prayers (6 files) | 84,335 | 3.02 ms |
+| All English novenas (9 files) | 135,613 | 2.90 ms |
+| Everything loaded on first frame | ~215,000 | **3.35 ms** |
+| `compute` spawn + round trip | — | **8–9 ms** |
+
+The parse it replaces costs about a third of what the isolate costs to start, and that cost is paid on the critical path. A second, independent reason: `compute` issued from `testWidgets` **never completes** — the isolate cannot be spun up under the fake-async zone, so the change made the widget suite hang rather than speed anything up. The parse stays inline; the real win in this part is 3.1–3.3 removing the repeated reads, not 3.4 removing one parse.
+
+**Note on 3.5 (partial):** day bodies are now read from the retained source map only when a body is actually accessed, rather than being copied into an eagerly built model. This is the cheap half of the idea and is verified by test. The half that would actually reclaim the ~120 KB — never holding the bodies at all for list views — needs the corpus split into summary and detail files, which is a content-schema change and belongs to Part 6, not here.
+
 **Acceptance:** opening all 36 prayer screens performs zero additional asset reads; the deep-link resolver performs no reads already satisfied by the cache; all content renders identically; **no prayer reading view gains a card** (§0.1).
 
 **Verification (AGENT):**
 
-- A new unit test asserts each asset file is read **exactly once per language** across a full navigation sweep, and that N reads of `prayerById` trigger zero additional reads. This replaces manual read-count instrumentation, which would have needed a running app.
-- Assert the manifest is decoded once, not once per call.
-- Assert `jsonDecode` no longer runs on the UI isolate.
-- Assert novena list views do not construct day bodies.
-- Existing `content_loader_repository_test.dart` and `search_rosary_novena_test.dart` pass unchanged.
-- All four gate commands pass.
+- [x] A unit test asserts each asset file is read **exactly once per language** across a full navigation sweep, and that 36 reads of `prayerById` trigger zero additional reads. This replaces manual read-count instrumentation, which would have needed a running app. Measured: **8 reads** for the initial English corpus and **0 additional** reads across all 36 by-id lookups, down from 9 + 45.
+- [x] The manifest is decoded once, not once per call (1 read for 3 calls; categories likewise 1 for 2).
+- [~] `jsonDecode` no longer runs on the UI isolate — **not applicable**, see 3.4 above.
+- [x] Novena list views no longer construct day bodies eagerly; day, closing-prayer, and thanksgiving screens still read the same text.
+- [x] Existing `content_loader_repository_test.dart` and `search_rosary_novena_test.dart` pass unchanged.
+- [x] All four gate commands pass, and the full `flutter test` suite is green at 68/68 (this also retired the three out-of-gate failures Part 2 had recorded).
 
 **Verification (OWNER):**
 
-- Open every one of the 36 prayers and all 9 novenas × all days on a device; content renders correctly
-- First-frame timing compared against the Part 1.7 baseline
+- [ ] Open every one of the 36 prayers and all 9 novenas × all days on a device; content renders correctly
+- [ ] First-frame timing compared against the Part 1.7 baseline
+- [ ] Confirm novena day bodies, closing prayers, and thanksgivings are intact on device — 3.5 changed when those strings are read
 
 **Risk:** medium — this is the core data path, and it is the part where an AGENT-only proof is weakest, because a caching bug can pass unit tests yet show stale content. 3.5 changes when novena day bodies load, so novena day, closing-prayer, and thanksgiving screens all need OWNER checking.
 
