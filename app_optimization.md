@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Planning only. No code has been changed.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Planning for Part 3 pending user approval.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -131,49 +131,54 @@ These run only at a part's acceptance gate, not continuously. `flutter test` exe
 
 | Directory | Files | Names |
 | --- | --- | --- |
-| `test/unit` | 6 | `app_theme_test`, `content_loader_repository_test`, `content_validation_test`, `deep_link_service_test`, `home_widget_service_test`, `search_rosary_novena_test`, plus `unused_dependencies_test` added in Part 1 |
+| `test/unit` | 8 | `app_theme_test`, `content_loader_repository_test`, `content_validation_test`, `deep_link_service_test`, `home_widget_service_test`, `search_rosary_novena_test`, plus `unused_dependencies_test` added in Part 1, and `part2_optimizations_test` added in Part 2 |
 | `test/widget` | 3 | `onboarding_routing_test`, `prayer_text_unboxed_test` (added in Part 1), `today_novena_localization_test` |
 | `integration_test` | 3 | `app_startup_test`, `novena_progress_test`, `offline_prayer_flow_test` |
 
-An earlier draft of this plan claimed 7 unit and 4 widget files. That was wrong.
-There is no `test/widget/widget_test.dart`. The counts above are the measured ones.
+Measured during Part 2 on 2026-09-29: `test/unit` holds 8 files and
+`flutter test test/unit` runs 51 tests. `flutter test test/widget` runs 10 tests
+across the 3 widget files.
 
-### Known pre-existing failure — not caused by this work
+A root-level `test/widget_test.dart` also exists and is **not** covered by either
+gate command. It is inventoried in [Out of gate](#out-of-gate) below.
 
-`test/widget/today_novena_localization_test.dart` fails with
-`Expected requested widget to appear`. **Diagnosed, root cause confirmed, left
-unfixed on purpose.**
+### Resolved in Part 2 — the real-asset loading failure
 
-Chain of evidence:
+`test/widget/today_novena_localization_test.dart` and
+`test/widget/onboarding_routing_test.dart` both used to fail with
+`Expected requested widget to appear`. **Fixed in Part 2.**
 
-1. `TodayScreen` renders its content only inside `prayersState.when(...)`
-   (`today_screen.dart:34`) and shows `AppLoading` while loading (`:35`).
-2. The test never overrides `prayersProvider`, so the real provider runs, which
-   constructs `LocalContentDataSource()` with the **default `rootBundle`**
-   (`local_content_datasource.dart:17`).
-3. The `rootBundle` asset channel never responds under `flutter test`. Proven
-   directly: a bare `rootBundle.loadString(...)` never completed and hung a
-   diagnostic run past 300s.
-4. So `prayersProvider` stays in `loading` forever. Observed in a diagnostic
-   run: 0 `ListView`s built, 1 `Text` built, the only text being the
-   `AppLoading` label "Inapakia leo...".
-5. `content_loader_repository_test.dart` passes only because it injects a
-   `_FakeAssetBundle` (`:9`). **The real `rootBundle` path has no test coverage
-   anywhere in the suite.**
+An earlier revision of this plan recorded the cause as "`rootBundle` never
+responds under `flutter test`, proven by a bare `loadString` hanging past 300s".
+**That diagnosis was wrong and has been replaced.** What was actually measured,
+each step in isolation:
 
-Ruled out along the way: this is *not* an offstage/scroll problem.
-`find.text(..., skipOffstage: false)` also returned 0 matches, and no `ListView`
-existed to scroll.
+| Probe | Result |
+| --- | --- |
+| `rootBundle.loadString` in a plain `test()` | Works. Manifest is 2,257 bytes; 40 assets visible |
+| `rootBundle.loadString` awaited inside `testWidgets` | **Hangs** |
+| One `loadString` in `testWidgets`, pumped, not awaited | Completes |
+| Five sequential `loadString` calls, pumped | Never settles |
+| `getPrayers` in a plain `test()`, sync bundle | **36 prayers** |
+| `getPrayers` in `testWidgets`, bundle returning `Future.value` | Never settles |
+| `getPrayers` in `testWidgets`, bundle returning `SynchronousFuture` | **36 prayers** |
 
-None of the Part 1 files are in this code path.
+The real cause is narrower and different: `LocalContentDataSource` reads several
+files in sequence, and under `testWidgets`' fake-async zone that multi-file chain
+does not settle when each read is a normal asynchronous future. The
+single-file cases that appeared to "prove" the channel was dead were the ones
+that did complete.
 
-**Fix recipe, when wanted:** make the test inject a bundle the way
-`content_loader_repository_test.dart` does, or override `prayersProvider`. Better
-still, extract a shared `TestAssetBundle` so real-asset tests stop depending on
-a channel that does not exist under `flutter test`.
+The fix is `test/helpers/test_asset_bundle.dart`, the shared `TestAssetBundle`
+this plan earlier suggested. It reads the real `assets/content` JSON
+synchronously from disk and returns `SynchronousFuture`, which settles inside
+the fake-async zone. It is injected by overriding
+`localContentDataSourceProvider`, which feeds prayers, categories, novenas and
+rosary — so one override covers every content-backed provider.
 
-Until then, treat this test as **KNOWN-FAILING / PRE-EXISTING** and do not read
-it as a regression signal.
+**No production code was changed to achieve this.** The tests still exercise the
+real bundled content, so the previously untested real-asset path is now covered
+rather than mocked away.
 
 ### Explicitly excluded
 
@@ -424,7 +429,7 @@ Seven parts, sequenced by risk-adjusted value. Parts 1–3 are the highest value
 | Part | Name | Goal | Effort | Status |
 | --- | --- | --- | --- | --- |
 | 1 | Baseline + gate harness | Lock the measurement baseline and the fixed verification commands | Low | **AGENT complete** — OWNER items 1.6–1.9 outstanding |
-| 2 | Cheap, zero-risk wins | Immediate size + CPU reduction, no behaviour change | Low | Not started |
+| 2 | Cheap, zero-risk wins | Immediate size + CPU reduction, no behaviour change | Low | Code complete, gates green; OWNER device checks outstanding |
 | 3 | Data layer: stop re-parsing everything | Eliminate redundant IO and decode | Medium | Not started |
 | 4 | Text rendering hot path | Remove per-line regex and string churn | Medium | Not started |
 | 5 | Startup, rebuild scope, and responsiveness | Cut first-frame work and over-rebuilding | Medium | Not started |
@@ -516,7 +521,66 @@ OWNER item 1.7 territory and must be confirmed before shipping.
 - 2.5 — the Part 1.5 guard test passes; `pubspec.yaml` has no unused packages
 - 2.6 — assert no `addPostFrameCallback` inside a `build()` method body
 - 2.7 — assert the home-widget writes are batched
-- All four gate commands pass, including the 7 unit and 4 widget test files.
+- All four gate commands pass. Measured 2026-09-29: `flutter analyze` clean;
+  `test/unit` 51/51; `test/widget` 10/10; content validator passed.
+
+#### Part 2 outcome
+
+All eight items are implemented. Gate results, measured 2026-09-29:
+
+| Command | Result |
+| --- | --- |
+| `flutter analyze` | No issues found |
+| `flutter test test/unit` | 51/51 passed |
+| `flutter test test/widget` | 10/10 passed |
+| `dart run tools/validate_content.dart` | Content validation passed |
+
+**§0.1 holds:** `prayer_text_unboxed_test` is 7/7 green, so no prayer reading
+view gained a card.
+
+**One deliberate deviation from the plan, item 2.4.** The plan called for
+`latest_all.dart` → `latest.dart`. The implementation keeps `latest_all.dart` and
+maps the device's UTC offset to a named zone instead. `latest.dart` ships neither
+`Africa/Dar_es_Salaam` nor UTC, so it cannot express the app's primary market.
+`part2_optimizations_test.dart` pins this: it asserts `latest_all.dart` is still
+imported, that the reduced dataset is *not*, and that every mapped zone resolves
+and observes no daylight saving. Verified zones: `Africa/Nairobi` (UTC+3),
+`Asia/Dubai` (UTC+4), plus UTC+1 and UTC+2 entries.
+
+**Two of this plan's own Part 2 test guards were wrong and were corrected.**
+Both lived in `part2_optimizations_test.dart` and both failed against correct
+production code:
+
+- The 2.6 guard forbade `addPostFrameCallback` in the whole file, but the
+  one-time helper at `prayer_detail_screen.dart:63-75` is *supposed* to contain
+  it. It now asserts the callback appears exactly once and that it sits between
+  the helper and `build()` — the property the plan actually asked for.
+- The 2.6 guard matched the literal `if (!mounted) return`, which `dart format`
+  rewrites across three lines. It now matches `if (!mounted)`, which is the
+  substantive check.
+
+**Content files were not modified.** `git status` shows changes only under
+`test/` and this plan.
+
+#### Out of gate
+
+`test/widget_test.dart` is a root-level suite that neither `test/unit` nor
+`test/widget` picks up, so it is outside the gate by construction. It has 7
+tests: 4 pass, 3 fail. All three failures are pre-existing and unrelated to Part
+2 — they are `AboutScreen` expectations and one off-screen tap, not content
+loading, and not code this part touched:
+
+| Test | Failure |
+| --- | --- |
+| `opens offline prayer library and detail` | Taps a target at `Offset(400, 613)`, outside the 800x600 surface |
+| `shows active novena and marks current day complete` | `_pumpUntilFound` on `'Day 2'` |
+| `persists settings and shows about content` | `_pumpUntilFound` on `'Busara Digital'` |
+
+The last one expects `find.text('Busara Digital')`, but the screen only ever
+renders that phrase inside longer sentences, so an exact-match finder cannot hit
+it; it also expects `CONTENT SOURCES` and `DISCLAIMER`, which appear nowhere in
+`about_screen.dart`. These are stale test expectations, not Part 2 regressions.
+Fixing them is a separate decision and was left alone.
 
 **Verification (OWNER):**
 
@@ -786,7 +850,14 @@ OWNER item 1.7 territory and must be confirmed before shipping.
 Nothing in this section has been done. The agent never runs the app and never
 produces a build (§0.2). Each item needs a device, a build, or a store account.
 
-### 9.1 Required now, before Part 2 — Part 1 is not fully closed without these
+### 9.1 Required now, before Part 2 is signed off
+
+Part 2's code and gates are complete. What remains is the device work, which the
+agent cannot do. The items below were Part 1's handover and are still open.
+
+Note: the AAB at `build/app/outputs/bundle/release/app-release.aab` predates the
+Part 2 commits, so re-running the size report against it measures the old build.
+Rebuild before treating any number as a Part 2 result.
 
 | # | Item | How | What to record |
 | --- | --- | --- | --- |
@@ -796,12 +867,16 @@ produces a build (§0.2). Each item needs a device, a build, or a store account.
 | 4 | Scroll-jank timings | Profile mode, heaviest litany and heaviest novena day | Frame timings (item 1.8) |
 | 5 | Peak memory | Profile mode on a low-end device | Baseline before the logo and timezone work (item 1.9) |
 
-### 9.2 The one known pre-existing failure
+### 9.2 The pre-existing widget failure — now fixed
 
-`flutter test test/widget` will report **2 failures** in
-`today_novena_localization_test.dart`. This is expected and is not a regression.
-Root cause and fix recipe are in §0.2 — `rootBundle` never responds under
-`flutter test`, so `TodayScreen` never leaves its loading state.
+`flutter test test/widget` used to report failures in
+`today_novena_localization_test.dart` and `onboarding_routing_test.dart`. **Both
+are fixed**; the suite is 10/10 green. `test/helpers/test_asset_bundle.dart`
+injects the real bundled content so the multi-file read chain settles under
+`testWidgets`. Full measurements and the corrected root cause are in §0.2.
+
+The 3 remaining failures in `test/widget_test.dart` are outside the gate and
+unrelated to Part 2; see [Out of gate](#out-of-gate).
 
 ### 9.3 Re-measure size without rebuilding
 
