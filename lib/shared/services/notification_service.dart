@@ -11,31 +11,47 @@ class NotificationService {
   static const String _dailyReminderChannelName = 'Daily prayer reminder';
   static const String _dailyReminderChannelDescription =
       'Daily reminder to pray with Sala Katoliki';
-  static const Map<String, String> _timeZoneNameByAbbreviation = {
-    'EAT': 'Africa/Dar_es_Salaam',
-    'UTC': 'UTC',
-    'GMT': 'Etc/UTC',
-    'BST': 'Europe/London',
-    'CET': 'Europe/Paris',
-    'CEST': 'Europe/Paris',
-    'EST': 'America/New_York',
-    'EDT': 'America/New_York',
-    'CST': 'America/Chicago',
-    'CDT': 'America/Chicago',
-    'MST': 'America/Denver',
-    'MDT': 'America/Denver',
-    'PST': 'America/Los_Angeles',
-    'PDT': 'America/Los_Angeles',
-  };
+  /// Fixed-offset time zone for every common UTC offset, in minutes.
+  ///
+  /// Every zone here was verified to exist and to have **no daylight saving**,
+  /// so the mapping stays correct in both hemispheres and all year. Zones with
+  /// DST are deliberately avoided: the device only tells us its *current*
+  /// offset, so a DST zone would be right for half the year and wrong for the
+  /// other half.
   static const Map<int, String> _timeZoneNameByOffsetMinutes = {
-    180: 'Africa/Dar_es_Salaam',
-    0: 'UTC',
-    60: 'Europe/London',
-    120: 'Europe/Paris',
-    -300: 'America/New_York',
-    -360: 'America/Chicago',
-    -420: 'America/Denver',
-    -480: 'America/Los_Angeles',
+    -720: 'Etc/GMT+12',
+    -660: 'Pacific/Pago_Pago',
+    -600: 'Pacific/Honolulu',
+    -570: 'Pacific/Marquesas',
+    -540: 'Pacific/Gambier',
+    -480: 'Etc/GMT+8',
+    -420: 'Etc/GMT+7',
+    -360: 'Etc/GMT+6',
+    -300: 'Etc/GMT+5',
+    -240: 'Etc/GMT+4',
+    -180: 'America/Sao_Paulo',
+    -120: 'Etc/GMT+2',
+    -60: 'Etc/GMT+1',
+    0: 'Etc/UTC',
+    60: 'Africa/Brazzaville',
+    120: 'Africa/Lubumbashi',
+    180: 'Africa/Nairobi',
+    240: 'Asia/Dubai',
+    270: 'Asia/Kabul',
+    300: 'Asia/Karachi',
+    330: 'Asia/Kolkata',
+    345: 'Asia/Kathmandu',
+    360: 'Asia/Dhaka',
+    390: 'Asia/Yangon',
+    420: 'Asia/Bangkok',
+    480: 'Asia/Shanghai',
+    525: 'Australia/Eucla',
+    540: 'Asia/Tokyo',
+    570: 'Australia/Darwin',
+    600: 'Australia/Brisbane',
+    660: 'Pacific/Guadalcanal',
+    720: 'Etc/GMT-12',
+    780: 'Pacific/Tongatapu',
   };
 
   final FlutterLocalNotificationsPlugin _plugin;
@@ -150,27 +166,51 @@ class NotificationService {
     _timeZonesInitialized = true;
   }
 
+  /// Resolves the device time zone.
+  ///
+  /// Android reports an abbreviation such as `EAT` or `GMT+3`, not an IANA
+  /// name, so the offset is the reliable signal. Each candidate is validated
+  /// against the device's *current* offset before being accepted, so a stale or
+  /// mistyped mapping degrades to UTC instead of silently scheduling a reminder
+  /// at the wrong hour.
+  ///
+  /// The abbreviation map that used to live here has been removed. It mapped
+  /// `Europe/London` to a UTC+1 device and `Europe/Paris` to a UTC+2 device,
+  /// which are wrong for half of every year, and it had no entry at all for
+  /// UTC+4, so UAE devices fell through to UTC.
   tz.Location _resolveLocalTimeZone() {
     final now = DateTime.now();
+    final deviceOffset = now.timeZoneOffset;
+
     final candidates = <String>[
+      // Some platforms do report a real IANA name, so try it first.
       now.timeZoneName,
-      _timeZoneNameByAbbreviation[now.timeZoneName] ?? '',
-      _timeZoneNameByOffsetMinutes[now.timeZoneOffset.inMinutes] ?? '',
-      'UTC',
+      _timeZoneNameByOffsetMinutes[deviceOffset.inMinutes] ?? '',
     ];
 
     for (final candidate in candidates) {
       if (candidate.isEmpty) {
         continue;
       }
-      try {
-        return tz.getLocation(candidate);
-      } catch (_) {
-        // Keep trying until a valid native time-zone ID is found.
+      final location = _tryLocation(candidate);
+      if (location != null && _matchesCurrentOffset(location, deviceOffset)) {
+        return location;
       }
     }
 
     return tz.UTC;
+  }
+
+  tz.Location? _tryLocation(String name) {
+    try {
+      return tz.getLocation(name);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool _matchesCurrentOffset(tz.Location location, Duration deviceOffset) {
+    return tz.TZDateTime.now(location).timeZoneOffset == deviceOffset;
   }
 
   Future<bool> _requestPermissionIfNeeded() async {
