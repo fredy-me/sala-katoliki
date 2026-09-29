@@ -195,17 +195,53 @@ void main() {
     );
 
     test('build no longer registers the recording side effect', () {
+      final helperIndex = screen.indexOf('void _recordRecentOnce');
+      final buildIndex = screen.indexOf('Widget build(BuildContext context)');
+      expect(helperIndex, isNot(-1), reason: 'the one-time helper must exist');
+      expect(buildIndex, isNot(-1));
+
+      final registrations = RegExp(
+        r'addPostFrameCallback',
+      ).allMatches(screen).length;
+      expect(
+        registrations,
+        1,
+        reason: 'the post-frame callback belongs to the one-time helper and '
+            'must not be registered from anywhere else in the screen',
+      );
+
+      final callbackIndex = screen.indexOf('addPostFrameCallback');
+      expect(
+        callbackIndex,
+        greaterThan(helperIndex),
+        reason: 'the helper is what registers the post-frame callback',
+      );
+      expect(
+        callbackIndex,
+        lessThan(buildIndex),
+        reason: 'build() must not register the post-frame callback itself; it '
+            'delegates to _recordRecentOnce instead',
+      );
       expect(
         screen,
-        isNot(contains('addPostFrameCallback')),
-        reason: 'the post-frame callback should live in the one-time helper',
+        contains('_recordRecentOnce(prayer.id)'),
+        reason: 'build() should call the helper and nothing more',
       );
     });
 
     test('recording is guarded so it happens at most once per prayer', () {
       expect(screen, contains('_recordRecentOnce'));
       expect(screen, contains('_recordedPrayerId'));
-      expect(screen, contains('if (!mounted) return'));
+      expect(
+        screen,
+        contains('if (_recordedPrayerId == prayerId)'),
+        reason: 'the guard must return before scheduling a second write',
+      );
+      expect(
+        screen,
+        contains('if (!mounted)'),
+        reason: 'the helper must not touch ref after the widget is disposed',
+      );
     });
 
     test('the notifier skips an unchanged list instead of writing again', () {
