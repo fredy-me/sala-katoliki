@@ -8,6 +8,8 @@ import 'package:salakatoliki/features/novenas/presentation/providers/novena_prov
 import 'package:salakatoliki/features/today/presentation/providers/today_providers.dart';
 import 'package:salakatoliki/features/today/presentation/screens/today_screen.dart';
 
+import '../helpers/test_asset_bundle.dart';
+
 void main() {
   testWidgets('shows localized Kiswahili titles for active novenas', (
     tester,
@@ -48,6 +50,9 @@ Future<void> _expectActiveNovenaTitle(
     ProviderScope(
       key: UniqueKey(),
       overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
         activeLanguageProvider.overrideWithValue('sw'),
         todayLocalStateProvider.overrideWith(
           (ref) async => TodayLocalState(
