@@ -3,7 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:salakatoliki/app.dart';
 import 'package:salakatoliki/routes/app_router.dart';
+import 'package:salakatoliki/shared/widgets/prayer_text_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../helpers/test_asset_bundle.dart';
 
 void main() {
   setUp(() {
@@ -20,6 +23,9 @@ void main() {
         key: UniqueKey(),
         overrides: [
           appInitialLocationProvider.overrideWithValue('/prayers/our_father'),
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
         ],
         child: const SalaKatolikiApp(),
       ),
@@ -27,19 +33,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose Your Prayer Language'), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.byType(FilledButton),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.byType(FilledButton));
+    final continueButton = find.widgetWithText(FilledButton, 'Continue');
+    await tester.ensureVisible(continueButton);
+    await tester.pumpAndSettle();
+    await tester.tap(continueButton);
 
     await _pumpUntilFound(tester, find.text('Our Father'));
     expect(
       find.textContaining('Our Father, who art in heaven'),
       findsOneWidget,
     );
-    expect(find.text('Source'), findsOneWidget);
+    expect(
+      find.text('COMMON PRAYERS'),
+      findsOneWidget,
+      reason: 'the deep link must resolve real bundled content, not an '
+          'error or missing-prayer state',
+    );
+    expect(
+      find.byType(PrayerTextView),
+      findsOneWidget,
+      reason: 'the prayer must render through the unboxed reading view',
+    );
   });
 
   testWidgets('stored language starts without onboarding flicker', (
@@ -49,7 +63,15 @@ void main() {
     addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
 
     await tester.pumpWidget(
-      ProviderScope(key: UniqueKey(), child: const SalaKatolikiApp()),
+      ProviderScope(
+        key: UniqueKey(),
+        overrides: [
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
+        ],
+        child: const SalaKatolikiApp(),
+      ),
     );
     await tester.pump();
 
