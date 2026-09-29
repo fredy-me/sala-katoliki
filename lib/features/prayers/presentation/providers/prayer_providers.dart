@@ -13,7 +13,6 @@ import '../../../../core/localization/localization_providers.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../../domain/usecases/get_all_prayers_usecase.dart';
-import '../../domain/usecases/get_prayer_by_id_usecase.dart';
 
 final localContentDataSourceProvider = Provider<LocalContentDataSource>((ref) {
   return LocalContentDataSource();
@@ -41,10 +40,6 @@ final getAllPrayersUseCaseProvider = Provider<GetAllPrayersUseCase>((ref) {
   return GetAllPrayersUseCase(ref.watch(prayerRepositoryProvider));
 });
 
-final getPrayerByIdUseCaseProvider = Provider<GetPrayerByIdUseCase>((ref) {
-  return GetPrayerByIdUseCase(ref.watch(prayerRepositoryProvider));
-});
-
 final prayersProvider = FutureProvider<List<PrayerEntity>>((ref) {
   final languageCode = ref.watch(activeLanguageProvider);
   return ref
@@ -52,14 +47,26 @@ final prayersProvider = FutureProvider<List<PrayerEntity>>((ref) {
       .call(languageCode: languageCode);
 });
 
+/// Indexes the prayer corpus by id, once per language.
+///
+/// Looking a single prayer up by id used to reload and re-parse all 36 prayers
+/// every time a detail screen opened. Both the index and the list now derive
+/// from the same cached corpus, so opening every prayer performs no further
+/// asset reads.
+final prayerIndexProvider = FutureProvider<Map<String, PrayerEntity>>((
+  ref,
+) async {
+  final prayers = await ref.watch(prayersProvider.future);
+  return {for (final prayer in prayers) prayer.id: prayer};
+});
+
 final prayerByIdProvider = FutureProvider.family<PrayerEntity?, String>((
   ref,
   id,
-) {
-  final languageCode = ref.watch(activeLanguageProvider);
-  return ref
-      .watch(getPrayerByIdUseCaseProvider)
-      .call(id, languageCode: languageCode);
+) async {
+  ref.watch(activeLanguageProvider);
+  final index = await ref.watch(prayerIndexProvider.future);
+  return index[id];
 });
 
 final favoritePrayerIdsProvider =
