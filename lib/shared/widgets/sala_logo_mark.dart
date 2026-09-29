@@ -19,6 +19,10 @@ class SalaLogoMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final logicalImageSize = (size - padding * 2).clamp(1.0, double.infinity);
+    final cacheWidth = (logicalImageSize * devicePixelRatio).round();
+
     return Container(
       width: size,
       height: size,
@@ -32,6 +36,8 @@ class SalaLogoMark extends StatelessWidget {
         child: Image.asset(
           AssetPaths.appLogo,
           fit: BoxFit.contain,
+          cacheWidth: cacheWidth,
+          filterQuality: FilterQuality.medium,
           semanticLabel: 'Sala Katoliki',
         ),
       ),
