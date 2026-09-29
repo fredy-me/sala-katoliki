@@ -28,7 +28,9 @@ abstract final class AppTheme {
     );
   }
 
-  static ThemeData get light {
+  static final ThemeData light = _light();
+
+  static ThemeData _light() {
     final scheme = ColorScheme.fromSeed(
       seedColor: AppColors.navy,
       brightness: Brightness.light,
@@ -50,7 +52,9 @@ abstract final class AppTheme {
     );
   }
 
-  static ThemeData get dark {
+  static final ThemeData dark = _dark();
+
+  static ThemeData _dark() {
     final scheme =
         ColorScheme.fromSeed(
           seedColor: AppColors.navy,
