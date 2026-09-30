@@ -8,6 +8,7 @@ import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/litany_text_view.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
+import '../../../../shared/widgets/text_style_rules.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 
@@ -26,33 +27,19 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
   static const _maxTextScale = 1.3;
   static const _textScaleStep = 0.15;
 
-  /// Litanies that use the St Rita response styling.
-  ///
-  /// Declared once as a constant. Inline, this allocated a fresh 18-element
-  /// `Set<String>` on every rebuild of the detail screen.
-  static const Set<String> _stRitaLitanies = {
-    'st_rita_litany',
-    'bikira_maria_litany',
-    'divine_mercy_litany',
-    'holy_spirit_litany',
-    'sacred_head_of_jesus_litany',
-    'st_aloysius_gonzaga_litany',
-    'st_jude_thaddeus_litany',
-    'st_joseph_litany',
-    'st_anthony_of_padua_litany_v1',
-    'st_anthony_of_padua_litany_v2',
-    'franciscan_st_anthony_litany',
-    'st_anne_litany',
-    'holy_angels_litany',
-    'sacred_heart_of_jesus_litany',
-    'holy_face_of_jesus_litany',
-    'souls_in_purgatory_litany',
-    'seven_sorrows_mary_litany',
-    'litany_of_reparation',
-  };
-
-  double _textScale = _defaultTextScale;
+  /// 4.5: the scale lives in a notifier rather than in this State's `setState`,
+  /// so tapping A- / A / A+ rebuilds only the chip row and the prayer text
+  /// instead of the entire detail screen.
+  final ValueNotifier<double> _textScale = ValueNotifier<double>(
+    _defaultTextScale,
+  );
   String? _recordedPrayerId;
+
+  @override
+  void dispose() {
+    _textScale.dispose();
+    super.dispose();
+  }
 
   /// Records the prayer in the recents list, at most once per prayer.
   ///
@@ -163,37 +150,51 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 28),
-                      Row(
-                        children: [
-                          _TextSizeChip(
-                            label: 'A-',
-                            selected: _textScale < _defaultTextScale,
-                            onPressed: _decreaseTextSize,
-                          ),
-                          _TextSizeChip(
-                            label: 'A',
-                            selected: _textScale == _defaultTextScale,
-                            onPressed: _resetTextSize,
-                          ),
-                          _TextSizeChip(
-                            label: 'A+',
-                            selected: _textScale > _defaultTextScale,
-                            onPressed: _increaseTextSize,
-                          ),
-                        ],
+                      ValueListenableBuilder<double>(
+                        valueListenable: _textScale,
+                        builder: (context, textScale, _) {
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  _TextSizeChip(
+                                    label: 'A-',
+                                    selected:
+                                        textScale < _defaultTextScale,
+                                    onPressed: _decreaseTextSize,
+                                  ),
+                                  _TextSizeChip(
+                                    label: 'A',
+                                    selected:
+                                        textScale == _defaultTextScale,
+                                    onPressed: _resetTextSize,
+                                  ),
+                                  _TextSizeChip(
+                                    label: 'A+',
+                                    selected:
+                                        textScale > _defaultTextScale,
+                                    onPressed: _increaseTextSize,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              if (prayer.categoryId == 'litanies')
+                                LitanyTextView(
+                                  text: prayer.text(activeLanguageCode),
+                                  fontScale: textScale,
+                                  stRitaStyle: usesStRitaLitanyStyling(
+                                    prayer.id,
+                                  ),
+                                )
+                              else
+                                PrayerTextView(
+                                  text: prayer.text(activeLanguageCode),
+                                  fontScale: textScale,
+                                ),
+                            ],
+                          );
+                        },
                       ),
-                      const SizedBox(height: 24),
-                      if (prayer.categoryId == 'litanies')
-                        LitanyTextView(
-                          text: prayer.text(activeLanguageCode),
-                          fontScale: _textScale,
-                          stRitaStyle: _stRitaLitanies.contains(prayer.id),
-                        )
-                      else
-                        PrayerTextView(
-                          text: prayer.text(activeLanguageCode),
-                          fontScale: _textScale,
-                        ),
                     ],
                   ),
                 ),
@@ -253,27 +254,21 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
   }
 
   void _decreaseTextSize() {
-    setState(() {
-      _textScale = (_textScale - _textScaleStep).clamp(
-        _minTextScale,
-        _maxTextScale,
-      );
-    });
+    _textScale.value = (_textScale.value - _textScaleStep).clamp(
+      _minTextScale,
+      _maxTextScale,
+    );
   }
 
   void _resetTextSize() {
-    setState(() {
-      _textScale = _defaultTextScale;
-    });
+    _textScale.value = _defaultTextScale;
   }
 
   void _increaseTextSize() {
-    setState(() {
-      _textScale = (_textScale + _textScaleStep).clamp(
-        _minTextScale,
-        _maxTextScale,
-      );
-    });
+    _textScale.value = (_textScale.value + _textScaleStep).clamp(
+      _minTextScale,
+      _maxTextScale,
+    );
   }
 }
 
