@@ -33,6 +33,33 @@ class PrayerEntity {
   final bool isFavorite;
   final bool showTitle;
 
+  /// 4.7: the lowercased search haystack, computed once per language.
+  ///
+  /// `score()` previously lowercased the title, the category label and the body
+  /// on every call, and the library calls it for all 36 prayers on every
+  /// keystroke — roughly 82 KB of allocation per character typed. The haystack
+  /// cannot change while the entity lives, so it is derived on first use.
+  ///
+  /// This hangs off an [Expando] keyed by the entity rather than a `static`
+  /// map keyed by id, so the memo cannot outlive the entity it describes. A
+  /// `static` map keyed by id would also be wrong in principle: two entities
+  /// with the same id but different text would share one index.
+  static final Expando<Map<String, _PrayerSearchIndex>> _searchIndexes =
+      Expando<Map<String, _PrayerSearchIndex>>('prayerSearchIndexes');
+
+  _PrayerSearchIndex _searchIndexFor(String languageCode) {
+    final cache =
+        _searchIndexes[this] ??= <String, _PrayerSearchIndex>{};
+    return cache.putIfAbsent(languageCode, () {
+      return _PrayerSearchIndex(
+        title: title(languageCode).toLowerCase(),
+        category: categoryLabel(languageCode).toLowerCase(),
+        body: text(languageCode).toLowerCase(),
+        tags: [for (final tag in tags) tag.toLowerCase()],
+      );
+    });
+  }
+
   String title([String? languageCode]) {
     return localizedTitle;
   }
@@ -55,12 +82,12 @@ class PrayerEntity {
       return true;
     }
 
-    return title(effectiveLanguageCode).toLowerCase().contains(normalized) ||
-        categoryLabel(
-          effectiveLanguageCode,
-        ).toLowerCase().contains(normalized) ||
-        text(effectiveLanguageCode).toLowerCase().contains(normalized) ||
-        tags.any((tag) => tag.toLowerCase().contains(normalized));
+    final index = _searchIndexFor(effectiveLanguageCode);
+
+    return index.title.contains(normalized) ||
+        index.category.contains(normalized) ||
+        index.body.contains(normalized) ||
+        index.tags.any((tag) => tag.contains(normalized));
   }
 
   /// Returns a relevance score for the given [query].
@@ -72,34 +99,47 @@ class PrayerEntity {
       return 1;
     }
 
-    final titleLower = title(effectiveLanguageCode).toLowerCase();
-    final categoryLower = categoryLabel(effectiveLanguageCode).toLowerCase();
-    final bodyLower = text(effectiveLanguageCode).toLowerCase();
+    final index = _searchIndexFor(effectiveLanguageCode);
 
     // Title scoring
-    if (titleLower == normalized) return 100;
-    if (titleLower.startsWith(normalized)) return 90;
-    if (titleLower.contains(normalized)) return 80;
+    if (index.title == normalized) return 100;
+    if (index.title.startsWith(normalized)) return 90;
+    if (index.title.contains(normalized)) return 80;
 
     // Tag scoring
-    for (final tag in tags) {
-      final tagLower = tag.toLowerCase();
+    for (final tagLower in index.tags) {
       if (tagLower == normalized) return 70;
       if (tagLower.startsWith(normalized)) return 60;
       if (tagLower.contains(normalized)) return 50;
     }
 
     // Category scoring
-    if (categoryLower == normalized) return 45;
-    if (categoryLower.contains(normalized)) return 40;
+    if (index.category == normalized) return 45;
+    if (index.category.contains(normalized)) return 40;
 
     // Body scoring (only for queries 3+ chars to reduce noise)
-    if (normalized.length >= 3 && bodyLower.contains(normalized)) {
+    if (normalized.length >= 3 && index.body.contains(normalized)) {
       return 30;
     }
 
     return 0;
   }
+}
+
+/// The precomputed lowercase form of everything [PrayerEntity.score] compares a
+/// query against. Derived once per language; see [_searchIndexFor].
+class _PrayerSearchIndex {
+  const _PrayerSearchIndex({
+    required this.title,
+    required this.category,
+    required this.body,
+    required this.tags,
+  });
+
+  final String title;
+  final String category;
+  final String body;
+  final List<String> tags;
 }
 
 /// Returns the prayer featured for today, rotating deterministically by day.
