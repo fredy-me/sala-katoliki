@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,17 +14,11 @@ import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_search_bar.dart';
+import '../../../../shared/widgets/text_style_rules.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../../../novenas/presentation/providers/novena_providers.dart';
 import '../providers/prayer_providers.dart';
 import '../widgets/prayer_card.dart';
-
-const _commonPrayerCategoryIds = {
-  'common_prayers',
-  'mass_prayers',
-  'confession_prayers',
-  'divine_mercy',
-};
 
 class PrayerLibraryScreen extends ConsumerStatefulWidget {
   const PrayerLibraryScreen({super.key});
@@ -36,8 +32,26 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
   final _searchController = TextEditingController();
   String _query = '';
 
+  /// 4.7: the query the results are filtered by, applied only after the user
+  /// stops typing. The field itself still updates on every keystroke, so the
+  /// field stays responsive; only the 36-prayer re-scoring is deferred.
+  static const _searchDebounce = Duration(milliseconds: 250);
+
+  Timer? _debounceTimer;
+
+  void _onQueryChanged(String value) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_searchDebounce, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _query = value);
+    });
+  }
+
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -99,7 +113,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
             AppSearchBar(
               controller: _searchController,
               hintText: strings.searchHint,
-              onChanged: (value) => setState(() => _query = value),
+              onChanged: _onQueryChanged,
             ),
             const SizedBox(height: AppSpacing.lg),
             if (_query.trim().isNotEmpty)
@@ -227,7 +241,7 @@ class _CategoryGrid extends StatelessWidget {
     };
     final countsByCategory = <String, int>{};
     for (final prayer in prayers) {
-      final categoryId = _commonPrayerCategoryIds.contains(prayer.categoryId)
+      final categoryId = isCommonPrayerCategory(prayer.categoryId)
           ? 'common_prayers'
           : prayer.categoryId;
       countsByCategory.update(
