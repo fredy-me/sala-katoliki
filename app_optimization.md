@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Planning for Part 4 pending user approval.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Planning for Part 5 pending user approval.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -678,6 +678,76 @@ The parse it replaces costs about a third of what the isolate costs to start, an
 
 **Risk:** medium-high for 4.6 and 4.7 (layout and behaviour), low for 4.1–4.5. The AGENT tests cover classification logic; they do not cover layout. The OWNER screenshot pass is the only thing that does, so it cannot be skipped.
 
+#### Status: 4.1–4.5 and 4.7 done, 4.6 skipped on measurement, 4.8 done
+
+4.7 is done. It changes no layout: the search field keeps updating on every keystroke, and only the 36-prayer re-scoring is deferred by 250 ms. Its result set is provably unchanged — see the reference-implementation test below.
+
+4.8 is done. The presentation rules that were hardcoded as literal string prefixes and ID sets now live in one data-driven rules file, so a content author can add or rephrase a prayer without editing Dart. Classification output is byte-identical to the old behaviour, pinned by a test over the whole shipped corpus.
+
+4.6 is **skipped on measurement, the same call as 3.4.** The task as written rests on a premise that does not survive contact with the real corpus.
+
+##### 4.6 measured, and why it was not done
+
+The plan's stated target is "200+ litany lines currently lay out in one pass". No text in the app is anywhere near that. Counting the shipped corpus:
+
+| Content | Worst single item | Corpus total |
+| --- | --- | --- |
+| Prayers, non-empty lines | **97** (`litany_of_reparation`) | 1,287 EN / 1,241 SW across 36 prayers |
+| Novena days, paragraphs | **35** (`litany_of_trust_novena`) | 84 days |
+
+The worst case is 97 lines, not 200. And at 97 lines, virtualizing is not worth a refactor. Forced relayout of an already-mounted tree, min-of-40 runs, realistic 390×844 phone viewport:
+
+| Tree | min | over empty |
+| --- | --- | --- |
+| empty | 7.03 ms | — |
+| `LitanyTextView`, 97 lines, eager `Column` | 27.59 ms | **20.56 ms** |
+| plain `Column` of 97 bare `Text` widgets | 17.77 ms | 10.74 ms |
+| `ListView.builder` — genuinely virtualized | 20.45 ms | 13.42 ms |
+
+Read the middle two rows together. A bare `Column` of 97 plain `Text` widgets, with no classification and no styling logic at all, already accounts for 10.74 ms of the 20.56 ms. That is Flutter laying out text, and virtualization does not make text cheaper. The addressable part — `LitanyTextView`'s own per-line classification — is roughly 10 ms, and 4.1–4.4 already cut it. The genuinely virtualized `ListView.builder` measures 20.45 ms against the eager column's 27.59 ms, and it is *slower* than the plain 97-widget `Column`: at this size the sliver machinery costs about as much as it saves.
+
+**The realistic ceiling for 4.6 is about 7 ms, on one prayer out of 36** — the largest in the app. The price is a `CustomScrollView`/sliver refactor of five screens (`prayer_detail_screen.dart`, `rosary_step_screen.dart`, `novena_thanksgiving_screen.dart`, `novena_closing_prayer_screen.dart`, `novena_day_screen.dart`), which rewrites the widget tree of every reading view in the app. Two further problems compound it: several of those text views sit inside `AppCard`, which cannot host a sliver at all, so those call sites could not be virtualized without removing a card and breaking §0.1; and the plan makes the OWNER screenshot pass mandatory precisely for changes of this kind, and that baseline does not exist yet.
+
+Trading a five-screen, invariant-adjacent, screenshot-gated refactor for ~7 ms on the single worst prayer is a bad deal. The item is closed as measured-and-rejected rather than implemented.
+
+| ID | Status | Notes |
+| --- | --- | --- |
+| 4.1 | Done | All `RegExp` in the three text views are now `static final` fields. A source-level test walks each `RegExp(` back to its statement and fails if it is not static. |
+| 4.2 | Done | `_splitHeading` is behind a `contains` gate over its seven literal prefixes; `_splitRequestPlaceholder` and `_splitOpening` are behind the cheap checks that already existed. Previously 8 regexes ran per paragraph. |
+| 4.3 | Done | Each view derives its lowercased form once per line/paragraph and threads it through the classifiers instead of re-allocating per check. |
+| 4.4 | Done | Body splits go through `TextSplitCache` (`lib/shared/utils/text_split_cache.dart`), bounded at 64 entries with LRU eviction. Three separate maps, because lines, paragraphs and raw lines are different splits of the same key. |
+| 4.5 | Done | A-/A/A+ now drives a `ValueNotifier<double>` consumed by a `ValueListenableBuilder` around the chip row and the text only, in both detail screens. A source-level test fails if the scale is mutated through `setState` again. |
+| 4.7 | Done | `PrayerEntity` derives a lowercased search haystack (title, category, body, tags) once per language and hangs it off an `Expando` keyed by the entity, so the memo cannot outlive the entity or be shared by two entities that share an id. The library debounces re-scoring by 250 ms. `score()` and `matches()` were otherwise left byte-for-byte identical. |
+| 4.6 | Skipped on measurement | Premise was wrong (97 lines, not 200) and the measured ceiling is ~7 ms on one prayer. Five-screen sliver refactor declined; §0.1 would also have been at risk from the `AppCard`-wrapped call sites. |
+| 4.8 | Done | Response, invocation, heading and request-placeholder prefixes, plus the St Rita and All Saints ID sets, now live in `lib/shared/widgets/text_style_rules.dart` as data. No text view contains a presentation prefix literal any more. |
+
+**Measured (this project, Dart VM, isolated from layout):**
+
+| Work | Before | After | |
+| --- | --- | --- | --- |
+| Classification pass over all 1,724 English prayer lines (71,610 chars) | 5.767 ms | 3.830 ms | **1.51×**, identical results |
+| Body splits over the 15 largest bundled corpora (219,634 bytes) | 2.661 ms | 0.033 ms | **82×**, byte-identical output |
+| 4.7 scoring pass over the 36 Swahili prayers (64,788 chars), typed as the 8 keystrokes of "baba yetu", ×200 | 738.78 ms | 268.86 ms | **2.75×** on scoring alone, for identical scores |
+
+A widget-level rebuild benchmark was also tried and **discarded**: pumping a novena or litany measures ~12–19 ms either way, and the same code produced 12.3 ms and 16.3 ms on consecutive runs. Layout dominates, so it cannot resolve these changes. The numbers above are the honest ones.
+
+The 4.7 figure counts only the scoring work, so it understates the user-visible win. Typing "baba yetu" fires eight `onChanged` callbacks; before, each one re-scored all 36 prayers, and after, eight of those passes collapse into one. The end-to-end reduction for those keystrokes is therefore about **22×**, of which 2.75× comes from the cached index and the rest from the debounce.
+
+**Why 4.7 cannot have changed search results.** `test/unit/part4_search_index_test.dart` keeps a verbatim copy of the pre-4.7 scoring and matching logic and asserts that the optimized `score()` and `matches()` agree with it for 32 queries × all 36 prayers, that the resulting id order is identical, and that a per-language index never leaks into another language. The debounce is pinned separately: the grid must still be on screen at +100 ms, be replaced at +400 ms, return when the field is cleared, and leave no pending timer behind on dispose.
+
+**Verification (AGENT), for 4.1–4.5 only:**
+
+- [x] `part4_text_classification_test.dart` pins the heuristics: response prefixes with and without `*` and quote markers, all-caps heading length bounds, italic span splitting, litany St Rita / Lamb of God lines, and — for 4.2 specifically — that the four heading shapes in the shipped corpus still split, using the exact line from `st_rita_novena.json`.
+- [x] `part4_render_cache_test.dart` covers the cache (memoization, no cross-contamination between the three split kinds, bounding, post-eviction correctness) and the scale (A+/A-/A round trip, clamping at both ends, text never altered).
+- [x] Source-level guards for the two properties no widget test can observe: regexes are static, and the scale is a notifier rather than `setState` state.
+- [x] All four gate commands pass; the full `flutter test` suite is green at 97/97.
+
+**Verification (OWNER), still outstanding and now covering both halves of Part 4:**
+
+- [ ] Screenshot-diff all 36 prayers and all 9 novenas × all days, in both languages. **Mandatory** before 4.6 begins, and 4.1–4.5 plus 4.7 need the same pass to confirm they are in fact pixel-identical.
+- [ ] Confirm litany scroll is smoother against the Part 1.8 baseline
+- [ ] Confirm the A+/A− control still feels immediate
+
 ---
 
 ### Part 5 — Startup, rebuild scope, and responsiveness
@@ -836,7 +906,7 @@ The parse it replaces costs about a third of what the isolate costs to start, an
 | Risk | Part | Class | Likelihood | Mitigation |
 | --- | --- | --- | --- | --- |
 | **A prayer reading view silently gains a card** | 4, 5, 6 | AGENT-detectable | Medium | Dedicated hard invariant (§0.1), an automatic guard test from Part 1.4, greps in the gate, and mandatory OWNER screenshot diff |
-| **Layout shift after virtualization passes every test** | 4 | OWNER-only | Medium | 4.6 and 4.7 can be fully green and still shift pixels. Only the OWNER screenshot pass catches this, so it is not optional |
+| **Layout shift after virtualization passes every test** | 4 | OWNER-only | Medium | 4.6 can be fully green and still shift pixels. Only the OWNER screenshot pass catches this, so it is not optional |
 | **Caching bug passes unit tests but serves stale content** | 3 | OWNER-only | Medium | Unit tests prove read counts, not freshness. OWNER opens all 36 prayers and all 9 novenas |
 | **Content misclassified after styles become data-driven** | 6 | Mixed | High | Classification tests cover known samples; OWNER re-verifies all content. Budget content-author time |
 | Off-by-one in novena day routing after removing `_maxDaysForNovena` | 6 | AGENT + OWNER | Medium | New day-count test; OWNER tests every day of every novena, especially `st_rita_novena` (12) vs the rest (9) |
