@@ -10,6 +10,7 @@ import '../../../../data/models/novena_model.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/novena_text_view.dart';
+import '../../../../shared/widgets/text_style_rules.dart';
 import '../providers/novena_providers.dart';
 
 class NovenaDayScreen extends ConsumerStatefulWidget {
@@ -28,7 +29,18 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
   static const _maxTextScale = 1.3;
   static const _textScaleStep = 0.15;
 
-  double _textScale = _defaultTextScale;
+  /// 4.5: the scale lives in a notifier rather than in this State's `setState`,
+  /// so tapping A- / A / A+ rebuilds only the chip row and the day text
+  /// instead of the entire day screen.
+  final ValueNotifier<double> _textScale = ValueNotifier<double>(
+    _defaultTextScale,
+  );
+
+  @override
+  void dispose() {
+    _textScale.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,41 +133,45 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         const SizedBox(height: AppSpacing.xl),
-                        Row(
-                          children: [
-                            _TextSizeChip(
-                              label: 'A-',
-                              selected: _textScale < _defaultTextScale,
-                              onPressed: _decreaseTextSize,
-                            ),
-                            _TextSizeChip(
-                              label: 'A',
-                              selected: _textScale == _defaultTextScale,
-                              onPressed: _resetTextSize,
-                            ),
-                            _TextSizeChip(
-                              label: 'A+',
-                              selected: _textScale > _defaultTextScale,
-                              onPressed: _increaseTextSize,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        NovenaTextView(
-                          text: dayContent.body,
-                          fontScale: _textScale,
-                          allSaintsStyle:
-                              novena.id == 'all_saints_day_novena' ||
-                              novena.id == 'divine_mercy_novena' ||
-                              novena.id == 'holy_family_novena' ||
-                              novena.id == 'holy_spirit_novena' ||
-                              novena.id == 'litany_of_trust_novena' ||
-                              novena.id == 'sacred_heart_of_jesus_novena' ||
-                              novena.id == 'st_aloysius_gonzaga_novena' ||
-                              novena.id == 'st_jude_novena' ||
-                              novena.id == 'st_rita_novena',
-                          holySpiritStyle: novena.id == 'holy_spirit_novena',
-                          stRitaStyle: novena.id == 'st_rita_novena',
+                        ValueListenableBuilder<double>(
+                          valueListenable: _textScale,
+                          builder: (context, textScale, _) {
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    _TextSizeChip(
+                                      label: 'A-',
+                                      selected: textScale < _defaultTextScale,
+                                      onPressed: _decreaseTextSize,
+                                    ),
+                                    _TextSizeChip(
+                                      label: 'A',
+                                      selected:
+                                          textScale == _defaultTextScale,
+                                      onPressed: _resetTextSize,
+                                    ),
+                                    _TextSizeChip(
+                                      label: 'A+',
+                                      selected: textScale > _defaultTextScale,
+                                      onPressed: _increaseTextSize,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: AppSpacing.lg),
+                                NovenaTextView(
+                                  text: dayContent.body,
+                                  fontScale: textScale,
+                                  allSaintsStyle: usesAllSaintsStyling(
+                                    novena.id,
+                                  ),
+                                  holySpiritStyle:
+                                      novena.id == kHolySpiritNovenaId,
+                                  stRitaStyle: novena.id == kStRitaNovenaId,
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -233,25 +249,21 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
   }
 
   void _decreaseTextSize() {
-    setState(() {
-      _textScale = (_textScale - _textScaleStep).clamp(
-        _minTextScale,
-        _maxTextScale,
-      );
-    });
+    _textScale.value = (_textScale.value - _textScaleStep).clamp(
+      _minTextScale,
+      _maxTextScale,
+    );
   }
 
   void _resetTextSize() {
-    setState(() => _textScale = _defaultTextScale);
+    _textScale.value = _defaultTextScale;
   }
 
   void _increaseTextSize() {
-    setState(() {
-      _textScale = (_textScale + _textScaleStep).clamp(
-        _minTextScale,
-        _maxTextScale,
-      );
-    });
+    _textScale.value = (_textScale.value + _textScaleStep).clamp(
+      _minTextScale,
+      _maxTextScale,
+    );
   }
 }
 
