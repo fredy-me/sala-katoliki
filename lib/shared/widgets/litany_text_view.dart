@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../utils/text_split_cache.dart';
+import 'text_style_rules.dart';
 
 /// Renders litany text line by line.
 ///
@@ -23,11 +25,7 @@ class LitanyTextView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lines = text
-        .split('\n')
-        .map((line) => line.trim())
-        .where((line) => line.isNotEmpty)
-        .toList(growable: false);
+    final lines = TextSplitCache.lines(text);
 
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,6 +56,9 @@ class _LitanyLine extends StatelessWidget {
   final double fontScale;
   final bool stRitaStyle;
 
+  /// Hoisted so the pattern is compiled once rather than per line.
+  static final RegExp _nonLetterPattern = RegExp(r'[^A-Za-zÀ-ÿ]');
+
   @override
   Widget build(BuildContext context) {
     final normalized = text
@@ -67,18 +68,18 @@ class _LitanyLine extends StatelessWidget {
         .trim();
     final isMarked = normalized.contains('*');
     final plainText = normalized.replaceAll('*', '');
-    final isHighlighted = isMarked || _isHighlightedLine(normalized);
-    final isLambOfGod =
-        plainText.startsWith('Mwanakondoo') ||
-        plainText.startsWith('Lamb of God') ||
-        plainText.startsWith('O Lamb of God');
+    // 4.3: all three classifiers below need a lowercased form of the same
+    // string, so derive it once instead of once per classifier.
+    final plainLower = plainText.toLowerCase();
+    final isHighlighted = isMarked || _isHighlightedLine(plainLower);
+    final isLambOfGod = startsWithAny(plainText, kLambOfGodPrefixes);
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final scaledStyle = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
     );
 
     if (stRitaStyle) {
-      if (_isResponseLine(plainText)) {
+      if (_isResponseLine(plainLower)) {
         return Text(
           plainText,
           style: scaledStyle?.copyWith(
@@ -99,7 +100,7 @@ class _LitanyLine extends StatelessWidget {
         );
       }
 
-      if (_isStRitaHeading(plainText)) {
+      if (_isStRitaHeading(plainLower, plainText)) {
         return Text(
           plainText.toUpperCase(),
           style: scaledStyle?.copyWith(
@@ -146,46 +147,23 @@ class _LitanyLine extends StatelessWidget {
     );
   }
 
-  bool _isHighlightedLine(String line) {
-    final normalized = line.replaceAll('*', '').toLowerCase();
-    return normalized.startsWith('kiitikio') ||
-        normalized.startsWith('response') ||
-        normalized.startsWith('r:') ||
-        normalized.startsWith('v:') ||
-        normalized.startsWith('k:') ||
-        normalized.startsWith('w:') ||
-        normalized.startsWith('k.') ||
-        normalized.startsWith('w.') ||
-        normalized.startsWith('kiongozi:') ||
-        normalized.startsWith('wote:') ||
-        normalized.startsWith('tuombe') ||
-        normalized.startsWith('let us pray');
+  /// [plainLower] is [text] with markers and quotes removed, then lowercased.
+  bool _isHighlightedLine(String plainLower) {
+    return startsWithAny(plainLower, kResponsePrefixes);
   }
 
-  bool _isResponseLine(String line) {
-    final normalized = line.toLowerCase();
-    return normalized.startsWith('kiitikio') ||
-        normalized.startsWith('response') ||
-        normalized.startsWith('r:') ||
-        normalized.startsWith('w:') ||
-        normalized.startsWith('r.') ||
-        normalized.startsWith('w.') ||
-        normalized.startsWith('all:') ||
-        normalized.startsWith('wote:') ||
-        normalized.endsWith('utuombee') ||
-        normalized.endsWith('pray for us');
+  /// [plainLower] is [text] with markers and quotes removed, then lowercased.
+  bool _isResponseLine(String plainLower) {
+    return startsWithAny(plainLower, kLitanyResponsePrefixes) ||
+        endsWithAny(plainLower, kLitanyResponseSuffixes);
   }
 
-  bool _isStRitaHeading(String line) {
-    final normalized = line.toLowerCase();
-    final lettersOnly = line.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
+  /// [plainLower] is the lowercased form; [plainText] keeps original case,
+  /// which the all-caps check depends on.
+  bool _isStRitaHeading(String plainLower, String plainText) {
+    final lettersOnly = plainText.replaceAll(_nonLetterPattern, '');
     return (lettersOnly.isNotEmpty &&
             lettersOnly == lettersOnly.toUpperCase()) ||
-        normalized.startsWith('the litany of') ||
-        normalized.startsWith('litany to') ||
-        normalized.startsWith('litania ya') ||
-        normalized.startsWith('litania kwa') ||
-        normalized.startsWith('tuombe') ||
-        normalized.startsWith('let us pray');
+        startsWithAny(plainLower, kLitanyHeadingPrefixes);
   }
 }
