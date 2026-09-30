@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../utils/text_split_cache.dart';
+import 'text_style_rules.dart';
 
 /// Renders novena body text.
 ///
@@ -29,11 +31,7 @@ class NovenaTextView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paragraphs = text
-        .split(RegExp(r'\n\s*\n'))
-        .map((paragraph) => paragraph.trim())
-        .where((paragraph) => paragraph.isNotEmpty)
-        .toList(growable: false);
+    final paragraphs = TextSplitCache.paragraphs(text);
 
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,9 +72,28 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   final bool stRitaStyle;
   final bool thanksgivingStyle;
 
+  /// Hoisted so the patterns are compiled once for the app rather than rebuilt
+  /// for every paragraph of every novena day.
+  static final RegExp _nonLetterPattern = RegExp(r'[^A-Za-zÀ-ÿ]');
+  static final RegExp _stRitaResponsePattern = RegExp(
+    r'You help the blind[^.]*restored to life\.|Unawasaidia vipofu[^.]*wanarudishiwa uhai\.',
+    caseSensitive: false,
+  );
+  static final RegExp _stRitaRequestPattern = RegExp(
+    r'\((?:here make|hapa omba)[^)]+\)',
+    caseSensitive: false,
+  );
+  static final RegExp _stRitaPrayerHeadingPattern = RegExp(
+    r'^(LET US PRAY:|TUOMBE:)\s*(.+)$',
+    caseSensitive: false,
+  );
+
   @override
   Widget build(BuildContext context) {
     final displayText = text.replaceAll('*', '').trim();
+    // 4.3: every classifier below lowercases the same string. Derive it once
+    // and thread it through instead of allocating a copy per check.
+    final displayLower = displayText.toLowerCase();
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final style = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
@@ -84,7 +101,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       fontWeight: FontWeight.w400,
     );
 
-    if (_isIntentions(displayText)) {
+    if (_isIntentions(displayLower)) {
       return Text(
         displayText,
         style: style?.copyWith(fontStyle: FontStyle.italic),
@@ -92,8 +109,8 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     }
 
     if ((thanksgivingStyle && _isThanksgivingHeading(text)) ||
-        _isHeading(displayText) ||
-        (holySpiritStyle && _isHolySpiritHeading(displayText))) {
+        _isHeading(displayText, displayLower) ||
+        (holySpiritStyle && _isHolySpiritHeading(displayLower))) {
       return Text(
         displayText.toUpperCase(),
         style: style?.copyWith(
@@ -104,7 +121,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
       );
     }
 
-    final invocation = _isInvocation(displayText);
+    final invocation = _isInvocation(displayLower);
     if (invocation) {
       return Text.rich(
         TextSpan(
@@ -161,7 +178,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
         );
       }
 
-      if (_isStRitaPrayerCount(displayText)) {
+      if (_isStRitaPrayerCount(displayLower)) {
         return Text(
           displayText,
           style: style?.copyWith(fontStyle: FontStyle.italic),
@@ -173,6 +190,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
           style: style,
           children: _stRitaTextSpans(
             displayText,
+            displayLower,
             style?.copyWith(fontStyle: FontStyle.italic),
             style?.copyWith(
               color: Theme.of(context).colorScheme.primary,
@@ -186,21 +204,21 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     return Text(displayText, style: style);
   }
 
+  /// [normalized] is [value] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
   List<InlineSpan> _stRitaTextSpans(
     String value,
+    String normalized,
     TextStyle? italicStyle,
     TextStyle? responseStyle,
   ) {
-    final normalized = value.toLowerCase();
-    if (normalized.startsWith('r:') || normalized.startsWith('w:')) {
+    if (startsWithAny(normalized, kStRitaResponsePrefixes)) {
       return [TextSpan(text: value, style: responseStyle)];
     }
 
-    final responsePattern = RegExp(
-      r'You help the blind[^.]*restored to life\.|Unawasaidia vipofu[^.]*wanarudishiwa uhai\.',
-      caseSensitive: false,
-    );
-    final matches = responsePattern.allMatches(value).toList(growable: false);
+    final matches = _stRitaResponsePattern
+        .allMatches(value)
+        .toList(growable: false);
     if (matches.isEmpty) {
       return [TextSpan(text: value)];
     }
@@ -221,10 +239,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   }
 
   _StRitaTextSplit? _splitStRitaRequest(String value) {
-    final match = RegExp(
-      r'\((?:here make|hapa omba)[^)]+\)',
-      caseSensitive: false,
-    ).firstMatch(value);
+    final match = _stRitaRequestPattern.firstMatch(value);
     if (match == null) {
       return null;
     }
@@ -237,10 +252,7 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   }
 
   _StRitaPrayerHeading? _splitStRitaPrayerHeading(String value) {
-    final match = RegExp(
-      r'^(LET US PRAY:|TUOMBE:)\s*(.+)$',
-      caseSensitive: false,
-    ).firstMatch(value);
+    final match = _stRitaPrayerHeadingPattern.firstMatch(value);
     if (match == null) {
       return null;
     }
@@ -251,70 +263,47 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
     );
   }
 
-  bool _isStRitaPrayerCount(String value) {
-    final normalized = value.toLowerCase();
-    return normalized.contains('our father (3)') ||
-        normalized.contains('baba yetu (3)');
+  /// [normalized] is [value] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
+  bool _isStRitaPrayerCount(String normalized) {
+    return containsAny(normalized, kStRitaPrayerCountFragments);
   }
 
-  bool _isIntentions(String value) {
-    final normalized = value.toLowerCase();
-    return normalized.startsWith('(state your intentions') ||
-        normalized.startsWith('(mention your intention') ||
-        normalized.startsWith('(taja nia zako') ||
-        normalized.startsWith('(taja nia yako') ||
-        normalized.startsWith('"today bring to me') ||
-        normalized.startsWith('"leo uniletee') ||
-        normalized.startsWith('holy spirit we ask for the grace of [') ||
-        normalized.startsWith('roho mtakatifu, tunakuomba neema ya [') ||
-        normalized.contains('(mention your intention') ||
-        normalized.contains('(taja nia zako hapa)') ||
-        normalized.contains('(taja nia yako hapa)');
+  /// [normalized] is [value] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
+  ///
+  /// 4.8: this was eleven literal `startsWith`/`contains` calls. The fragments
+  /// are data now, and the two `hapa)` variants that used to be separate
+  /// `contains` clauses are simply additional entries in the same list, because
+  /// `'(taja nia zako'` is a prefix of `'(taja nia zako hapa)'`.
+  bool _isIntentions(String normalized) {
+    return containsAny(normalized, kIntentionContainsFragments);
   }
 
-  bool _isInvocation(String value) {
-    final normalized = value.toLowerCase();
-    return normalized.startsWith('in the name of the father') ||
-        normalized.startsWith('kwa jina la baba');
+  /// [normalized] is [value] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
+  bool _isInvocation(String normalized) {
+    return startsWithAny(normalized, kInvocationPrefixes);
   }
 
-  bool _isHeading(String value) {
-    final normalized = value.toLowerCase();
-    if (normalized == 'pray the divine mercy chaplet.' ||
-        normalized == 'sali chapleti ya huruma ya mungu.' ||
-        normalized == 'the litany of trust' ||
-        normalized == 'litania ya tumaini') {
+  /// [value] keeps its original case, which the all-caps check depends on;
+  /// [normalized] is [value] lowercased.
+  bool _isHeading(String value, String normalized) {
+    if (equalsAny(normalized, kExactHeadingEquals)) {
       return true;
     }
 
     if (value.length < 4 || value.length > 48) {
       return false;
     }
-    final lettersOnly = value.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
+    final lettersOnly = value.replaceAll(_nonLetterPattern, '');
     return lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase();
   }
 
-  bool _isHolySpiritHeading(String value) {
-    return const {
-      'charity',
-      'joy',
-      'peace',
-      'patience',
-      'kindness',
-      'faithfulness',
-      'gentleness',
-      'self-control',
-      'goodness',
-      'mapendo',
-      'furaha',
-      'amani',
-      'subira',
-      'ukarimu',
-      'uaminifu',
-      'upole',
-      'kujitawala',
-      'wema',
-    }.contains(value.toLowerCase());
+  /// [normalized] is [value] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
+  bool _isHolySpiritHeading(String normalized) {
+    return equalsAny(normalized, kHolySpiritHeadings);
   }
 
   bool _isThanksgivingHeading(String value) {
@@ -348,18 +337,38 @@ class _NovenaParagraph extends StatelessWidget {
   final String text;
   final double fontScale;
 
+  /// Hoisted so the pattern is compiled once for the app rather than rebuilt
+  /// for every paragraph of every novena day.
+  static final RegExp _requestPlaceholderPattern = RegExp(
+    r'\((?:hapa omba|here make)[^)]+\)',
+    caseSensitive: false,
+  );
+
   @override
   Widget build(BuildContext context) {
     final displayText = _stripMarkers(text);
+    // 4.3: the lowercased form is needed by the cheap gates and by
+    // _isStructuredHighlight, so derive it once.
+    final displayLower = displayText.toLowerCase();
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final style = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
       height: 1.55,
       fontWeight: FontWeight.w400,
     );
-    final openingSplit = _splitOpening(displayText);
-    final requestSplit = _splitRequestPlaceholder(displayText);
-    final headingSplit = _splitHeading(displayText);
+
+    // 4.2: the cheap prefix/contains checks run first; the regex-based splits
+    // only run when the paragraph could possibly match. Previously all three
+    // splits — 8 regexes in total — ran on every paragraph.
+    final openingSplit = _isOpening(displayLower)
+        ? _splitOpening(displayText)
+        : null;
+    final requestSplit = _isRequestPlaceholder(displayLower)
+        ? _splitRequestPlaceholder(displayText)
+        : null;
+    final headingSplit = _couldBeHeading(displayLower)
+        ? _splitHeading(displayText)
+        : null;
 
     if (openingSplit != null) {
       return Column(
@@ -397,7 +406,7 @@ class _NovenaParagraph extends StatelessWidget {
       );
     }
 
-    if (_isStructuredHighlight(displayText)) {
+    if (_isStructuredHighlight(displayLower)) {
       return _HighlightedParagraph(text: displayText, style: style);
     }
 
@@ -408,9 +417,9 @@ class _NovenaParagraph extends StatelessWidget {
     return value.replaceAll('*', '').trim();
   }
 
-  bool _isStructuredHighlight(String value) {
-    final normalized = value.toLowerCase();
-
+  /// [normalized] is [text] lowercased, passed in so it is derived once per
+  /// paragraph rather than once per classifier.
+  bool _isStructuredHighlight(String normalized) {
     return _isOpening(normalized) ||
         _isRequestPlaceholder(normalized) ||
         _isPrayerCount(normalized) ||
@@ -419,7 +428,7 @@ class _NovenaParagraph extends StatelessWidget {
   }
 
   (String, String)? _splitOpening(String value) {
-    final lines = value.split('\n');
+    final lines = TextSplitCache.rawLines(value);
     if (lines.length < 2 || !_isOpening(lines.first.toLowerCase())) {
       return null;
     }
@@ -433,10 +442,7 @@ class _NovenaParagraph extends StatelessWidget {
   }
 
   _RequestSplit? _splitRequestPlaceholder(String value) {
-    final match = RegExp(
-      r'\((?:hapa omba|here make)[^)]+\)',
-      caseSensitive: false,
-    ).firstMatch(value);
+    final match = _requestPlaceholderPattern.firstMatch(value);
     if (match == null) {
       return null;
     }
@@ -448,18 +454,15 @@ class _NovenaParagraph extends StatelessWidget {
     );
   }
 
-  _HeadingSplit? _splitHeading(String value) {
-    final patterns = <RegExp>[
-      RegExp(r'^(Kwa njia ya Mtakatifu Rita:-)\s*(.+)$'),
-      RegExp(r'^(Kwa maombezi yako:-)\s*(.+)$'),
-      RegExp(r'^(TUOMBE:)\s*(.+)$'),
-      RegExp(r'^(UTUOMBE:)\s*(.+)$'),
-      RegExp(r'^(Through Saint Rita:)\s*(.+)$'),
-      RegExp(r'^(Through your intercession:)\s*(.+)$'),
-      RegExp(r'^(LET US PRAY:)\s*(.+)$'),
-    ];
+  /// Cheap necessary condition for [_splitHeading] to match. The patterns are
+  /// case sensitive and anchored at the start, so a paragraph whose lowercased
+  /// form contains none of the prefixes cannot match any of them.
+  bool _couldBeHeading(String normalized) {
+    return containsAny(normalized, kHeadingWithBodyPrefixes);
+  }
 
-    for (final pattern in patterns) {
+  _HeadingSplit? _splitHeading(String value) {
+    for (final pattern in kHeadingWithBodyPatterns) {
       final match = pattern.firstMatch(value);
       if (match != null) {
         return _HeadingSplit(
@@ -473,44 +476,24 @@ class _NovenaParagraph extends StatelessWidget {
   }
 
   bool _isOpening(String value) {
-    return value.startsWith('kwa jina la baba') ||
-        value.startsWith('in the name of the father');
+    return startsWithAny(value, kInvocationPrefixes);
   }
 
   bool _isRequestPlaceholder(String value) {
-    return value.contains('(hapa omba') || value.contains('(here make');
+    return containsAny(value, kRequestPlaceholderFragments);
   }
 
   bool _isPrayerCount(String value) {
-    final sw =
-        value.contains('baba yetu (3)') &&
-        value.contains('salamu maria (3)') &&
-        value.contains('atukuzwe baba (3)');
-    final en =
-        value.contains('our father (3)') &&
-        value.contains('hail mary (3)') &&
-        value.contains('glory be (3)');
-
-    return sw || en;
+    return containsAllOfAnyTriple(value, kPrayerCountTriples);
   }
 
   bool _isLeaderResponse(String value) {
-    return value.startsWith('k:') ||
-        value.startsWith('w:') ||
-        value.startsWith('v:') ||
-        value.startsWith('r:');
+    return startsWithAny(value, kLeaderResponsePrefixes);
   }
 
   bool _isStandaloneHeading(String value) {
-    return value == 'tuombe:' ||
-        value == 'utuombe:' ||
-        value == 'let us pray:' ||
-        value == 'sehemu ya pili' ||
-        value == 'part two' ||
-        value.startsWith('siku 3 za kumshukuru mungu') ||
-        value.startsWith('three days of thanksgiving') ||
-        value == 'baba yetu (3), salamu maria (3), atukuzwe baba (3)' ||
-        value == 'our father (3), hail mary (3), glory be (3)';
+    return equalsAny(value, kStandaloneHeadingEquals) ||
+        startsWithAny(value, kStandaloneHeadingPrefixes);
   }
 }
 
