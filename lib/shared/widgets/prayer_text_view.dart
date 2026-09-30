@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../utils/text_split_cache.dart';
+import 'text_style_rules.dart';
+
 class PrayerTextView extends StatelessWidget {
   const PrayerTextView({
     required this.text,
@@ -11,6 +14,12 @@ class PrayerTextView extends StatelessWidget {
   final String text;
   final TextAlign textAlign;
   final double fontScale;
+
+  /// Hoisted so the patterns are compiled once for the app rather than rebuilt
+  /// for every line of every prayer.
+  static final RegExp _italicPattern = RegExp(r'_(.+?)_');
+  static final RegExp _hasLetterPattern = RegExp(r'[A-Za-zÀ-ÿ]');
+  static final RegExp _nonLetterPattern = RegExp(r'[^A-Za-zÀ-ÿ]');
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +59,7 @@ class PrayerTextView extends StatelessWidget {
     TextStyle? responseStyle,
     TextStyle? sectionStyle,
   ) {
-    final lines = value.split('\n');
+    final lines = TextSplitCache.rawLines(value);
     final spans = <TextSpan>[];
 
     for (var index = 0; index < lines.length; index += 1) {
@@ -76,8 +85,7 @@ class PrayerTextView extends StatelessWidget {
     required TextStyle? responseStyle,
     required TextStyle? sectionStyle,
   }) {
-    final italicPattern = RegExp(r'_(.+?)_');
-    final matches = italicPattern.allMatches(line).toList();
+    final matches = _italicPattern.allMatches(line).toList();
 
     if (matches.isEmpty) {
       return [
@@ -133,16 +141,20 @@ class PrayerTextView extends StatelessWidget {
     required TextStyle? responseStyle,
     required TextStyle? sectionStyle,
   }) {
-    if (_isResponseLine(line)) {
+    // 4.3: the trimmed form is needed by both checks, so derive it once
+    // instead of once per check.
+    final trimmed = line.trim();
+
+    if (_isResponseLine(line, trimmed)) {
       return responseStyle;
     }
-    if (_isSectionHeadingLine(line)) {
+    if (_isSectionHeadingLine(trimmed)) {
       return sectionStyle;
     }
     return baseStyle;
   }
 
-  bool _isResponseLine(String line) {
+  bool _isResponseLine(String line, String trimmed) {
     final normalized = line
         .replaceAll('*', '')
         .replaceAll('"', '')
@@ -151,30 +163,17 @@ class PrayerTextView extends StatelessWidget {
         .trim()
         .toLowerCase();
 
-    return normalized.startsWith('kiitikio') ||
-        normalized.startsWith('response') ||
-        normalized.startsWith('r:') ||
-        normalized.startsWith('v:') ||
-        normalized.startsWith('k:') ||
-        normalized.startsWith('w:') ||
-        normalized.startsWith('k.') ||
-        normalized.startsWith('w.') ||
-        normalized.startsWith('kiongozi:') ||
-        normalized.startsWith('wote:') ||
-        normalized.startsWith('tuombe') ||
-        normalized.startsWith('let us pray');
+    return startsWithAny(normalized, kResponsePrefixes);
   }
 
-  bool _isSectionHeadingLine(String line) {
-    final normalized = line.trim();
-    if (normalized.length < 4 || normalized.length > 48) {
+  bool _isSectionHeadingLine(String trimmed) {
+    if (trimmed.length < 4 || trimmed.length > 48) {
       return false;
     }
-    final hasLetter = RegExp(r'[A-Za-zÀ-ÿ]').hasMatch(normalized);
-    if (!hasLetter) {
+    if (!_hasLetterPattern.hasMatch(trimmed)) {
       return false;
     }
-    final lettersOnly = normalized.replaceAll(RegExp(r'[^A-Za-zÀ-ÿ]'), '');
+    final lettersOnly = trimmed.replaceAll(_nonLetterPattern, '');
     if (lettersOnly.isEmpty) {
       return false;
     }
