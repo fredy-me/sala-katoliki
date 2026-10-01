@@ -22,7 +22,14 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    final strings = _BottomNavStrings(ref.watch(activeLanguageProvider));
+    final languageCode = ref.watch(activeLanguageProvider);
+    // 5.7: the labels and the four destination objects depend only on the
+    // language. They used to be rebuilt on every AppShell build — that is,
+    // on every navigation — so switching tabs allocated four objects and a
+    // list to produce values that never changed. Caching per language keeps
+    // the rendered output identical and drops the allocation.
+    final strings = _BottomNavStrings.of(languageCode);
+    final destinations = _BottomNavStrings.destinationsFor(strings);
 
     return PopScope(
       canPop: false,
@@ -40,28 +47,7 @@ class _AppShellState extends ConsumerState<AppShell> {
         ),
         bottomNavigationBar: AppBottomNav(
           location: widget.location,
-          destinations: [
-            AppBottomNavDestination(
-              '/today',
-              strings.today,
-              Icons.home_outlined,
-            ),
-            AppBottomNavDestination(
-              '/prayers',
-              strings.pray,
-              Icons.menu_book_outlined,
-            ),
-            AppBottomNavDestination(
-              '/novenas',
-              strings.novenas,
-              Icons.calendar_month_outlined,
-            ),
-            AppBottomNavDestination(
-              '/settings',
-              strings.settings,
-              Icons.settings_outlined,
-            ),
-          ],
+          destinations: destinations,
         ),
       ),
     );
@@ -89,6 +75,44 @@ class _BottomNavStrings {
   const _BottomNavStrings(this.languageCode);
 
   final String languageCode;
+
+  // Only two languages are supported, so a two-entry map is the whole cache.
+  static final Map<String, _BottomNavStrings> _byLanguage = {
+    'en': const _BottomNavStrings('en'),
+    'sw': const _BottomNavStrings('sw'),
+  };
+
+  static final Map<String, List<AppBottomNavDestination>> _destinationsByLanguage =
+      <String, List<AppBottomNavDestination>>{};
+
+  static _BottomNavStrings of(String languageCode) {
+    return _byLanguage[languageCode] ?? _byLanguage['en']!;
+  }
+
+  static List<AppBottomNavDestination> destinationsFor(
+    _BottomNavStrings strings,
+  ) {
+    return _destinationsByLanguage.putIfAbsent(strings.languageCode, () {
+      return <AppBottomNavDestination>[
+        AppBottomNavDestination('/today', strings.today, Icons.home_outlined),
+        AppBottomNavDestination(
+          '/prayers',
+          strings.pray,
+          Icons.menu_book_outlined,
+        ),
+        AppBottomNavDestination(
+          '/novenas',
+          strings.novenas,
+          Icons.calendar_month_outlined,
+        ),
+        AppBottomNavDestination(
+          '/settings',
+          strings.settings,
+          Icons.settings_outlined,
+        ),
+      ];
+    });
+  }
 
   bool get _sw => languageCode == 'sw';
 
