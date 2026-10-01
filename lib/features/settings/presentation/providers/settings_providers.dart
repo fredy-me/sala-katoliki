@@ -18,6 +18,24 @@ final userSettingsProvider =
       UserSettingsNotifier.new,
     );
 
+/// The only two settings fields the app root reads.
+///
+/// 5.5: the root watched the whole [userSettingsProvider], so toggling a
+/// reminder or changing its time — which the root never renders — rebuilt
+/// `MaterialApp.router` and the entire navigator beneath it. Selecting these
+/// two confines a settings change to the subtree that uses it. The record
+/// carries value equality, so an unrelated settings write does not notify here
+/// either.
+typedef RootSettings = ({ThemeMode themeMode, double fontScale});
+
+final rootSettingsProvider = Provider<RootSettings>((ref) {
+  final settings = ref.watch(userSettingsProvider).asData?.value;
+  return (
+    themeMode: settings?.themeMode ?? ThemeMode.system,
+    fontScale: settings?.fontScale ?? 1,
+  );
+});
+
 class UserSettings {
   const UserSettings({
     required this.themeMode,
@@ -32,6 +50,39 @@ class UserSettings {
   final bool reminderEnabled;
   final String reminderTime;
   final bool permissionDenied;
+
+  // 5.6: without this, every `copyWith` produced a fresh object that compared
+  // unequal to the previous state, so setting a field to the value it already
+  // had re-notified every listener and rebuilt the app. Every write here goes
+  // through copyWith, so the old object is never mutated underneath us and
+  // value equality is safe. All five fields are scalars, so `==` is exact.
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is UserSettings &&
+            runtimeType == other.runtimeType &&
+            themeMode == other.themeMode &&
+            fontScale == other.fontScale &&
+            reminderEnabled == other.reminderEnabled &&
+            reminderTime == other.reminderTime &&
+            permissionDenied == other.permissionDenied;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    themeMode,
+    fontScale,
+    reminderEnabled,
+    reminderTime,
+    permissionDenied,
+  );
+
+  @override
+  String toString() {
+    return 'UserSettings(themeMode: $themeMode, fontScale: $fontScale, '
+        'reminderEnabled: $reminderEnabled, reminderTime: $reminderTime, '
+        'permissionDenied: $permissionDenied)';
+  }
 
   UserSettings copyWith({
     ThemeMode? themeMode,
