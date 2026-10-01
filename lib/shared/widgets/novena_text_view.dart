@@ -273,11 +273,14 @@ class _AllSaintsNovenaParagraph extends StatelessWidget {
   /// paragraph rather than once per classifier.
   ///
   /// 4.8: this was eleven literal `startsWith`/`contains` calls. The fragments
-  /// are data now, and the two `hapa)` variants that used to be separate
-  /// `contains` clauses are simply additional entries in the same list, because
-  /// `'(taja nia zako'` is a prefix of `'(taja nia zako hapa)'`.
+  /// are data now, split into the two lists the original code used — the
+  /// anchored prefixes and the unanchored `hapa)` fragments — so the
+  /// classification is unchanged. Merging them into one `contains` list would
+  /// have been broader than the original: it would also match a line that
+  /// mentions an intention marker mid-sentence.
   bool _isIntentions(String normalized) {
-    return containsAny(normalized, kIntentionContainsFragments);
+    return startsWithAny(normalized, kIntentionPrefixes) ||
+        containsAny(normalized, kIntentionContainsFragments);
   }
 
   /// [normalized] is [value] lowercased, passed in so it is derived once per
