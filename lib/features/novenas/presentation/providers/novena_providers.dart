@@ -35,6 +35,35 @@ final novenaByIdProvider = FutureProvider.family<NovenaModel?, String>((
   return null;
 });
 
+/// The title of the active novena, read without parsing all nine files.
+///
+/// 5.3: the Today screen needs one string. It was reaching it through
+/// [activeNovenaSessionProvider], which loads the whole novena corpus, and the
+/// corpus is 132 KB of JSON for nine files. This reads the single file the
+/// manifest points at. The dangling-id cleanup is kept deliberately, so
+/// switching the Today screen to this provider does not stop an active id
+/// that points at deleted content from being cleared.
+final activeNovenaTitleProvider = FutureProvider<String?>((ref) async {
+  final languageCode = ref.watch(activeLanguageProvider);
+  final progress = await ref.watch(novenaProgressProvider.future);
+  final activeId = progress.activeNovenaId;
+  if (activeId == null) {
+    return null;
+  }
+
+  final novena = await ref
+      .watch(novenaRepositoryProvider)
+      .getNovenaById(activeId, languageCode: languageCode);
+  if (novena == null) {
+    Future<void>.microtask(() {
+      ref.read(novenaProgressProvider.notifier).clear();
+    });
+    return null;
+  }
+
+  return novena.title;
+});
+
 final activeNovenaSessionProvider = FutureProvider<NovenaSession?>((ref) async {
   final progress = await ref.watch(novenaProgressProvider.future);
   final activeId = progress.activeNovenaId;
