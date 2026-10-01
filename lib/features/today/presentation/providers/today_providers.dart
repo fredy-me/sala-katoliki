@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +33,29 @@ class TodayLocalState {
   final Set<int> completedNovenaDays;
   final bool reminderEnabled;
   final String? reminderTime;
+
+  // 5.6: this is built fresh on every read of the provider, so with identity
+  // equality every unrelated settings change produced a state that compared
+  // unequal and rebuilt the Today screen. The set is compared by value, which
+  // is why the provider returns a new set each time rather than sharing one.
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is TodayLocalState &&
+            runtimeType == other.runtimeType &&
+            activeNovenaId == other.activeNovenaId &&
+            setEquals(completedNovenaDays, other.completedNovenaDays) &&
+            reminderEnabled == other.reminderEnabled &&
+            reminderTime == other.reminderTime;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    activeNovenaId,
+    Object.hashAllUnordered(completedNovenaDays),
+    reminderEnabled,
+    reminderTime,
+  );
 
   int get totalNovenaDays => activeNovenaId == 'st_rita_novena' ? 12 : 9;
 
