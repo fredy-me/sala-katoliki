@@ -662,12 +662,15 @@ The parse it replaces costs about a third of what the isolate costs to start, an
 
 **Verification (AGENT):**
 
-- Extend `search_rosary_novena_test.dart` to assert a fixed set of queries returns the same ordered result IDs as before the change. This is the check that matters most, and it is fully testable.
-- Assert every `RegExp` in the three text views is a `static final` field, not constructed inside a build path.
-- Assert the A-/A/A+ scale is driven by a `ValueNotifier` scoped to the text subtree, so it no longer triggers a full-screen rebuild.
-- Assert the text views emit builder-based children rather than an eager `children:` list.
-- Assert the search index is precomputed per language and that input is debounced.
-- Extend `content_validation_test.dart` to assert the formatting rules still classify a known set of sample lines identically — intentions, invocations, headings, response lines, prayer counts, request placeholders. **This is what protects the intricate heuristics from regressing without needing a screenshot.**
+- Assert a fixed set of queries returns the same ordered result IDs as before the change, pinned as literal goldens so a change to the *sort* is caught and not only a change to `score`. This is the check that matters most, and it is fully testable. → `part4_search_index_test.dart`
+- Assert every `RegExp` in the three text views is a `static final` field, not constructed inside a build path. → `part4_render_cache_test.dart`
+- Assert the A-/A/A+ scale is driven by a `ValueNotifier` scoped to the text subtree, so it no longer triggers a full-screen rebuild. → `part4_render_cache_test.dart`
+- Assert the heading split is still gated behind a cheap prefix check, so the 7 anchored regexes do not run for every paragraph. → `part4_render_cache_test.dart`
+- ~~Assert the text views emit builder-based children rather than an eager `children:` list.~~ **Dropped:** this was 4.6, which was skipped on measurement. Asserting it would require the virtualization that was declined.
+- Assert the search index is precomputed per language and that input is debounced. → `part4_search_index_test.dart`
+- Assert the formatting rules still classify a known set of sample lines identically — intentions, invocations, headings, response lines, prayer counts, request placeholders. **This is what protects the intricate heuristics from regressing without needing a screenshot.** → `part4_style_rules_test.dart` (corpus parity against the pre-4.8 literals) and `part4_text_classification_test.dart` (per-view rendered output).
+- Every rule list is pinned by exact literal, and is checked for duplicates and for surrounding whitespace.
+- Both directions of the intention classifier are asserted *through the widget*: a marker mid-sentence must not be italicised, and the `hapa)` markers after a lead-in still must be. Comparing rule data against the old literals is not sufficient here — a single merged `contains` list reproduces every shipped line while being strictly broader, so only a rendered-output test catches it.
 - All four gate commands pass.
 
 **Verification (OWNER):**
@@ -683,6 +686,10 @@ The parse it replaces costs about a third of what the isolate costs to start, an
 4.7 is done. It changes no layout: the search field keeps updating on every keystroke, and only the 36-prayer re-scoring is deferred by 250 ms. Its result set is provably unchanged — see the reference-implementation test below.
 
 4.8 is done. The presentation rules that were hardcoded as literal string prefixes and ID sets now live in one data-driven rules file, so a content author can add or rephrase a prayer without editing Dart. Classification output is byte-identical to the old behaviour, pinned by a test over the whole shipped corpus.
+
+The tests for it are deliberately two-sided, because the corpus comparison alone is not enough. The first half replays every shipped prayer and novena day against a reference implementation of the *old* literals, which proves the rule data has not drifted. The second half renders the text views and asserts the styling they actually produce, because a widget can ignore the rules and still leave every rule list correct — swapping the prayer-count triple match for a disjunction, or stubbing the heading gate, changes the screen while every rule stays intact. Each of those mutations, and dropping or padding any single entry, fails the suite.
+
+The audit found one real defect in the first cut of that refactor, and it is worth recording because the corpus test could not see it. The pre-4.8 intention check was `startsWith` over eight prefixes **or** `contains` over three fragments; the `contains` clause existed because the novena prints `(taja nia zako hapa)` *after* a lead-in, so `startsWith` alone would miss it. The refactor merged all eleven entries into one `contains` list, which reproduces every shipped line exactly and is nevertheless strictly broader — it would also italicise a line that merely mentions a marker mid-sentence. The rules file now keeps the two lists separate and the widget ORs them, matching the original. Two rendering tests pin both directions, since only a test that goes through the widget can distinguish the two.
 
 4.6 is **skipped on measurement, the same call as 3.4.** The task as written rests on a premise that does not survive contact with the real corpus.
 
@@ -719,7 +726,7 @@ Trading a five-screen, invariant-adjacent, screenshot-gated refactor for ~7 ms o
 | 4.5 | Done | A-/A/A+ now drives a `ValueNotifier<double>` consumed by a `ValueListenableBuilder` around the chip row and the text only, in both detail screens. A source-level test fails if the scale is mutated through `setState` again. |
 | 4.7 | Done | `PrayerEntity` derives a lowercased search haystack (title, category, body, tags) once per language and hangs it off an `Expando` keyed by the entity, so the memo cannot outlive the entity or be shared by two entities that share an id. The library debounces re-scoring by 250 ms. `score()` and `matches()` were otherwise left byte-for-byte identical. |
 | 4.6 | Skipped on measurement | Premise was wrong (97 lines, not 200) and the measured ceiling is ~7 ms on one prayer. Five-screen sliver refactor declined; §0.1 would also have been at risk from the `AppCard`-wrapped call sites. |
-| 4.8 | Done | Response, invocation, heading and request-placeholder prefixes, plus the St Rita and All Saints ID sets, now live in `lib/shared/widgets/text_style_rules.dart` as data. No text view contains a presentation prefix literal any more. |
+| 4.8 | Done | Response, invocation, heading and request-placeholder prefixes, plus the St Rita and All Saints ID sets, now live in `lib/shared/widgets/text_style_rules.dart` as data. No text view contains a presentation prefix literal any more. Verified two-sided: corpus parity against the old literals, plus rendered-output tests that fail if a widget stops consulting the rules. Anchored and unanchored fragment lists are kept separate, matching the original `startsWith`/`contains` split. |
 
 **Measured (this project, Dart VM, isolated from layout):**
 
@@ -733,14 +740,14 @@ A widget-level rebuild benchmark was also tried and **discarded**: pumping a nov
 
 The 4.7 figure counts only the scoring work, so it understates the user-visible win. Typing "baba yetu" fires eight `onChanged` callbacks; before, each one re-scored all 36 prayers, and after, eight of those passes collapse into one. The end-to-end reduction for those keystrokes is therefore about **22×**, of which 2.75× comes from the cached index and the rest from the debounce.
 
-**Why 4.7 cannot have changed search results.** `test/unit/part4_search_index_test.dart` keeps a verbatim copy of the pre-4.7 scoring and matching logic and asserts that the optimized `score()` and `matches()` agree with it for 32 queries × all 36 prayers, that the resulting id order is identical, and that a per-language index never leaks into another language. The debounce is pinned separately: the grid must still be on screen at +100 ms, be replaced at +400 ms, return when the field is cleared, and leave no pending timer behind on dispose.
+**Why 4.7 cannot have changed search results.** `test/unit/part4_search_index_test.dart` keeps a verbatim copy of the pre-4.7 scoring and matching logic and asserts that the optimized `score()` and `matches()` agree with it for 32 queries × all 36 prayers, that the resulting id order is identical, and that a per-language index never leaks into another language. Because the reference uses the same sort as the implementation, that comparison alone would not notice a change to the *ordering* rule, so four queries are additionally pinned against literal ID goldens, and four are pinned to return nothing. The debounce is pinned separately: the grid must still be on screen at +100 ms, be replaced at +400 ms, return when the field is cleared, and leave no pending timer behind on dispose.
 
 **Verification (AGENT), for 4.1–4.5 only:**
 
 - [x] `part4_text_classification_test.dart` pins the heuristics: response prefixes with and without `*` and quote markers, all-caps heading length bounds, italic span splitting, litany St Rita / Lamb of God lines, and — for 4.2 specifically — that the four heading shapes in the shipped corpus still split, using the exact line from `st_rita_novena.json`.
 - [x] `part4_render_cache_test.dart` covers the cache (memoization, no cross-contamination between the three split kinds, bounding, post-eviction correctness) and the scale (A+/A-/A round trip, clamping at both ends, text never altered).
 - [x] Source-level guards for the two properties no widget test can observe: regexes are static, and the scale is a notifier rather than `setState` state.
-- [x] All four gate commands pass; the full `flutter test` suite is green at 97/97.
+- [x] All four gate commands pass; the full `flutter test` suite is green at 145/145.
 
 **Verification (OWNER), still outstanding and now covering both halves of Part 4:**
 
