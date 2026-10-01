@@ -51,6 +51,7 @@ class LocalContentDataSource {
   Future<List<CategoryModel>>? _categories;
   final Map<String, Future<List<PrayerModel>>> _prayersByLanguage = {};
   final Map<String, Future<List<NovenaModel>>> _novenasByLanguage = {};
+  final Map<String, Future<NovenaModel?>> _novenaByIdCache = {};
   final Map<String, Future<List<RosaryPrayerModel>>> _rosaryPrayersByLanguage = {};
   final Map<String, Future<List<RosaryMysteryModel>>> _mysteriesByLanguage = {};
 
@@ -68,6 +69,67 @@ class LocalContentDataSource {
 
   Future<List<NovenaModel>> getNovenas({String languageCode = 'sw'}) {
     return _novenasByLanguage[languageCode] ??= _readNovenas(languageCode);
+  }
+
+  /// Loads a single novena rather than all nine.
+  ///
+  /// 5.3: the Today screen needs one title. Reaching it through [getNovenas]
+  /// parsed 132 KB of JSON across nine files. The manifest already lists those
+  /// files and each one is named after its own `id`, so the path for a single
+  /// id is known without opening any of them. If that naming convention ever
+  /// stops holding, this returns null and the caller can fall back, so a
+  /// mismatch costs a lookup rather than producing a wrong answer.
+  Future<NovenaModel?> getNovenaById(
+    String novenaId, {
+    String languageCode = 'sw',
+  }) {
+    return _novenaByIdCache.putIfAbsent(
+      '$languageCode/$novenaId',
+      () => _readNovenaById(novenaId, languageCode),
+    );
+  }
+
+  Future<NovenaModel?> _readNovenaById(
+    String novenaId,
+    String languageCode,
+  ) async {
+    final manifest = await getManifest();
+    final paths =
+        manifest.novenaPaths[languageCode] ??
+        manifest.novenaPaths[AssetPaths.defaultContentLanguage] ??
+        const <String>[];
+
+    for (final path in paths) {
+      if (_novenaIdFromPath(path) == novenaId) {
+        return _readNovenaAt(path);
+      }
+    }
+
+    // 5.3 fallback. The fast path above matches on the filename stem, which is
+    // the convention every bundled novena currently follows (verified across
+    // both languages). But the previous behaviour — and the authority — is the
+    // `id` field inside each file, and those are not required to agree. If the
+    // convention ever breaks, returning null here would make
+    // `activeNovenaTitleProvider` treat a real novena as missing and wipe the
+    // user's saved progress. So fall back to the original full-corpus lookup
+    // rather than silently regressing. This costs one extra read per novena in
+    // a corpus that does not follow the convention, and nothing at all in one
+    // that does, because the cache is keyed and shared with `getNovenas`.
+    for (final path in paths) {
+      final novena = await _readNovenaAt(path);
+      if (novena.id == novenaId) {
+        return novena;
+      }
+    }
+
+    return null;
+  }
+
+  /// `assets/content/novenas/en/st_rita_novena.json` -> `st_rita_novena`.
+  String _novenaIdFromPath(String path) {
+    final file = path.split('/').last;
+    final dot = file.lastIndexOf('.');
+    return dot <= 0 ? file : file.substring(0, dot);
   }
 
   Future<List<RosaryPrayerModel>> getRosaryPrayers({
@@ -141,10 +203,14 @@ class LocalContentDataSource {
 
     final novenas = <NovenaModel>[];
     for (final path in paths) {
-      novenas.add(NovenaModel.fromJson(await _loadMap(path)));
+      novenas.add(await _readNovenaAt(path));
     }
 
     return novenas;
+  }
+
+  Future<NovenaModel> _readNovenaAt(String path) async {
+    return NovenaModel.fromJson(await _loadMap(path));
   }
 
   Future<List<RosaryPrayerModel>> _readRosaryPrayers(
