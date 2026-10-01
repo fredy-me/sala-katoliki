@@ -276,9 +276,23 @@ void main() {
   group('2.8 st rita litany set', () {
     final screen =
         _read('lib/features/prayers/presentation/screens/prayer_detail_screen.dart');
+    final rules =
+        _read('lib/shared/widgets/text_style_rules.dart');
 
     test('is a static const set rather than a per-build literal', () {
-      expect(screen, contains('static const Set<String> _stRitaLitanies'));
+      // 4.8 moved the set out of the screen so the rule is content-editable
+      // in one place. The requirement is unchanged: it must be a top-level
+      // const, not a literal rebuilt on every build().
+      expect(
+        rules,
+        contains('const Set<String> kStRitaLitanies'),
+        reason: 'the set should live in text_style_rules.dart as a const',
+      );
+      expect(
+        screen,
+        isNot(contains('Set<String> {')),
+        reason: 'the screen must not rebuild a set literal per build',
+      );
     });
   });
 }
