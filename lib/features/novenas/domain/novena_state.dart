@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../data/models/novena_model.dart';
 
 class NovenaProgress {
@@ -8,6 +10,46 @@ class NovenaProgress {
 
   final String? activeNovenaId;
   final Map<String, Set<int>> completedDaysByNovenaId;
+
+  // 5.6: the map is compared by value. This is only safe because every writer
+  // copies before it mutates — `_copyCompletedDaysByNovenaId` deep-copies both
+  // the map and each inner set, and every `state = AsyncData(...)` assigns a
+  // freshly built NovenaProgress. A deep-equality operator over a map that
+  // something else held and mutated would suppress a real change, so this
+  // pairs with the copy-on-write, it does not replace it.
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! NovenaProgress || runtimeType != other.runtimeType) {
+      return false;
+    }
+    if (activeNovenaId != other.activeNovenaId) {
+      return false;
+    }
+    if (completedDaysByNovenaId.length != other.completedDaysByNovenaId.length) {
+      return false;
+    }
+    for (final entry in completedDaysByNovenaId.entries) {
+      final otherDays = other.completedDaysByNovenaId[entry.key];
+      if (otherDays == null ||
+          !setEquals(entry.value, otherDays)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    // Order-independent over the outer map, order-independent within each set.
+    var outer = 0;
+    for (final entry in completedDaysByNovenaId.entries) {
+      outer ^= Object.hash(entry.key, Object.hashAllUnordered(entry.value));
+    }
+    return Object.hash(activeNovenaId, outer);
+  }
 
   bool get hasActiveNovena => activeNovenaId != null;
 
