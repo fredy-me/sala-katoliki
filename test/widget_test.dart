@@ -14,6 +14,7 @@ import 'package:salakatoliki/features/novenas/presentation/screens/novena_detail
 import 'package:salakatoliki/features/novenas/presentation/screens/novenas_screen.dart';
 import 'package:salakatoliki/features/prayers/domain/entities/prayer_entity.dart';
 import 'package:salakatoliki/features/prayers/presentation/screens/prayer_detail_screen.dart';
+import 'package:salakatoliki/features/prayers/presentation/screens/prayer_library_screen.dart';
 import 'package:salakatoliki/features/prayers/presentation/providers/prayer_providers.dart';
 import 'package:salakatoliki/features/rosary/presentation/screens/mystery_selection_screen.dart';
 import 'package:salakatoliki/features/rosary/presentation/screens/rosary_screen.dart';
@@ -80,9 +81,17 @@ void main() {
     await _pumpUntilFound(tester, find.text('Tafuta sala...'));
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
-    expect(find.text('Sala za Kawaida'), findsOneWidget);
+    // The 'Sala' tab sits in an IndexedStack, so the Today screen stays
+    // mounted and its "Common Prayers" quick action renders the same
+    // Swahili label as the library's category card. Scope the finder to the
+    // library so the tap cannot land on the inactive tab's copy.
+    final libraryCategory = find.descendant(
+      of: find.byType(PrayerLibraryScreen),
+      matching: find.text('Sala za Kawaida'),
+    );
+    expect(libraryCategory, findsOneWidget);
 
-    await tester.tap(find.text('Sala za Kawaida').first);
+    await tester.tap(libraryCategory);
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Baba Yetu').first);
