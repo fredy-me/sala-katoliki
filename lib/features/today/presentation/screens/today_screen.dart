@@ -22,12 +22,9 @@ class TodayScreen extends ConsumerWidget {
     final strings = _TodayStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final localState = ref.watch(todayLocalStateProvider).asData?.value;
-    final activeNovenaTitle = ref
-        .watch(activeNovenaSessionProvider)
-        .asData
-        ?.value
-        ?.novena
-        .title;
+    // 5.3: the title alone, not a whole novena session. The other novena
+    // screens still use activeNovenaSessionProvider, which needs the days.
+    final activeNovenaTitle = ref.watch(activeNovenaTitleProvider).asData?.value;
     final recentIds =
         ref.watch(recentPrayerIdsProvider).asData?.value ?? const <String>[];
 
