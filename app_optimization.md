@@ -794,6 +794,19 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 
 **Risk:** medium. 5.1 touches launch ordering, including the widget launch path. 5.4 is a user-visible behaviour change and needs release-note wording.
 
+**Status (AGENT):**
+
+| Item | Status | Notes |
+| --- | --- | --- |
+| 5.1 | Done | `runApp` now runs before the `setEnabledSystemUIMode` and `initiallyLaunchedFromHomeWidget` awaits. The launch URI is applied via `appRouterProvider.go()` in `_applyWidgetLaunch`, deliberately **not** through the slug resolver: the widget URI is a real in-app route, the old code used it as `initialLocation` verbatim, and warm `widgetClicked` taps call `go()` the same way. Getting this wrong was caught by a test, not by inspection. Covered by `test/widget/home_widget_launch_test.dart` (late link, null link, failed platform channel, post-dispose resolution). |
+| 5.2 | Done | Post-frame `ref.read(prayersProvider)` preload removed. |
+| 5.3 | Done | `getNovenaById` + `activeNovenaTitleProvider`. The fast path matches the filename stem; a fallback to the full-corpus lookup by JSON `id` was added after review, because returning `null` on a stem mismatch would make the title provider treat a real novena as missing and clear the user's progress. |
+| 5.4 | **Deferred — not implemented** | The only intentional behaviour change in Part 5, and it conflicts with the instruction to make no app-logic changes. Requires explicit approval; `StatefulShellRoute.indexedStack` is the correct mechanism (`pushReplacement` was tried and rejected — it grows the tab stack and breaks back-navigation). |
+| 5.5 | Done | `rootSettingsProvider` selects only `themeMode` and `fontScale`; reminder-only changes no longer change the root value. |
+| 5.6 | Done | `==`/`hashCode` on `UserSettings`, `TodayLocalState`, `NovenaProgress`, `RosaryProgress`, `RosarySession`, `RosaryStep`. Mutation audit confirmed all state is copy-on-write, so suppressing equal-state notifications is safe. |
+| 5.7 | Done | Nav strings and destinations cached per language. |
+| 5.8 | **Not implemented — premise did not hold** | `SharedPreferences.getInstance()` is already a cached singleton returning one in-memory instance whose getters read `_preferenceCache`, so all 22 call sites already share a single disk read and cost nothing per call. There are no redundant platform round-trips to remove. The second half (deduping novena-progress parsing) is real duplication, but the two copies differ deliberately — Today falls back to legacy `completedNovenaDays` on malformed JSON while Novena returns empty — so consolidating them is a logic change, not an optimization. Flagged rather than silently skipped. |
+
 ---
 
 ### Part 6 — Content-authoring flexibility
