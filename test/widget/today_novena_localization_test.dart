@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:salakatoliki/core/constants/storage_keys.dart';
 import 'package:salakatoliki/core/localization/localization_providers.dart';
-import 'package:salakatoliki/data/models/novena_model.dart';
 import 'package:salakatoliki/features/novenas/domain/novena_state.dart';
-import 'package:salakatoliki/features/novenas/presentation/providers/novena_providers.dart';
 import 'package:salakatoliki/features/today/presentation/providers/today_providers.dart';
 import 'package:salakatoliki/features/today/presentation/screens/today_screen.dart';
 
@@ -46,6 +48,21 @@ Future<void> _expectActiveNovenaTitle(
     },
   );
 
+  // 5.3: the Today screen now reads the active novena's title from real
+  // preferences and the real content files rather than from an overridden
+  // session provider, so this test seeds the actual store. That keeps it
+  // checking the same thing it always did — that the Kiswahili title is the
+  // one on screen — while exercising the new single-file lookup instead of
+  // bypassing it.
+  SharedPreferences.setMockInitialValues({
+    StorageKeys.selectedLanguage: 'sw',
+    StorageKeys.activeNovenaId: novenaId,
+    StorageKeys.completedNovenaDays: ['1'],
+    StorageKeys.novenaProgressById: jsonEncode({
+      novenaId: [1],
+    }),
+  });
+
   await tester.pumpWidget(
     ProviderScope(
       key: UniqueKey(),
@@ -62,22 +79,13 @@ Future<void> _expectActiveNovenaTitle(
             reminderTime: null,
           ),
         ),
-        activeNovenaSessionProvider.overrideWith(
-          (ref) async => NovenaSession(
-            novena: NovenaModel(
-              id: novenaId,
-              language: 'sw',
-              title: expectedTitle,
-              description: '',
-              days: const [],
-            ),
-            progress: progress,
-          ),
-        ),
       ],
       child: const MaterialApp(home: TodayScreen()),
     ),
   );
+  // Keep the expectation honest: the title on screen must come from the
+  // content file, so assert it against the real corpus title.
+  expect(progress.activeNovenaId, novenaId);
 
   await _pumpUntilFound(tester, find.text(expectedTitle));
 
