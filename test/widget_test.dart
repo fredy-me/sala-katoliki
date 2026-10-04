@@ -81,6 +81,13 @@ void main() {
     await _pumpUntilFound(tester, find.text('Tafuta sala...'));
 
     expect(find.text('Tafuta sala...'), findsOneWidget);
+    // 5.4 changed the shell to `StatefulShellRoute.indexedStack`, so every
+    // tab branch builds at startup rather than on first navigation. The
+    // library's static header and search field render before its content
+    // resolves, so `_pumpUntilFound` above returns before the category cards
+    // exist. The branch is already mounted and correct; this just lets its
+    // content finish loading. Without the change this test is flaky.
+    await tester.pumpAndSettle();
     // The 'Sala' tab sits in an IndexedStack, so the Today screen stays
     // mounted and its "Common Prayers" quick action renders the same
     // Swahili label as the library's category card. Scope the finder to the
