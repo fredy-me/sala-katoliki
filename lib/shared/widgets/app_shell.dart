@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/localization/localization_providers.dart';
 import 'app_bottom_nav.dart';
 
 class AppShell extends ConsumerStatefulWidget {
-  const AppShell({required this.location, required this.child, super.key});
+  const AppShell({required this.navigationShell, super.key});
 
-  final String location;
-  final Widget child;
+  // 5.4: a `StatefulNavigationShell` instead of the `location` + `child` pair a
+  // plain `ShellRoute` handed over. It carries the per-branch Navigators and
+  // the active index, which is what makes a tab switch state-preserving.
+  final StatefulNavigationShell navigationShell;
 
   @override
   ConsumerState<AppShell> createState() => _AppShellState();
@@ -43,10 +46,29 @@ class _AppShellState extends ConsumerState<AppShell> {
       child: Scaffold(
         body: SafeArea(
           bottom: false,
-          child: NavigatorPopHandler(child: widget.child),
+          child: NavigatorPopHandler(child: widget.navigationShell),
         ),
         bottomNavigationBar: AppBottomNav(
-          location: widget.location,
+          // 5.4: the selected index now comes from the shell rather than being
+          // inferred by matching the current path against the destination list.
+          // Same value in every reachable state, but it stays correct if a
+          // branch ever gains a nested route.
+          selectedIndex: widget.navigationShell.currentIndex,
+          // `goBranch` switches which branch Navigator is visible without
+          // destroying the other branches, so each tab keeps its scroll
+          // position and its own stack.
+          //
+          // `context.go` was tried here first and rejected: on a stateful shell
+          // it replaces the shell's location and resets branch state, which
+          // defeats the whole point of 5.4. Tapping the already-active tab
+          // passes `initialLocation: true`, go_router's documented idiom for
+          // popping that branch back to its root.
+          onDestinationSelected: (index) {
+            widget.navigationShell.goBranch(
+              index,
+              initialLocation: index == widget.navigationShell.currentIndex,
+            );
+          },
           destinations: destinations,
         ),
       ),
