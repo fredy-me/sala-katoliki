@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
-    required this.location,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
     required this.destinations,
     super.key,
   });
 
-  final String location;
+  // 5.4: supplied by the caller from the `StatefulNavigationShell` rather than
+  // inferred from the current path. See `AppShell`.
+  final int selectedIndex;
+  final void Function(int index) onDestinationSelected;
   final List<AppBottomNavDestination> destinations;
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = destinations.indexWhere(
-      (destination) => location == destination.path,
-    );
-
     final borderColor =
         Theme.of(context).dividerTheme.color ??
         Theme.of(context).colorScheme.outlineVariant;
@@ -29,9 +28,7 @@ class AppBottomNav extends StatelessWidget {
       child: NavigationBar(
         maintainBottomViewPadding: true,
         selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-        onDestinationSelected: (index) {
-          context.go(destinations[index].path);
-        },
+        onDestinationSelected: onDestinationSelected,
         destinations: [
           for (final destination in destinations)
             NavigationDestination(
