@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Planning for Part 5 pending user approval.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 pending.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -373,7 +373,7 @@ Every part below is internal. The only items that could plausibly alter appearan
 | List virtualization could shift scroll position | Preserve `initialScrollOffset` and padding; verify first-frame content is identical. |
 | Removing `x86_64` | Emulator only. No user-visible change. |
 | Dropping 3 unused packages | No visual change — they were never imported. |
-| Bottom-nav `go()` → state-preserving navigation | **This is an intentional behaviour change** (tab switches keep scroll position). It is a UX improvement, but it must be called out in release notes, not slipped in silently. See Part 5, item 5.4. |
+| Bottom-nav `go()` → state-preserving navigation | **Implemented.** This is an intentional behaviour change (tab switches keep scroll position). It must be called out in release notes. See Part 5, item 5.4, which also records the eager-branch-building cost it introduces. |
 
 **Acceptance gate for every part:** screenshot the affected screens before and after at matched device sizes and confirm no pixel differences beyond the intended navigation-state change.
 
@@ -671,7 +671,7 @@ The parse it replaces costs about a third of what the isolate costs to start, an
 - Assert the formatting rules still classify a known set of sample lines identically — intentions, invocations, headings, response lines, prayer counts, request placeholders. **This is what protects the intricate heuristics from regressing without needing a screenshot.** → `part4_style_rules_test.dart` (corpus parity against the pre-4.8 literals) and `part4_text_classification_test.dart` (per-view rendered output).
 - Every rule list is pinned by exact literal, and is checked for duplicates and for surrounding whitespace.
 - Both directions of the intention classifier are asserted *through the widget*: a marker mid-sentence must not be italicised, and the `hapa)` markers after a lead-in still must be. Comparing rule data against the old literals is not sufficient here — a single merged `contains` list reproduces every shipped line while being strictly broader, so only a rendered-output test catches it.
-- All four gate commands pass.
+- All four gate commands pass. **Measured:** `flutter analyze` reports no issues; `flutter test test/unit` 154/154; `flutter test test/widget` 18/18; `dart run tools/validate_content.dart` passes. The full `flutter test` suite is green at 179/179.
 
 **Verification (OWNER):**
 
@@ -781,16 +781,17 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 - Assert `runApp` is called before the platform-channel awaits in `main.dart`
 - Assert no eager content preload remains in a post-frame callback
 - Assert the Today screen's active-novena title is not sourced from a full novena load
-- Assert `userSettingsProvider` is read via `.select` for the single field the root needs
+- ~~Assert `userSettingsProvider` is read via `.select`~~ — **not applicable**; 5.5 shipped as a derived record provider instead. Verify instead that `rootSettingsProvider` exposes only `themeMode` and `fontScale`, and that a reminder-only change leaves the root value equal.
 - Assert the state classes implement `==` and `hashCode`
+- Assert a tab switch preserves scroll offset, and that per-branch offsets stay independent (5.4)
 - Assert the nav destination list is built once per language, not per build
-- Assert `SharedPreferences` access is funnelled through a single service and that the duplicated novena-progress parsing is gone
+- ~~Assert `SharedPreferences` access is funnelled through a single service and that the duplicated novena-progress parsing is gone~~ — **cannot be asserted: 5.8 is not implemented.** Its premise was investigated and disproved; see the status table.
 - All four gate commands pass.
 
 **Verification (OWNER):**
 
 - First-frame timing vs the Part 1.7 baseline
-- Navigate all four tabs and confirm scroll position is retained (5.4)
+- Navigate all four tabs and confirm scroll position is retained (5.4) — the scroll offset is now automated, but confirm it visually, and specifically check whether the eager branch-building cost noted in 5.4 reads as a slower cold launch
 - Cold-launch from the home-screen widget and confirm the deep link still resolves — 5.1 changes launch ordering and this is the most likely place for a silent break
 - Memory vs the Part 1.9 baseline
 
@@ -933,7 +934,8 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 | **Content misclassified after styles become data-driven** | 6 | Mixed | High | Classification tests cover known samples; OWNER re-verifies all content. Budget content-author time |
 | Off-by-one in novena day routing after removing `_maxDaysForNovena` | 6 | AGENT + OWNER | Medium | New day-count test; OWNER tests every day of every novena, especially `st_rita_novena` (12) vs the rest (9) |
 | Logo looks soft at 72 px | 2 | OWNER-only | Low–Medium | 192 px is still 2.6× oversampled, but only a device shows it. Explicit OWNER item, highest risk in Part 2 |
-| Widget-launch deep link breaks when launch ordering changes | 5.1 | OWNER-only | Low | Explicit OWNER item: cold-launch from the widget |
+| Widget-launch deep link breaks when launch ordering changes | 5.1 | OWNER-only | Low | Explicit OWNER item: cold-launch from the widget. Partially retired: `home_widget_launch_test.dart` covers late, null, failed-channel and post-dispose paths, and caught a real bug (the URI was being routed through the slug resolver). The platform-channel round trip itself still needs a device. |
+| Tab state preserved but cold launch feels slower | 5.4 | OWNER-only | Medium | `StatefulShellRoute.indexedStack` builds all four tab branches at startup. Measure first-frame time on a device before shipping; if it regresses Part 5's startup work, `ShellRoute` can be restored at the cost of losing scroll position. |
 | Removing a package that only a test imports | 2.5 | AGENT | Low | Grep `lib/`, `test/`, `integration_test/`, `tool/` first; Part 1.5 guard prevents recurrence |
 | Size targets set on a remembered 10 MB limit | 1.6 | OWNER | High | Part 1.6 reads the real Play Console figure before any size work is judged |
 | **A part reported as done while OWNER items are open** | all | Process | Medium | Every criterion is labelled AGENT or OWNER. The agent reports AGENT passes only, and never claims a size or speed target is met while unmeasured |
