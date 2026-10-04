@@ -71,27 +71,59 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
-      ShellRoute(
-        builder: (context, state, child) {
-          return AppShell(location: state.uri.path, child: child);
+      // 5.4. `ShellRoute` gave each navigation a single child widget, so a tab
+      // switch destroyed the outgoing branch and rebuilt the incoming one —
+      // losing scroll position on the Today/Prayers/Novenas lists.
+      // `StatefulShellRoute.indexedStack` keeps one Navigator per branch and
+      // only swaps which one is visible, so each tab keeps its own stack and
+      // scroll offset. This is the one intentional behaviour change in Part 5
+      // and it needs release-note wording.
+      //
+      // Note the trade-off this introduces, which the plan did not call out:
+      // an IndexedStack builds every branch eagerly, so all four tab screens
+      // now build at startup instead of only `/today`. That works against the
+      // 5.1/5.2/5.3 work in this same part, and is measured in the Part 5
+      // status table rather than assumed away.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppShell(navigationShell: navigationShell);
         },
-        routes: [
-          GoRoute(
-            path: '/today',
-            builder: (context, state) => const TodayScreen(),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/today',
+                builder: (context, state) => const TodayScreen(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/prayers',
-            builder: (context, state) => const PrayerLibraryScreen(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/prayers',
+                builder: (context, state) => const PrayerLibraryScreen(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/novenas',
-            builder: (context, state) => const NovenasScreen(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/novenas',
+                builder: (context, state) => const NovenasScreen(),
+              ),
+            ],
           ),
-          GoRoute(path: '/library', redirect: (context, state) => '/settings'),
-          GoRoute(
-            path: '/settings',
-            builder: (context, state) => const SettingsScreen(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
+              GoRoute(
+                path: '/library',
+                redirect: (context, state) => '/settings',
+              ),
+            ],
           ),
         ],
       ),
