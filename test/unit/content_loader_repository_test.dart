@@ -38,11 +38,37 @@ void main() {
       isNull,
     );
   });
+
+  test('rosary reads manifest paths and caches each language', () async {
+    final bundle = _FakeAssetBundle();
+    final source = LocalContentDataSource(bundle: bundle);
+    final prayers = await source.getRosaryPrayers(languageCode: 'en');
+    final mysteries = await source.getRosaryMysteries(languageCode: 'en');
+
+    expect(prayers.single.id, 'test_prayer');
+    expect(mysteries.single.id, 'test_mystery');
+    expect(await source.getRosaryPrayers(languageCode: 'en'), same(prayers));
+    expect(
+      await source.getRosaryMysteries(languageCode: 'en'),
+      same(mysteries),
+    );
+    expect(
+      bundle.reads.where((path) => path == 'custom/rosary_prayers.json'),
+      hasLength(1),
+    );
+    expect(
+      bundle.reads.where((path) => path == 'custom/mysteries.json'),
+      hasLength(1),
+    );
+  });
 }
 
 class _FakeAssetBundle extends CachingAssetBundle {
+  final List<String> reads = [];
+
   @override
   Future<String> loadString(String key, {bool cache = true}) async {
+    reads.add(key);
     final value = _assets[key];
     if (value == null) {
       throw Exception('Missing fake asset: $key');
@@ -65,7 +91,7 @@ class _FakeAssetBundle extends CachingAssetBundle {
     "en": ["assets/content/prayers/en/common_prayers.json"],
     "sw": ["assets/content/prayers/sw/common_prayers.json"]
   },
-  "rosary": {"en": [], "sw": []},
+  "rosary": {"en": ["custom/rosary_prayers.json", "custom/mysteries.json"], "sw": []},
   "novenas": {"en": [], "sw": []}
 }
 ''',
@@ -103,5 +129,12 @@ class _FakeAssetBundle extends CachingAssetBundle {
 ]
 ''',
     'assets/content/prayers/sw/common_prayers.json': '[]',
+    'custom/rosary_prayers.json': '''[
+      {"id":"test_prayer","prayer_id":"our_father","repeat_count":1}
+    ]''',
+    'custom/mysteries.json': '''[
+      {"id":"test_mystery","language":"en","title":"Test",
+      "description":"Test","days":[],"mysteries":[]}
+    ]''',
   };
 }
