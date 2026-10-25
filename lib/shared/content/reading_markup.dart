@@ -110,14 +110,8 @@ abstract final class ReadingMarkup {
         : text.split('\n');
     final allowed = switch (mode) {
       'prayer' => const {'plain', 'response', 'heading'},
-      'litany' => const {
-        'plain',
-        'response',
-        'heading',
-        'lamb',
-        'panel_gold',
-        'panel_outline',
-      },
+      'litany' => const {'plain', 'lamb', 'panel_gold', 'panel_outline'},
+      'litany_st_rita' => const {'plain', 'response', 'heading', 'lamb'},
       'novena' => const {
         'plain',
         'response',
