@@ -825,7 +825,7 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 - 6.6: EN/SW prayer and novena ID parity is checked. Deep-link resolution now receives aliases from the same `id_aliases.json` declaration used by validation, rather than a second hardcoded mapping.
 - 6.9: authoring guide updated for these tools and variable novena lengths. Regression tests use temporary content copies; shipped prayer/novena JSON and the existing manifest remain untouched.
 - **Still pending:** 6.1 presentation fields, 6.7 authored styling markers, 6.8 i18n consolidation, and the remaining 6.9 guide changes for that future schema. These require a separate pass with explicit rendering verification. Part 7 final cleanup/handover is not complete.
-- Verification results for this continuation are recorded after the checks finish below. Earlier 179/179 results describe the earlier revision, not this working tree.
+- Verification: full host suite ran sequentially at reduced priority: 190 passed, two legacy final-day tests failed because they had no bundled-content fixture. After injecting `TestAssetBundle`, the affected file passed all 8 tests. Thus all 192 distinct tests have passed across the full run plus the targeted rerun; there was no second full-suite run. Content validation and the read-only manifest check passed. Analysis was started only after testing and validation finished; its result is recorded at the end of this file. Earlier 179/179 results describe the earlier revision, not this working tree.
 
 
 **Goal:** a content author adds a prayer or novena by creating JSON files and running one command. No Dart file is edited, and a mistake is caught by a validator rather than by a user reporting a missing prayer.
@@ -997,8 +997,10 @@ are fixed**; the suite is 10/10 green. `test/helpers/test_asset_bundle.dart`
 injects the real bundled content so the multi-file read chain settles under
 `testWidgets`. Full measurements and the corrected root cause are in §0.2.
 
-The 3 remaining failures in `test/widget_test.dart` are outside the gate and
-unrelated to Part 2; see [Out of gate](#out-of-gate).
+Historical Part 2 note: three root-level `test/widget_test.dart` failures were
+outside that gate. The 2026-10-25 continuation exercised the root-level tests
+as part of the full suite; they passed. See the current verification record
+below rather than treating that historical failure list as current.
 
 ### 9.3 Re-measure size without rebuilding
 
