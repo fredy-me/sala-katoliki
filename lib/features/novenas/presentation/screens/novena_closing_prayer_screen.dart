@@ -41,7 +41,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
               onAction: () => context.popOrGo('/novenas/$novenaId'),
             ),
             data: (novena) {
-              final isStRitaNovena = novenaId == 'st_rita_novena';
+              final isStRitaNovena = novena?.usesStRitaStyle ?? false;
               final closingPrayer = novena?.closingPrayer;
               if (novena == null || closingPrayer == null) {
                 return AppErrorState(
@@ -93,7 +93,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.lg),
                   if (isStRitaNovena)
                     LitanyTextView(
-                      text: closingPrayer.body,
+                      text: closingPrayer.readingText,
                       stRitaStyle: isStRitaNovena,
                     )
                   else
@@ -101,7 +101,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                       radius: AppSpacing.radiusXl,
                       padding: const EdgeInsets.all(AppSpacing.xl),
                       child: LitanyTextView(
-                        text: closingPrayer.body,
+                        text: closingPrayer.readingText,
                         stRitaStyle: isStRitaNovena,
                       ),
                     ),
