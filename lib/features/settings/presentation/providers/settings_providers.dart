@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -198,16 +199,14 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
 
   Future<bool> _scheduleReminder(String reminderTime) async {
     final (hour, minute) = _parseTime(reminderTime);
-    final strings = _ReminderNotificationStrings(
-      ref.read(activeLanguageProvider),
-    );
+    final strings = AppStrings(ref.read(activeLanguageProvider));
     return ref
         .read(notificationServiceProvider)
         .scheduleDailyReminder(
           hour: hour,
           minute: minute,
-          title: strings.title,
-          body: strings.body,
+          title: strings.reminderNotificationTitle,
+          body: strings.reminderNotificationBody,
         );
   }
 
@@ -275,18 +274,4 @@ class UserSettingsNotifier extends AsyncNotifier<UserSettings> {
     final parts = valid.split(':');
     return (int.parse(parts.first), int.parse(parts.last));
   }
-}
-
-class _ReminderNotificationStrings {
-  const _ReminderNotificationStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => 'Sala Katoliki';
-
-  String get body => _sw
-      ? 'Chukua muda mfupi kwa ajili ya sala leo.'
-      : 'Take a moment for prayer today.';
 }
