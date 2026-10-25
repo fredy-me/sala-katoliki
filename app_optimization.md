@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 (6.1–6.9): all implementation and AGENT acceptance work complete. The final full suite passed 215/215; content validation, both generator checks, and final analysis passed. Physical-device visual sign-off remains outstanding.
+**Status:** Parts 1–6 have their documented implementation and host gates complete. Part 7 repository work (7.1–7.6) is complete: full suite **216/216**, content and generator checks green, and static analysis clean. Per the owner's latest direction, Part 7 device tests, screenshots, performance measurements, and fresh release builds are left for owner verification. See [the ordered Part 7 handover](docs/qa/PART7_HANDOVER.md) for exact results and open checks. No current size or speed target is claimed met.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -224,51 +224,25 @@ Measured on 2026-09-27 from `build/app/outputs/bundle/release/app-release.aab` (
 
 The 43 MB figure people usually quote is the **AAB container size**, which includes all three ABIs plus 55.6 MB of debug symbols. It is not what a user downloads.
 
-### 1.2 What one device actually receives (arm64-v8a)
+### 1.2 Original AAB arm64 entry sizes
 
-Reproduce with `dart run tool/size_report.dart build/app/outputs/bundle/release/app-release.aab`.
-Figures below are exact, read from the bundle's ZIP central directory.
+Reproduce with `dart run tool/size_report.dart /tmp/sala-part7/pre-optimization-original.aab`, or use the preserved original AAB at `build/app/outputs/bundle/release/app-release.aab` until a fresh build replaces it. These are exact **ZIP entry sizes inside the original AAB**. They are not generated split-APK, installed, or Play download measurements.
 
-| Component | Uncompressed | Transfer |
-| --- | --- | --- |
-| `libflutter.so` (Flutter engine) | 10,848 KB | 5,130 KB |
-| `libapp.so` (this app's Dart AOT code) | 6,337 KB | 2,427 KB |
-| `libdartjni.so` + other native | 129 KB | 26 KB |
-| **native libraries subtotal** | **17,313 KB** | **7,583 KB** |
-| `dex` (classes.dex + classes2.dex) | 1,473 KB | 664 KB |
-| `flutter_assets` — `logo.png` | 1,071 KB | 1,071 KB |
-| `flutter_assets` — `assets/content/**.json` (38 files) | 434 KB | 87 KB |
-| `flutter_assets` — `NOTICES.Z` | 124 KB | 123 KB |
-| `flutter_assets` — fonts, shaders, manifests | 55 KB | 16 KB |
-| `res/*` + `resources.pb` + `root/*` + manifest | 765 KB + 91 KB | 396 KB + 25 KB |
+| Original AAB entry | Uncompressed | Compressed in AAB |
+| --- | ---: | ---: |
+| `libflutter.so` (arm64) | 10,848 KB | 5,130 KB |
+| `libapp.so` (arm64 Dart AOT) | 6,337 KB | 2,427 KB |
+| Other arm64 native libraries | 129 KB | 26 KB |
+| **Arm64 native subtotal** | **17,313 KB** | **7,583 KB** |
+| DEX | 1,473 KB | 664 KB |
+| Flutter logo asset | 1,071 KB | 1,071 KB |
+| Bundled content JSON | 434 KB | 87 KB |
+| Other ABI-independent AAB entries | — | 560 KB |
+| **Selected arm64 + ABI-independent AAB compressed-entry sum** | — | **9.73 MiB** |
 
-Note the logo: 1,071 KB uncompressed and 1,071 KB transferred. Deflating a PNG
-gains nothing — it is already compressed. **The logo is 67% of everything this
-project can actually shrink.**
+The 9.73 MiB sum is a comparison proxy, **not** the user's network transfer. Google Play generates split APKs from the bundle and may package entries differently. The original AAB container itself is 44,949,806 bytes. Neither installed bytes nor actual download size can be inferred exactly from its central directory. Current release values remain open under Part 7 item 7.8.
 
-### The three numbers that matter
-
-An earlier draft of this plan claimed a "Basis A" of 21.3 MB. **That was wrong.**
-It was the fully-uncompressed sum, which is not what any device holds.
-
-Every entry in the AAB is deflated — `unzip -v` confirms `Defl:N` throughout,
-including the native libraries. Play re-compresses when it generates the split
-APK, so the on-device figure **cannot be measured from the bundle**. It can only
-be derived, and it must be labelled as a derivation.
-
-| Measure | Value | Status |
-| --- | --- | --- |
-| **Transfer size** — what the user downloads | **9.73 MB** | **Exact**, from the bundle |
-| **On-device size** — split APK held on the phone | **~19.2 MB** | **Derived**, not measured |
-| **Floor** — native libraries alone, uncompressed | **16.91 MB** | **Hard bound** |
-| **Addressable** — compressible ABI-independent content | **1.59 MB** | **Derived** |
-
-The on-device derivation: native libraries are stored uncompressed so the loader
-can mmap them (16.91 MB), and everything else transfers at its compressed size
-(2.33 MB). 16.91 + 2.33 = 19.24 MB.
-
-**Confirm the on-device figure from an installed split APK, not from the AAB.
-That check is OWNER work.**
+The original source logo was 1,096,474 bytes; the current source logo is 17,117 bytes. That source change is measurable without a build, while its release-package effect needs a fresh AAB and visual quality needs owner device review.
 
 ### 1.3 Source-level baseline
 
@@ -287,69 +261,39 @@ That check is OWNER work.**
 
 ---
 
-## 2. Answer: how small will the download get?
+## 2. Download-size target and what is measured
 
-**Short answer: about 8.5 MB transferred and about 18 MB on-device, against a hard floor of 16.91 MB. A 10 MB *stored* APK is impossible, and a 10 MB download is only just reachable today with almost no headroom — it should not be treated as a reliable target.**
+The original plan projected an approximately 8.5 MiB arm64 download and an approximately 18 MiB installed package after optimization. Those were **estimates**, not measured delivery or installation results. They must not be used as acceptance results. The Part 7 owner handover records the measurements still needed.
 
-The earlier "Basis A / Basis B" framing in this plan was misleading and has been
-replaced. See §1.2 for why the on-device figure is a derivation rather than a
-measurement, and for the numbers that are exact.
+### 2.1 Known baseline and current source change
 
-### 2.1 Why a 10 MB stored APK is unreachable
+| Measure | Original | Current | Interpretation |
+| --- | ---: | ---: | --- |
+| Release AAB archive | 44,949,806 bytes | Not rebuilt by owner request | Original container includes multiple ABIs and metadata; not a download measure |
+| Selected arm64 AAB compressed-entry sum | 9.73 MiB | Not rebuilt by owner request | Original-bundle comparison proxy only |
+| Logo source file | 1,096,474 bytes | 17,117 bytes | Source asset reduction of 1,079,357 bytes; current package effect unmeasured |
+| Total current source assets | Historical total not recorded | 0.54 MiB raw, 0.11 MiB gzip -9 | Source measurement only |
+| Play delivery size and installed split APKs | Not measured | Not measured | Requires owner build/store or device check |
 
-The arm64 native libraries are **17,313 KB (16.91 MB) uncompressed**, and
-`libflutter.so` alone is **10,848 KB (10.6 MB)**. Both are compiled by Google,
-not by this project, and no code change in this repository affects them.
+The original arm64 native entries total 16.91 MiB **uncompressed in the AAB**. This is not a hard installed-size floor: packaging varies, and `libapp.so` is generated from Dart code and can change. `libflutter.so` is the largest single entry, at 10.59 MiB raw in that original bundle, and its size depends on the Flutter engine build.
 
-- The native libraries are stored uncompressed on-device so they can be
-  memory-mapped, so **16.91 MB is a mathematical floor** for any Flutter app on
-  this engine version.
-- Transferred, the engine compresses to roughly half and the total lands at
-  9.73 MB — just under 10 MB, with almost no headroom. Adding content, a plugin,
-  or a dependency pushes it over.
+### 2.2 Expected savings, pending release measurement
 
-### 2.2 What the optimization work actually saves
+The logo is the clearest source-level reduction. Removing unused dependencies, repeated code, and dead declarations may change DEX or Dart AOT size, but there is no reliable byte-for-byte conversion from source files to delivered APKs. No current release AAB was built in Part 7 under the owner's analysis-and-tests-only instruction.
 
-Only 1.59 MB of the shipped payload is compressible content that this project
-controls. Everything else is the engine and the AOT snapshot.
+### 2.3 Projected result — historical estimate, not acceptance
 
-| Change | Transfer saving | Certainty |
+| Metric | Original plan estimate | Current measured result |
 | --- | --- | --- |
-| Logo 1254×1254 PNG → ~192 px WebP | **~1,040 KB** | High — the PNG is 1,071 KB raw and 1,071 KB transferred, so deflating it gains nothing |
-| Drop 3 unused packages — **done in Part 1.5** | ~30–40 KB (dex) + small AOT effect | Medium |
-| Remove dead code / consolidate 18 i18n classes (smaller `libapp.so`) | ~100–200 KB | Low–medium, not linear |
-| Drop `x86_64` ABI from the bundle | **0 KB to users** | Certain — affects AAB size only, not per-device |
-| **Total realistic saving** | **~1.2–1.3 MB (≈13% of transfer)** | |
+| Arm64 download | ~8.5 MiB after optimization | **Unmeasured** |
+| Installed package | ~18 MiB after optimization | **Unmeasured** |
+| AAB archive | ~40 MiB after optimization | **Unmeasured** |
 
-The logo alone is two thirds of this. Every other asset in the app combined is
-under 120 KB transferred.
+Read the actual download figure in a Play Console internal-test track, or generate device-specific split APKs from a fresh AAB, before evaluating a 10 MB target. A split-APK result and a Play Console download figure should be named by their different measurement methods.
 
-### 2.3 Projected result
+### 2.4 Decision gate
 
-| Measure | Now | After all parts | Saving | Floor |
-| --- | --- | --- | --- | --- |
-| Transfer — what the user downloads (exact) | 9.73 MB | ~8.5 MB | ~1.2 MB | — |
-| On-device — split APK (derived) | ~19.2 MB | ~18.0 MB | ~1.2 MB | **16.91 MB** |
-| AAB container (all 3 ABIs + symbols) | 42.87 MB | ~40 MB | ~2.9 MB | — |
-
-The 16.91 MB floor is the native libraries alone, fully uncompressed. It is set
-by the Flutter engine version and **no change in this repository can go below
-it.** The logo work moves the on-device figure from 19.2 to 18.0 MB, which is
-about 65% of the way from the current figure to the floor.
-
-### 2.4 The decision this forces
-
-The optimization work makes the app meaningfully faster and lighter, but **it will not make the download dramatically smaller**, because ~85% of the shipped bytes are the Flutter engine and the Dart AOT snapshot — neither of which shrinks much.
-
-If a sub-10 MB figure is a hard business constraint rather than a current measurement, the options are:
-
-1. **Accept ~8.5 MB transfer / ~18 MB on-device** and proceed with this plan. The app is already lean for Flutter.
-2. **Re-check the actual constraint.** Play's bundle limits and the "compressed download size" metric in Play Console should be confirmed against current policy rather than a remembered 10 MB figure, and the real number read from Play Console for an internal-test track.
-3. **Change framework** — only if a sub-10 MB *stored* APK is genuinely mandatory. No amount of Dart-level optimization reaches it, because the engine floor alone is 16.91 MB.
-
-**Recommendation:** proceed with this plan for the performance and quality gains, and confirm the real store limit from Play Console before treating 10 MB as a constraint. Part 1 item 1.6 records that figure, and it is an **OWNER** item (§0.2) because it needs a published build and a store account.
-
----
+The source and host-test work can be accepted independently. Any release-size constraint remains open until the owner measures the freshly built release artifact and its delivered size. See [Part 7 handover](docs/qa/PART7_HANDOVER.md).
 
 ## 3. Answer: what changes in data and visual layout?
 
@@ -436,7 +380,7 @@ Seven parts, sequenced by risk-adjusted value. Parts 1–3 are the highest value
 | 4 | Text rendering hot path | Remove per-line regex and string churn | Medium | 4.1–4.5, 4.7–4.8 implemented; 4.6 deferred |
 | 5 | Startup, rebuild scope, and responsiveness | Cut first-frame work and over-rebuilding | Medium | 5.1–5.7 implemented; 5.8 closed as unwarranted; OWNER checks outstanding |
 | 6 | Content-authoring flexibility | Add content without touching Dart | Medium–High | In progress: 6.2–6.6 and authoring documentation; remaining scope below |
-| 7 | Dead-code sweep + owner handover | Leave no dead code; list what needs a device | Low | Not started |
+| 7 | Dead-code sweep + owner handover | Leave no dead code; list what needs a device | Low | 7.1–7.6 complete; device/build checks 7.7–7.11 handed to owner per current instruction |
 
 **Gate for every part:** the four commands in §0.2. **Invariants re-checked at every gate:** §0.1 (prayers never boxed) and the §4 dead-code policy.
 
@@ -455,7 +399,7 @@ The §1 baseline is already recorded from the pre-existing `build/` artifacts. T
 | 1.3 | Record the four gate commands in a single documented place | AGENT | **Done.** §0.2 |
 | 1.4 | Guard the §0.1 invariant automatically | AGENT | **Done, and stronger than specified.** `showContainer` was removed from `NovenaTextView` and `LitanyTextView` and the card moved to the two call sites that legitimately show one. The text views can no longer be boxed at all, enforced by the compiler. 8 tests in `test/widget/prayer_text_unboxed_test.dart` |
 | 1.5 | Guard against the three unused packages reappearing | AGENT | **Done.** All three removed from `pubspec.yaml`; `flutter pub get` dropped 5 dependencies. 2 tests in `test/unit/unused_dependencies_test.dart` |
-| 1.6 | Read the actual compressed download size from Play Console, internal-test track | **OWNER** | Outstanding — §2 now has a derived 9.73 MB to compare against |
+| 1.6 | Read the actual compressed download size from Play Console, internal-test track | **OWNER** | Outstanding — the original 9.73 MiB AAB-entry sum in §1.2 is only a proxy |
 | 1.7 | Record first-frame timing, debug and profile | **OWNER** | Outstanding |
 | 1.8 | Record scroll-jank timings for the heaviest litany and heaviest novena day | **OWNER** | Outstanding |
 | 1.9 | Record peak memory on a low-end device | **OWNER** | Outstanding |
@@ -902,6 +846,8 @@ Physical-device visual sign-off and release measurements remain separate.
 
 **Acceptance:** all AGENT items pass; the OWNER checklist in 7.6 is complete, specific, and ordered. The §2.3 estimates are explicitly still labelled estimates until 7.8 and 7.11 replace them.
 
+**2026-10-25 result:** 7.1–7.6 passed; see [Part 7 handover](docs/qa/PART7_HANDOVER.md). The owner requested analysis and tests only, so 7.7–7.11 remain open for owner device/build checks. An isolated QA build attempt produced no device test result before the phone was disconnected. The original AAB remains the only release bundle measured here. `tool/size_report.dart` now labels its AAB entry sums correctly and its source gzip calculation reads binary output correctly.
+
 **Note on honesty in reporting:** the agent may report "AGENT items pass" and nothing more. It must not state that a part is fully verified, or that a size or speed target was met, while OWNER items remain open. Size and timing claims stay marked as estimates until measured on a device.
 
 ---
@@ -987,8 +933,9 @@ Physical-device visual sign-off and release measurements remain separate.
 
 ## 9. OWNER checklist — you run these, the agent does not
 
-Nothing in this section has been done. The agent never runs the app and never
-produces a build (§0.2). Each item needs a device, a build, or a store account.
+The current, consolidated checklist and status for all remaining device and
+build checks is in [Part 7 handover](docs/qa/PART7_HANDOVER.md). This section
+retains the original historical sequencing and methods.
 
 ### 9.1 Required now, before Part 2 is signed off
 
@@ -1002,7 +949,7 @@ Rebuild before treating any number as a Part 2 result.
 | # | Item | How | What to record |
 | --- | --- | --- | --- |
 | 1 | **Confirm the Part 1 rendering change is invisible** | `flutter run`, then open: a standard prayer, a litany, a novena day, a rosary step, the St Rita novena closing prayer, the St Rita novena thanksgiving, and the **same two novena screens for any other novena** | That the two novena screens are still carded and the other four are still unboxed. This is the single highest-value check in Part 1 — it is the only thing that can catch an unintended visual change |
-| 2 | Compressed download size | Play Console → internal-test track, or `bundletool` / `unzip` on the split APK | The real number, to compare against the derived 9.73 MB in §1.2 (item 1.6) |
+| 2 | Compressed download size | Play Console → internal-test track for actual delivery; device-specific split APKs for an artifact estimate | Record the method and number; do not label the original 9.73 MiB AAB-entry sum as a download (item 1.6) |
 | 3 | First-frame timing | `flutter run --profile`, DevTools performance overlay | Real number, not an estimate (item 1.7) |
 | 4 | Scroll-jank timings | Profile mode, heaviest litany and heaviest novena day | Frame timings (item 1.8) |
 | 5 | Peak memory | Profile mode on a low-end device | Baseline before the logo and timezone work (item 1.9) |
