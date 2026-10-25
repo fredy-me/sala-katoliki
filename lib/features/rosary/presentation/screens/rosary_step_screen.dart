@@ -72,7 +72,7 @@ class RosaryStepScreen extends ConsumerWidget {
                         _MysteryMeditation(step: step),
                         const SizedBox(height: AppSpacing.lg),
                       ],
-                      if (step.prayer.categoryId == 'litanies')
+                      if (step.prayer.usesLitanyStyle)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -86,8 +86,8 @@ class RosaryStepScreen extends ConsumerWidget {
                               const SizedBox(height: AppSpacing.lg),
                             ],
                             LitanyTextView(
-                              text: step.prayer.text(),
-                              stRitaStyle: true,
+                              text: step.prayer.readingText,
+                              stRitaStyle: step.prayer.usesStRitaStyle,
                             ),
                           ],
                         )
@@ -104,7 +104,7 @@ class RosaryStepScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: AppSpacing.lg),
                             ],
-                            PrayerTextView(text: step.prayer.text()),
+                            PrayerTextView(text: step.prayer.readingText),
                           ],
                         ),
                     ],
@@ -247,7 +247,7 @@ class _BeadProgress extends StatelessWidget {
     final label = step.isIntro
         ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
         : step.decadeIndex > 5
-        ? (step.prayer.categoryId == 'litanies'
+        ? (step.prayer.usesLitanyStyle
               ? strings.litany
               : strings.closing)
         : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
