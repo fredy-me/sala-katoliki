@@ -227,7 +227,8 @@ paragraphs. Marker names are lowercase and do not depend on language or wording.
 | Reading | Allowed roles |
 | --- | --- |
 | Standard prayer | `plain`, `heading`, `response` |
-| Litany, including a novena closing prayer | `plain`, `heading`, `response`, `lamb`, `panel_gold`, `panel_outline` |
+| Standard litany (`litany`), including a non-St Rita novena closing prayer | `plain`, `lamb`, `panel_gold`, `panel_outline` |
+| St Rita litany (`litany_st_rita`), including a St Rita novena closing prayer | `plain`, `heading`, `response`, `lamb` |
 | Novena day or thanksgiving | `plain`, `heading`, `response`, `invocation`, `italic`, `rich`, `group`, `highlight` |
 
 `heading` keeps the existing heading appearance (uppercased for litanies and
