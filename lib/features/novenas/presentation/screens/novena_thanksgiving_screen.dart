@@ -41,7 +41,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
               onAction: () => context.popOrGo('/novenas/$novenaId'),
             ),
             data: (novena) {
-              final isStRitaNovena = novenaId == 'st_rita_novena';
+              final isStRitaNovena = novena?.usesStRitaStyle ?? false;
               final section = novena?.thanksgivingSection;
               if (novena == null || section == null) {
                 return AppErrorState(
@@ -93,7 +93,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.lg),
                   if (isStRitaNovena)
                     NovenaTextView(
-                      text: section.body,
+                      text: section.readingText,
                       allSaintsStyle: isStRitaNovena,
                       thanksgivingStyle: isStRitaNovena,
                     )
@@ -102,7 +102,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
                       radius: AppSpacing.radiusXl,
                       padding: const EdgeInsets.all(AppSpacing.xl),
                       child: NovenaTextView(
-                        text: section.body,
+                        text: section.readingText,
                         allSaintsStyle: isStRitaNovena,
                         thanksgivingStyle: isStRitaNovena,
                       ),
