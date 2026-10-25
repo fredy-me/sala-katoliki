@@ -146,7 +146,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        prayer.title(activeLanguageCode),
+                        prayer.title(),
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 28),
