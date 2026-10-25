@@ -50,10 +50,11 @@ void main() {
           {
             'id': 'authoring_probe',
             'type': 'prayer',
+            'style': 'standard',
             'category': 'common_prayers',
             'language': language,
             'title': 'Authoring probe',
-            'body': 'Test fixture only.',
+            'body': '[[plain]]Test fixture only.[[/plain]]',
           },
         ]);
       }
@@ -69,6 +70,36 @@ void main() {
       expect(File('${fixture.path}/$manifestPath').readAsStringSync(), first);
     },
   );
+
+  test('missing or invalid presentation styles fail validation', () async {
+    final novena = read(novenaPath);
+    novena.remove('style');
+    write(novenaPath, novena);
+    var result = await run(validator);
+    expect(result.exitCode, isNot(0));
+    expect(result.stderr, contains('must declare a valid style'));
+    novena['style'] = 'misspelled';
+    write(novenaPath, novena);
+    result = await run(validator);
+    expect(result.exitCode, isNot(0));
+    expect(result.stderr, contains('must declare a valid style'));
+  });
+
+  test('validator rejects malformed and unsupported reading markers', () async {
+    final novena = read(novenaPath);
+    final day = (novena['days'] as List).first as Map;
+    for (final body in [
+      '[[heading]]Missing close',
+      '[[group]]Undeclared child[[/group]]',
+      '[[panel_gold]]Wrong renderer[[/panel_gold]]',
+    ]) {
+      day['body'] = body;
+      write(novenaPath, novena);
+      final result = await run(validator);
+      expect(result.exitCode, isNot(0));
+      expect(result.stderr, contains('body:'));
+    }
+  });
 
   test('duplicate and nonexistent manifest paths fail validation', () async {
     final manifest = read(manifestPath);
