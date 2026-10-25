@@ -268,5 +268,6 @@ Validation rejects unknown/mismatched markers, missing declarations, empty
 blocks, roles unsupported by the renderer, and invalid nesting. Rephrasing the
 text inside a marker keeps its declared formatting. After editing either
 translation, run the generator and validator shown above. Corpus parity tests
-compare all bundled readings with the pre-marker renderer; intended future
-appearance/content changes require a deliberate update to that evidence.
+compare the 244 baseline readings with the pre-marker renderer. New IDs can be
+added without editing those fixtures; changing an existing baseline requires a
+deliberate update to its preservation evidence.
