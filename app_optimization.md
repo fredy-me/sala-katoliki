@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 pending.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 in progress: content day counts, manifest tooling, and ID parity are being corrected and verified; presentation markers and i18n consolidation remain pending.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -124,6 +124,8 @@ The resulting widget tree is identical, so rendering is unchanged.
 | 2 | `flutter test test/unit` | Unit tests — 7 files, 30 tests |
 | 3 | `flutter test test/widget` | Widget tests — 3 files |
 | 4 | `dart run tools/validate_content.dart` | Content validator must pass |
+
+**Low-resource verification order (OWNER instruction, 2026-10-25):** run tests sequentially with `nice -n 15 flutter test --no-pub --concurrency=1`, then content validation, and run `flutter analyze --no-pub` last. Never overlap these processes. Reduced scheduling priority does not guarantee a temperature limit.
 
 These run only at a part's acceptance gate, not continuously. `flutter test` executes on the host Dart VM and produces no app build, so it is within policy.
 
@@ -430,10 +432,10 @@ Seven parts, sequenced by risk-adjusted value. Parts 1–3 are the highest value
 | --- | --- | --- | --- | --- |
 | 1 | Baseline + gate harness | Lock the measurement baseline and the fixed verification commands | Low | **AGENT complete** — OWNER items 1.6–1.9 outstanding |
 | 2 | Cheap, zero-risk wins | Immediate size + CPU reduction, no behaviour change | Low | Code complete, gates green; OWNER device checks outstanding |
-| 3 | Data layer: stop re-parsing everything | Eliminate redundant IO and decode | Medium | Not started |
-| 4 | Text rendering hot path | Remove per-line regex and string churn | Medium | Not started |
-| 5 | Startup, rebuild scope, and responsiveness | Cut first-frame work and over-rebuilding | Medium | Not started |
-| 6 | Content-authoring flexibility | Add content without touching Dart | Medium–High | Not started |
+| 3 | Data layer: stop re-parsing everything | Eliminate redundant IO and decode | Medium | Implemented; OWNER checks outstanding |
+| 4 | Text rendering hot path | Remove per-line regex and string churn | Medium | 4.1–4.5, 4.7–4.8 implemented; 4.6 deferred |
+| 5 | Startup, rebuild scope, and responsiveness | Cut first-frame work and over-rebuilding | Medium | 5.1–5.7 implemented; 5.8 closed as unwarranted; OWNER checks outstanding |
+| 6 | Content-authoring flexibility | Add content without touching Dart | Medium–High | In progress: 6.2–6.6 and authoring documentation; remaining scope below |
 | 7 | Dead-code sweep + owner handover | Leave no dead code; list what needs a device | Low | Not started |
 
 **Gate for every part:** the four commands in §0.2. **Invariants re-checked at every gate:** §0.1 (prayers never boxed) and the §4 dead-code policy.
@@ -774,7 +776,7 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 
 **Acceptance:** first-frame time improves against the Part 1.7 baseline; switching bottom-nav tabs preserves scroll position (5.4 — the one intended behaviour change); no settings change rebuilds more than the affected subtree.
 
-**Acceptance outcome:** the AGENT-verifiable criteria are met — tab switches preserve scroll position (5.4, mutation-verified), and no settings change rebuilds the root (5.5). The first-frame clause is **not met and is not yet measurable by AGENT**: it is an OWNER timing comparison against the Part 1.7 baseline, and 5.4 works *against* it by building all four tab branches at startup. See the status table before claiming this part improved startup.
+**Acceptance outcome:** the AGENT-verifiable criteria are met — tab switches preserve scroll position (5.4, mutation-verified), and no settings change rebuilds the root (5.5). The first-frame clause is **not met and is not yet measurable by AGENT**: it is an OWNER timing comparison against the Part 1.7 baseline, and 5.4 retains visited branches, which needs a device memory check; unvisited branches are not preloaded. See the status table before claiming this part improved startup.
 
 **Verification (AGENT):**
 
@@ -791,7 +793,7 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 **Verification (OWNER):**
 
 - First-frame timing vs the Part 1.7 baseline
-- Navigate all four tabs and confirm scroll position is retained (5.4) — the scroll offset is now automated, but confirm it visually, and specifically check whether the eager branch-building cost noted in 5.4 reads as a slower cold launch
+- Navigate all four tabs and confirm scroll position is retained (5.4) — the scroll offset is now automated, but confirm it visually, measure cold launch without assuming that unvisited branches are preloaded
 - Cold-launch from the home-screen widget and confirm the deep link still resolves — 5.1 changes launch ordering and this is the most likely place for a silent break
 - Memory vs the Part 1.9 baseline
 
@@ -804,7 +806,7 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 | 5.1 | Done | `runApp` now runs before the `setEnabledSystemUIMode` and `initiallyLaunchedFromHomeWidget` awaits. The launch URI is applied via `appRouterProvider.go()` in `_applyWidgetLaunch`, deliberately **not** through the slug resolver: the widget URI is a real in-app route, the old code used it as `initialLocation` verbatim, and warm `widgetClicked` taps call `go()` the same way. Getting this wrong was caught by a test, not by inspection. Covered by `test/widget/home_widget_launch_test.dart` (late link, null link, failed platform channel, post-dispose resolution). |
 | 5.2 | Done | Post-frame `ref.read(prayersProvider)` preload removed. |
 | 5.3 | Done | `getNovenaById` + `activeNovenaTitleProvider`. The fast path matches the filename stem; a fallback to the full-corpus lookup by JSON `id` was added after review, because returning `null` on a stem mismatch would make the title provider treat a real novena as missing and clear the user's progress. |
-| 5.4 | **Done — with a trade-off the plan did not anticipate** | Implemented with `StatefulShellRoute.indexedStack` in `app_router.dart`; `AppShell` now takes a `StatefulNavigationShell`, and `AppBottomNav` takes `selectedIndex` + `onDestinationSelected` instead of a `location` string. `pushReplacement` was tried first and rejected (it grows the tab stack and breaks back-navigation); `context.go` inside a stateful shell resets branch state. Verified in `bottom_nav_state_preservation_test.dart`: a Today↔Pray round trip preserves the offset, branches keep independent offsets, and every tab stays reachable. Reverting to a plain `ShellRoute` was mutation-tested and drops the offset to 0, failing both preservation tests. **Cost:** an IndexedStack builds every branch eagerly, so all four tab screens now build at startup instead of only `/today`. That regresses the startup work in 5.1–5.3 and is why the first-frame acceptance clause cannot be claimed. It also surfaced a real test-timing bug in `widget_test.dart`, where the library's header renders before its content. **Needs release-note wording.** |
+| 5.4 | **Done — with a trade-off the plan did not anticipate** | Implemented with `StatefulShellRoute.indexedStack` in `app_router.dart`; `AppShell` now takes a `StatefulNavigationShell`, and `AppBottomNav` takes `selectedIndex` + `onDestinationSelected` instead of a `location` string. `pushReplacement` was tried first and rejected (it grows the tab stack and breaks back-navigation); `context.go` inside a stateful shell resets branch state. Verified in `bottom_nav_state_preservation_test.dart`: a Today↔Pray round trip preserves the offset, branches keep independent offsets, and every tab stays reachable. Reverting to a plain `ShellRoute` was mutation-tested and drops the offset to 0, failing both preservation tests. **Correction (2026-10-25):** the previous eager-startup claim was false. In the installed GoRouter 17.2.3 source, `StatefulShellBranch.preload` defaults to `false` and `_preloadBranches` only loads branches explicitly marked for preload. Unvisited branches are loaded on first navigation; visited branches remain mounted. This still needs device timing and memory measurements, but eager loading of all four tabs is not an established regression. **Needs release-note wording.** |
 | 5.5 | Done — **by a different mechanism than documented** | The plan specified `.select`; there is no `.select` anywhere in the app. Implemented as `rootSettingsProvider`, a derived `Provider` returning a `RootSettings` record of just `themeMode` and `fontScale`. The acceptance criterion (no settings change rebuilds more than the affected subtree) is met — a reminder-only change yields an equal record — but note this only works because the record has value equality, which is 5.6 work. `.select` would not have. Tested at `part5_state_equality_test.dart:263`. |
 | 5.6 | Done | `==`/`hashCode` on `UserSettings`, `TodayLocalState`, `NovenaProgress`, `RosaryProgress`, `RosarySession`, `RosaryStep`. Mutation audit confirmed all state is copy-on-write, so suppressing equal-state notifications is safe. |
 | 5.7 | Done | Nav strings and destinations cached per language. |
@@ -813,6 +815,18 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 ---
 
 ### Part 6 — Content-authoring flexibility
+
+**Continuation record — 2026-10-25 (partial Part 6, not a full sign-off):**
+
+- 6.2: use each novena's `days.length`; resolve bounds before filtering or migrating saved progress. Starting a new session resolves its bound before a progress write. Unknown lengths preserve positive saved days instead of clamping them to nine; nine is only a Today display fallback.
+- Count/title/list lookups now share a model cache keyed by asset path. Filename matches verify the JSON ID before returning a model. This also repairs a residual duplicate-read path from Part 5.
+- 6.3: validate non-empty ordered days, optional `day_count` against array length, and matching EN/SW lengths. **Deviation:** `day_count` is optional, since requiring redundant metadata would change all bundled JSON; `days` remains authoritative.
+- 6.4–6.5: generator preserves existing file order, appends new paths deterministically, and provides read-only `--check`. Validator rejects manifest omissions, missing files, duplicate/non-string paths, and a mismatched category path.
+- 6.6: EN/SW prayer and novena ID parity is checked. Deep-link resolution now receives aliases from the same `id_aliases.json` declaration used by validation, rather than a second hardcoded mapping.
+- 6.9: authoring guide updated for these tools and variable novena lengths. Regression tests use temporary content copies; shipped prayer/novena JSON and the existing manifest remain untouched.
+- **Still pending:** 6.1 presentation fields, 6.7 authored styling markers, 6.8 i18n consolidation, and the remaining 6.9 guide changes for that future schema. These require a separate pass with explicit rendering verification. Part 7 final cleanup/handover is not complete.
+- Verification results for this continuation are recorded after the checks finish below. Earlier 179/179 results describe the earlier revision, not this working tree.
+
 
 **Goal:** a content author adds a prayer or novena by creating JSON files and running one command. No Dart file is edited, and a mistake is caught by a validator rather than by a user reporting a missing prayer.
 
@@ -935,7 +949,7 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 | Off-by-one in novena day routing after removing `_maxDaysForNovena` | 6 | AGENT + OWNER | Medium | New day-count test; OWNER tests every day of every novena, especially `st_rita_novena` (12) vs the rest (9) |
 | Logo looks soft at 72 px | 2 | OWNER-only | Low–Medium | 192 px is still 2.6× oversampled, but only a device shows it. Explicit OWNER item, highest risk in Part 2 |
 | Widget-launch deep link breaks when launch ordering changes | 5.1 | OWNER-only | Low | Explicit OWNER item: cold-launch from the widget. Partially retired: `home_widget_launch_test.dart` covers late, null, failed-channel and post-dispose paths, and caught a real bug (the URI was being routed through the slug resolver). The platform-channel round trip itself still needs a device. |
-| Tab state preserved but cold launch feels slower | 5.4 | OWNER-only | Medium | `StatefulShellRoute.indexedStack` builds all four tab branches at startup. Measure first-frame time on a device before shipping; if it regresses Part 5's startup work, `ShellRoute` can be restored at the cost of losing scroll position. |
+| Tab state preserved but cold launch feels slower | 5.4 | OWNER-only | Medium | GoRouter loads unvisited branches lazily and retains visited branches. Measure first-frame time and retained memory on a device; do not infer a startup regression from IndexedStack alone. |
 | Removing a package that only a test imports | 2.5 | AGENT | Low | Grep `lib/`, `test/`, `integration_test/`, `tool/` first; Part 1.5 guard prevents recurrence |
 | Size targets set on a remembered 10 MB limit | 1.6 | OWNER | High | Part 1.6 reads the real Play Console figure before any size work is judged |
 | **A part reported as done while OWNER items are open** | all | Process | Medium | Every criterion is labelled AGENT or OWNER. The agent reports AGENT passes only, and never claims a size or speed target is met while unmeasured |
@@ -999,4 +1013,12 @@ source asset sizes with gzip figures. Neither command builds anything.
 ### 9.4 Later parts
 
 OWNER items for Parts 2–7 are added to this section as each part is accepted.
-None exist yet — Parts 2–7 have not been started.
+Parts 2–5 OWNER checks remain outstanding; see each part above. Part 6 additionally needs the device checks listed below.
+
+### Part 6 continuation — outstanding device checks
+
+- On an updated install, resume St Rita with saved days 10–11, confirm day 12 is next, and confirm progress survives restarting the app and switching language.
+- Start a fresh St Rita novena and confirm completion occurs on day 12; confirm a standard novena completes on day 9.
+- Check a daily prayer widget cold launch and external EN/SW prayer links, including the Divine Mercy alias.
+- Confirm all reading screens retain their current appearance and the documented card exceptions.
+- Capture low-end device startup, scroll and memory measurements. No new speed or size claim is made by this continuation.
