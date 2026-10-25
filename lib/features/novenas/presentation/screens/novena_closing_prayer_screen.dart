@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +20,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _ClosingPrayerStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final novenaState = ref.watch(novenaByIdProvider(novenaId));
 
     return PopScope(
@@ -33,11 +34,11 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
       child: Scaffold(
         body: SafeArea(
           child: novenaState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.closingPrayerLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.errorTitle,
-              message: strings.errorMessage,
-              actionLabel: strings.back,
+              title: strings.closingPrayerErrorTitle,
+              message: strings.closingPrayerErrorMessage,
+              actionLabel: strings.closingPrayerBack,
               onAction: () => context.popOrGo('/novenas/$novenaId'),
             ),
             data: (novena) {
@@ -45,9 +46,9 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
               final closingPrayer = novena?.closingPrayer;
               if (novena == null || closingPrayer == null) {
                 return AppErrorState(
-                  title: strings.missingTitle,
-                  message: strings.missingMessage,
-                  actionLabel: strings.back,
+                  title: strings.closingPrayerMissingTitle,
+                  message: strings.closingPrayerMissingMessage,
+                  actionLabel: strings.closingPrayerBack,
                   onAction: () => context.popOrGo('/novenas/$novenaId'),
                 );
               }
@@ -63,7 +64,7 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
                   Row(
                     children: [
                       IconButton(
-                        tooltip: strings.back,
+                        tooltip: strings.closingPrayerBack,
                         onPressed: () => context.popOrGo('/novenas/$novenaId'),
                         icon: const Icon(Icons.arrow_back),
                       ),
@@ -113,23 +114,4 @@ class NovenaClosingPrayerScreen extends ConsumerWidget {
       ),
     );
   }
-}
-
-class _ClosingPrayerStrings {
-  const _ClosingPrayerStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia sala...' : 'Loading prayer...';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get errorTitle => _sw ? 'Sala haijapakia' : 'Prayer did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma sala hii.'
-      : 'There was a problem reading this prayer.';
-  String get missingTitle => _sw ? 'Sala haikupatikana' : 'Prayer not found';
-  String get missingMessage => _sw
-      ? 'Sala hii haipo kwenye novena hii.'
-      : 'This prayer is not available for this novena.';
 }
