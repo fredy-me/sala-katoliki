@@ -23,11 +23,11 @@ assets/content/prayers/sw/common_prayers.json
 
 1. Choose the correct category file, such as `common_prayers.json` or `marian_prayers.json`.
 2. Add an English record under `assets/content/prayers/en/`.
-3. Add the Kiswahili record under `assets/content/prayers/sw/` when translation is available.
+3. Add the Kiswahili record under `assets/content/prayers/sw/` with the matching translation.
 4. Use the same `id` across translations.
-5. Include required fields: `id`, `type`, `category`, `language`, `title`, and `body`.
+5. Include required fields: `id`, `type`, `category`, `language`, `title`, `style`, and `body`.
 6. Include source and version metadata when available.
-7. Run content validation before release.
+7. Run `dart run tool/generate_content_manifest.dart`, then `dart run tools/validate_content.dart`.
 8. Verify the prayer appears in category, detail, favorites, and search flows.
 
 ## Example
@@ -41,7 +41,8 @@ assets/content/prayers/sw/common_prayers.json
     "language": "en",
     "title": "Hail Mary",
     "description": "A traditional Marian prayer.",
-    "body": "Hail Mary, full of grace, the Lord is with thee...",
+    "style": "standard",
+    "body": "[[plain]]Hail Mary, full of grace, the Lord is with thee...[[/plain]]",
     "tags": ["mary", "marian", "rosary"],
     "source": "Traditional Catholic Prayer",
     "version": 1,
@@ -57,6 +58,7 @@ assets/content/prayers/sw/common_prayers.json
 - ID is unique.
 - Language is `en` or `sw`.
 - Category exists in `categories.json`.
-- Body is not empty.
+- Body is not empty; every non-empty line has an explicit paired reading marker.
+- See [reading markers](../CONTENT_GUIDE.md#explicit-reading-markers-part-67) for supported formatting roles.
 - Source is reviewed before release.
 - Prayer can be found offline through search.
