@@ -20,8 +20,8 @@ void main() {
     await tester.tap(find.text('Divine Mercy Novena').first);
     await _pumpUntilFound(tester, find.text('Start Novena'));
     await tester.tap(find.text('Start Novena'));
-    await _pumpUntilFound(tester, find.text('Mark Complete'));
-    await tester.tap(find.text('Mark Complete'));
+    await _pumpUntilFound(tester, find.text('Complete Day 1'));
+    await tester.tap(find.text('Complete Day 1'));
     await _pumpUntilFound(tester, find.text('Day 2 of 9'));
 
     final preferences = await SharedPreferences.getInstance();
