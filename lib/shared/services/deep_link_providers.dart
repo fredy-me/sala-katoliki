@@ -17,9 +17,7 @@ final deepLinkContextProvider = FutureProvider<DeepLinkService>((ref) async {
   final activePrayers = await ref.watch(prayersProvider.future);
   final swPrayers = ref.read(activeLanguageProvider) == 'sw'
       ? activePrayers
-      : await ref
-            .watch(getAllPrayersUseCaseProvider)
-            .call(languageCode: 'sw');
+      : await ref.watch(getAllPrayersUseCaseProvider).call(languageCode: 'sw');
   final novenas = await ref
       .watch(novenaRepositoryProvider)
       .getNovenas(languageCode: 'sw');
@@ -28,6 +26,9 @@ final deepLinkContextProvider = FutureProvider<DeepLinkService>((ref) async {
       .getRosaryMysteries(languageCode: 'sw');
 
   return DeepLinkService(
+    prayerIdAliases: await ref
+        .watch(localContentDataSourceProvider)
+        .getPrayerIdAliases(),
     prayerIndex: swPrayers,
     activePrayers: activePrayers,
     novenas: novenas,
