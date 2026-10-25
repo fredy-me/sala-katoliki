@@ -1,0 +1,347 @@
+{
+  "locale": "en",
+  "messages": {
+    "about.aboutBody": "Developed by Busara Digital to help the faithful grow in prayer.",
+    "about.aboutDetailsBody": "Sala Katoliki is a simple Catholic prayer app created to help people pray, reflect, and build a daily habit of devotion.\n\nThe app provides common Catholic prayers, guided Rosary prayers, novenas, favorites, search, and daily reminders. It supports both English and Kiswahili, making it easier for more people to pray in the language they understand best.\n\nSala Katoliki is designed for everyone. If you are Catholic, it helps you access familiar prayers and devotions in one place. If you are not familiar with Catholic prayer, the app gives you a clear and simple way to learn, follow, and understand common Catholic devotions.\n\nThe app works offline, so you can continue using the main prayer features without an internet connection. It does not require an account, payment, or complicated setup.\n\nSala Katoliki is for personal prayer, reflection, and spiritual growth. It is not a replacement for the Church, the Bible, the Catechism, or pastoral guidance, but it can support your daily journey of faith.",
+    "about.aboutDetailsTitle": "About Sala Katoliki",
+    "about.aboutTitle": "About",
+    "about.back": "Back",
+    "about.contact": "Contact",
+    "about.contactBody": "For support or content corrections, reach us via:",
+    "about.contactOpenError": "Could not open a contact app.",
+    "about.contactTitle": "We are here to help",
+    "about.contentSourcesBody": "Content is based on traditional Catholic prayers and devotions used by the faithful.",
+    "about.contentSourcesDetailsBody": "The content in Sala Katoliki is based on traditional Catholic prayers, prayer books, devotional texts, and publicly available Catholic resources.\n\nThese materials include prayers and devotions that are commonly used in Catholic life, such as daily prayers, Rosary prayers, litanies, and novenas. The content is selected and organized to follow Catholic teaching, tradition, and devotional practice.\n\nSome content may come from traditional prayer books and Catholic devotional references. Other content may be adapted from open-source or publicly available online Catholic resources. Where needed, the content is reviewed and adjusted for clarity, language, and consistency with Catholic faith and practice.\n\nSala Katoliki aims to make Catholic prayer easier to access and understand for both Catholics and people who are new to Catholic devotion. The app does not claim to replace official Church documents, the Bible, the Catechism, or guidance from priests and Church leaders.\n\nAll content is provided for personal prayer, reflection, and spiritual growth.",
+    "about.contentSourcesTitle": "Content Sources",
+    "about.copyright": "© 2026 Busara Digital. All rights reserved.",
+    "about.developerBody": "Learn more about the developer behind Sala Katoliki.",
+    "about.developerTitle": "Learn About Busara Digital",
+    "about.disclaimerBody": "This app supports personal devotion and does not replace official Church teaching or pastoral guidance.",
+    "about.disclaimerTitle": "Disclaimer",
+    "about.emailLabel": "Email",
+    "about.introduction": "Sala Katoliki helps Catholic faithful pray daily in Kiswahili and English with prayers, novenas, rosary content and devotions, anytime, anywhere, even offline.",
+    "about.playStoreOpenError": "Could not open Google Play.",
+    "about.rateAppLabel": "Rate Sala Katoliki",
+    "about.title": "About App",
+    "about.version": {
+      "text": "Version {version}",
+      "parameters": {
+        "version": "String"
+      }
+    },
+    "bottomNav.exitPrompt": "Press back again to close Sala Katoliki.",
+    "bottomNav.novenas": "Novenas",
+    "bottomNav.pray": "Pray",
+    "bottomNav.settings": "Settings",
+    "bottomNav.today": "Today",
+    "closingPrayer.back": "Back",
+    "closingPrayer.errorMessage": "There was a problem reading this prayer.",
+    "closingPrayer.errorTitle": "Prayer did not load",
+    "closingPrayer.loading": "Loading prayer...",
+    "closingPrayer.missingMessage": "This prayer is not available for this novena.",
+    "closingPrayer.missingTitle": "Prayer not found",
+    "favorites.back": "Back",
+    "favorites.emptyMessage": "Tap the heart on any prayer to save it here.",
+    "favorites.emptyTitle": "No favorites yet",
+    "favorites.loadErrorMessage": "There was a problem reading saved prayers.",
+    "favorites.loadErrorTitle": "Favorites did not load",
+    "favorites.loading": "Loading favorites...",
+    "favorites.noSearchResults": "No favorite prayer matches this search.",
+    "favorites.searchHint": "Search favorites...",
+    "favorites.subtitle": {
+      "text": "{count} saved favorites",
+      "parameters": {
+        "count": "int"
+      }
+    },
+    "favorites.title": "Favorites",
+    "homeWidget.label": "TODAY'S PRAYER",
+    "legalLinks.contentDisclaimer": "Content Disclaimer",
+    "legalLinks.note": "Before continuing, review the important policies for use and content.",
+    "legalLinks.privacyPolicy": "Privacy Policy",
+    "legalLinks.termsOfService": "Terms of Service",
+    "mysterySelection.back": "Back",
+    "mysterySelection.errorMessage": "There was a problem reading Rosary mysteries.",
+    "mysterySelection.errorTitle": "Mysteries did not load",
+    "mysterySelection.loading": "Loading mysteries...",
+    "mysterySelection.suggested": "Suggested today",
+    "mysterySelection.title": "Choose Mysteries",
+    "novenaDay.back": "Back",
+    "novenaDay.changeLanguage": "Change language",
+    "novenaDay.completeDay": {
+      "text": "Complete Day {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDay.completed": "Completed",
+    "novenaDay.dayLabel": {
+      "text": "Day {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDay.dayProgress": {
+      "text": "Day {day} of {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenaDay.errorMessage": "There was a problem reading this novena day.",
+    "novenaDay.errorTitle": "Day did not load",
+    "novenaDay.languageChanged": {
+      "parameters": {
+        "nextLanguageCode": "String"
+      },
+      "select": "nextLanguageCode",
+      "cases": {
+        "sw": "Language changed to Kiswahili.",
+        "other": "Language changed to English."
+      }
+    },
+    "novenaDay.loading": "Loading day...",
+    "novenaDay.missingMessage": "This day is not available in this novena.",
+    "novenaDay.missingTitle": "Day not found",
+    "novenaDay.removeFavorite": "Remove favorite",
+    "novenaDay.saveFavorite": "Save",
+    "novenaDay.share": "Share",
+    "novenaDay.shareFailed": "Could not share this novena.",
+    "novenaDay.source": "Source",
+    "novenaDetail.afterNovena": "After the Novena",
+    "novenaDetail.back": "Back",
+    "novenaDetail.continueDay": {
+      "text": "Continue to Day {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDetail.dayProgress": {
+      "text": "Day {day} of {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenaDetail.errorMessage": "There was a problem reading this novena.",
+    "novenaDetail.errorTitle": "Novena did not load",
+    "novenaDetail.loading": "Loading novena...",
+    "novenaDetail.missingMessage": "Try choosing another novena.",
+    "novenaDetail.missingTitle": "Novena not found",
+    "novenaDetail.notStarted": "Not Started",
+    "novenaDetail.progress": "Progress",
+    "novenaDetail.restart": "Restart",
+    "novenaDetail.start": "Start Novena",
+    "novenaDetail.startPrompt": "Start Day 1",
+    "novenaDetail.statusCompleted": "Completed",
+    "novenaDetail.statusCurrent": "Current day",
+    "novenaDetail.statusLocked": "Locked",
+    "novenaDetail.statusNotStarted": "Not started",
+    "novenaDetail.statusOpen": "Open",
+    "novenas.activeNovena": "Active Novena",
+    "novenas.browse": "Browse Novenas",
+    "novenas.continueLabel": "Continue",
+    "novenas.dayProgress": {
+      "text": "Day {day} of {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenas.emptyMessage": "Novena content was not found.",
+    "novenas.emptyTitle": "No novenas",
+    "novenas.errorMessage": "There was a problem reading local novenas.",
+    "novenas.errorTitle": "Novenas did not load",
+    "novenas.inProgress": "In progress",
+    "novenas.loading": "Loading novenas...",
+    "novenas.retry": "Retry",
+    "novenas.subtitle": "Nine-day devotions with local progress.",
+    "novenas.title": "Novenas",
+    "novenas.view": "View",
+    "onboarding.changeLater": "You can change this later in Settings.",
+    "onboarding.continueLabel": "Continue",
+    "onboarding.skip": "Skip",
+    "onboarding.subtitle": "Select the language you prefer for prayers and app content.",
+    "onboarding.title": "Choose Your Prayer Language",
+    "prayerDetail.back": "Back",
+    "prayerDetail.changeLanguage": "Change language",
+    "prayerDetail.defaultSource": "Traditional Catholic Prayer",
+    "prayerDetail.languageChanged": {
+      "parameters": {
+        "nextLanguageCode": "String"
+      },
+      "select": "nextLanguageCode",
+      "cases": {
+        "sw": "Language changed to Kiswahili.",
+        "other": "Language changed to English."
+      }
+    },
+    "prayerDetail.loadErrorMessage": "Try returning to the prayer list.",
+    "prayerDetail.loading": "Loading prayer...",
+    "prayerDetail.missingMessage": "Try choosing another prayer.",
+    "prayerDetail.notFoundTitle": "Prayer not found",
+    "prayerDetail.removeFavorite": "Remove favorite",
+    "prayerDetail.saveFavorite": "Save",
+    "prayerDetail.share": "Share",
+    "prayerDetail.shareFailed": "Could not share this prayer.",
+    "prayerDetail.source": "Source",
+    "prayerLibrary.categoriesErrorMessage": "There was a problem reading prayer categories.",
+    "prayerLibrary.categoriesErrorTitle": "Categories did not load",
+    "prayerLibrary.comingSoon": "Coming soon",
+    "prayerLibrary.corePrayers": "Essential Prayers",
+    "prayerLibrary.countLabel": {
+      "parameters": {
+        "count": "int"
+      },
+      "plural": "count",
+      "one": "1 prayer",
+      "other": "{count} prayers"
+    },
+    "prayerLibrary.devotions": "Devotions",
+    "prayerLibrary.divineMercyRosary": "Divine Mercy Rosary",
+    "prayerLibrary.divineMercyRosaryDescription": "Divine Mercy Rosary without mysteries.",
+    "prayerLibrary.loadErrorMessage": "There was a problem reading local content.",
+    "prayerLibrary.loadErrorTitle": "Prayers did not load",
+    "prayerLibrary.loading": "Loading prayers...",
+    "prayerLibrary.marianAndRosary": "Mary and Rosary",
+    "prayerLibrary.noSearchResults": "No prayers match this search.",
+    "prayerLibrary.retry": "Retry",
+    "prayerLibrary.rosaryAndMysteries": "Rosary and Mysteries",
+    "prayerLibrary.rosaryAndMysteriesDescription": "Pray the rosary step by step with the mysteries of the day.",
+    "prayerLibrary.searchHint": "Search prayers...",
+    "prayerLibrary.subtitle": "Choose prayers, devotions, novenas, and rosary in order.",
+    "prayerLibrary.title": "Pray",
+    "prayerList.back": "Back",
+    "prayerList.emptyMessage": "No prayers are available in this category yet.",
+    "prayerList.errorMessage": "There was a problem reading this category.",
+    "prayerList.errorTitle": "Prayers did not load",
+    "prayerList.noSearchResults": "No prayers match this search.",
+    "prayerList.searchHint": {
+      "text": "Search in {categoryTitle}...",
+      "parameters": {
+        "categoryTitle": "String"
+      }
+    },
+    "reminderNotification.body": "Take a moment for prayer today.",
+    "reminderNotification.title": "Sala Katoliki",
+    "rosary.allMysteries": "All Mysteries",
+    "rosary.choose": "Choose",
+    "rosary.continueLabel": "Continue",
+    "rosary.emptyMessage": "Rosary mysteries were not found in local content.",
+    "rosary.emptyTitle": "No Rosary content",
+    "rosary.loadErrorMessage": "There was a problem reading local Rosary content.",
+    "rosary.loadErrorTitle": "Rosary did not load",
+    "rosary.loading": "Loading Rosary...",
+    "rosary.restart": "Restart",
+    "rosary.retry": "Retry",
+    "rosary.savedProgress": "Saved Progress",
+    "rosary.start": "Start",
+    "rosary.stepLabel": {
+      "text": "Step {current} of {total}",
+      "parameters": {
+        "current": "int",
+        "total": "int"
+      }
+    },
+    "rosary.subtitle": "Follow the mysteries, virtues, and prayers in order.",
+    "rosary.suggestedToday": "Suggested today",
+    "rosary.title": "Rosary of Mary",
+    "rosary.todayMystery": "Today's Mystery",
+    "rosaryStep.back": "Back",
+    "rosaryStep.closing": "Closing",
+    "rosaryStep.errorMessage": "There was a problem reading Rosary steps.",
+    "rosaryStep.errorTitle": "Rosary did not load",
+    "rosaryStep.finish": "Finish",
+    "rosaryStep.litany": "Litany",
+    "rosaryStep.loading": "Loading step...",
+    "rosaryStep.missingMessage": "Saved progress did not match the current Rosary content.",
+    "rosaryStep.missingTitle": "Progress was reset",
+    "rosaryStep.next": "Next",
+    "rosaryStep.pause": "Pause",
+    "rosaryStep.previous": "Previous",
+    "rosaryStep.restart": "Restart",
+    "rosaryStep.stepLabel": {
+      "text": "Step {current} of {total}",
+      "parameters": {
+        "current": "int",
+        "total": "int"
+      }
+    },
+    "settings.about": "About App",
+    "settings.aboutSubtitle": "Version, developer and more",
+    "settings.changeTime": "Reminder Time",
+    "settings.dailyReminder": "Daily Reminder",
+    "settings.dark": "Dark",
+    "settings.fontSize": "Text Size",
+    "settings.fontSizeSubtitle": "Adjust reading size",
+    "settings.information": "Information",
+    "settings.language": "Language",
+    "settings.languageSubtitle": "Choose app language",
+    "settings.large": "Large",
+    "settings.light": "Light",
+    "settings.loadError": "There was a problem reading settings.",
+    "settings.loading": "Loading settings...",
+    "settings.medium": "Medium",
+    "settings.permissionDenied": "Notification permission was denied. You can enable it in device settings.",
+    "settings.preferences": "Preferences",
+    "settings.privacySubtitle": "Privacy Policy, Terms & Disclaimer",
+    "settings.privacyTitle": "Privacy & Policies",
+    "settings.reminderDisabled": "No reminder set",
+    "settings.reminderEnabled": {
+      "text": "Set for {time}",
+      "parameters": {
+        "time": "String"
+      }
+    },
+    "settings.reminderSubtitle": "Receive a reminder to pray",
+    "settings.reminders": "Reminders",
+    "settings.small": "Small",
+    "settings.supportInfo": "Support & Info",
+    "settings.system": "System",
+    "settings.theme": "Theme",
+    "settings.themeSubtitle": "Select app appearance",
+    "settings.title": "Settings",
+    "thanksgiving.back": "Back",
+    "thanksgiving.errorMessage": "There was a problem reading this section.",
+    "thanksgiving.errorTitle": "Thanksgiving did not load",
+    "thanksgiving.loading": "Loading thanksgiving...",
+    "thanksgiving.missingMessage": "This section is not available for this novena.",
+    "thanksgiving.missingTitle": "Section not found",
+    "today.activeNovenaUnavailable": "Novena unavailable",
+    "today.availableOffline": "Available offline",
+    "today.browse": "Browse",
+    "today.commonPrayers": "Common Prayers",
+    "today.continueAction": "Continue",
+    "today.continueNovena": "Continue Novena",
+    "today.dayProgress": {
+      "text": "Day {day} of {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "today.edit": "Edit",
+    "today.eyebrow": "PEACE BE WITH YOU",
+    "today.favorites": "Favorites",
+    "today.loading": "Loading today...",
+    "today.noActiveNovena": "No active novena yet.",
+    "today.noDailyPrayerBody": "Open the prayer library to view available prayers.",
+    "today.noDailyPrayerTitle": "Prayer unavailable",
+    "today.novenas": "Novenas",
+    "today.prayNow": "Pray Now",
+    "today.quickActions": "Quick Actions",
+    "today.recentlyOpened": "Recently Opened",
+    "today.reminderDisabled": "No reminder set",
+    "today.reminderEnabled": {
+      "text": "Reminder set for {time}",
+      "parameters": {
+        "time": "String"
+      }
+    },
+    "today.rosaryToday": "Rosary Today",
+    "today.startRosary": "Start Rosary",
+    "today.suggestedMystery": "Today's Mysteries",
+    "today.todayDay": "Based on today",
+    "today.todaysPrayer": "TODAY'S PRAYER"
+  }
+}
