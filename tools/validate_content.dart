@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../lib/shared/content/reading_markup.dart';
+import 'package:salakatoliki/shared/content/reading_markup.dart';
 
 const supportedLanguages = {'en', 'sw'};
 const contentRoot = 'assets/content';
