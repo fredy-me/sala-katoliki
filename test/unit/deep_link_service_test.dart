@@ -10,7 +10,9 @@ void main() {
       expect(DeepLinkService.slugify('Baba Yetu'), 'baba-yetu');
       expect(DeepLinkService.slugify('Atukuzwe Baba'), 'atukuzwe-baba');
       expect(
-        DeepLinkService.slugify('Litania ya Mtakatifu Antoni wa Padua, Toleo la 1'),
+        DeepLinkService.slugify(
+          'Litania ya Mtakatifu Antoni wa Padua, Toleo la 1',
+        ),
         'litania-ya-mtakatifu-antoni-wa-padua-toleo-la-1',
       );
       expect(
@@ -26,6 +28,9 @@ void main() {
 
     setUp(() {
       service = DeepLinkService(
+        prayerIdAliases: const {
+          'divine_mercy_prayer': 'divine_mercy_eternal_father',
+        },
         prayerIndex: _swPrayers,
         activePrayers: _enPrayers,
         novenas: _novenas,
@@ -46,8 +51,14 @@ void main() {
     });
 
     test('home', () {
-      expect(service.resolve('https://busaradigital.com/salakatoliki/'), '/today');
-      expect(service.resolve('https://busaradigital.com/salakatoliki'), '/today');
+      expect(
+        service.resolve('https://busaradigital.com/salakatoliki/'),
+        '/today',
+      );
+      expect(
+        service.resolve('https://busaradigital.com/salakatoliki'),
+        '/today',
+      );
     });
 
     test('prayer slug links from APP_INDEXES.md', () {
@@ -85,7 +96,9 @@ void main() {
 
     test('category index links', () {
       expect(
-        service.resolve('https://busaradigital.com/salakatoliki/prayers/litanies'),
+        service.resolve(
+          'https://busaradigital.com/salakatoliki/prayers/litanies',
+        ),
         '/prayers/category/litanies',
       );
       expect(
@@ -176,7 +189,9 @@ void main() {
         '/rosary/step/divine_mercy_rosary',
       );
       expect(
-        service.resolve('https://busaradigital.com/salakatoliki/prayers/rosary'),
+        service.resolve(
+          'https://busaradigital.com/salakatoliki/prayers/rosary',
+        ),
         '/rosary',
       );
     });
@@ -200,6 +215,9 @@ void main() {
   group('DeepLinkService.resolve with Swahili active language', () {
     test('divine mercy slug resolves to the sw id', () {
       final service = DeepLinkService(
+        prayerIdAliases: const {
+          'divine_mercy_prayer': 'divine_mercy_eternal_father',
+        },
         prayerIndex: _swPrayers,
         activePrayers: _swPrayers,
         novenas: _novenas,
@@ -217,16 +235,8 @@ void main() {
 }
 
 final _enPrayers = [
-  _prayer(
-    id: 'our_father',
-    categoryId: 'common_prayers',
-    title: 'Our Father',
-  ),
-  _prayer(
-    id: 'hail_mary',
-    categoryId: 'marian_prayers',
-    title: 'Hail Mary',
-  ),
+  _prayer(id: 'our_father', categoryId: 'common_prayers', title: 'Our Father'),
+  _prayer(id: 'hail_mary', categoryId: 'marian_prayers', title: 'Hail Mary'),
   _prayer(
     id: 'st_rita_litany',
     categoryId: 'litanies',
@@ -245,16 +255,8 @@ final _enPrayers = [
 ];
 
 final _swPrayers = [
-  _prayer(
-    id: 'our_father',
-    categoryId: 'common_prayers',
-    title: 'Baba Yetu',
-  ),
-  _prayer(
-    id: 'hail_mary',
-    categoryId: 'marian_prayers',
-    title: 'Salamu Maria',
-  ),
+  _prayer(id: 'our_father', categoryId: 'common_prayers', title: 'Baba Yetu'),
+  _prayer(id: 'hail_mary', categoryId: 'marian_prayers', title: 'Salamu Maria'),
   _prayer(
     id: 'st_rita_litany',
     categoryId: 'litanies',
