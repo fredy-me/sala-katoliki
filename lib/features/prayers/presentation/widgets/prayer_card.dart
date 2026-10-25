@@ -27,40 +27,38 @@ class PrayerCard extends StatelessWidget {
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.lg,
       ),
-      child: Ink(
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    prayer.title(),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    prayer.categoryLabel(),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  prayer.title(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  prayer.categoryLabel(),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                ),
+              ],
             ),
-            IconButton(
-              tooltip: isFavorite ? 'Remove favorite' : 'Save favorite',
-              onPressed: onFavoriteToggle,
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
+          ),
+          IconButton(
+            tooltip: isFavorite ? 'Remove favorite' : 'Save favorite',
+            onPressed: onFavoriteToggle,
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+              size: 20,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
