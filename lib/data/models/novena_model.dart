@@ -17,6 +17,10 @@ class NovenaModel {
   final String title;
   final String description;
   final List<NovenaDayModel> days;
+
+  /// The content array is the authority for progress bounds.
+  int get dayCount => days.length;
+
   final String? source;
   final int? version;
   final DateTime? lastUpdated;
