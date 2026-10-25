@@ -247,9 +247,7 @@ class _BeadProgress extends StatelessWidget {
     final label = step.isIntro
         ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
         : step.decadeIndex > 5
-        ? (step.prayer.usesLitanyStyle
-              ? strings.litany
-              : strings.closing)
+        ? (step.prayer.usesLitanyStyle ? strings.litany : strings.closing)
         : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
