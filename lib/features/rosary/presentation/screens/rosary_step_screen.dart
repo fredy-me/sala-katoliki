@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,25 +22,25 @@ class RosaryStepScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _RosaryStepStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final sessionState = ref.watch(rosarySessionProvider(mysteryId));
 
     return Scaffold(
       body: SafeArea(
         child: sessionState.when(
-          loading: () => AppLoading(label: strings.loading),
+          loading: () => AppLoading(label: strings.rosaryStepLoading),
           error: (error, stackTrace) => AppErrorState(
-            title: strings.errorTitle,
-            message: strings.errorMessage,
-            actionLabel: strings.back,
+            title: strings.rosaryStepErrorTitle,
+            message: strings.rosaryStepErrorMessage,
+            actionLabel: strings.rosaryStepBack,
             onAction: () => _goBack(context),
           ),
           data: (session) {
             if (session == null) {
               return AppErrorState(
-                title: strings.missingTitle,
-                message: strings.missingMessage,
-                actionLabel: strings.back,
+                title: strings.rosaryStepMissingTitle,
+                message: strings.rosaryStepMissingMessage,
+                actionLabel: strings.rosaryStepBack,
                 onAction: () => _goBack(context),
               );
             }
@@ -175,7 +176,7 @@ class _TopBar extends StatelessWidget {
   });
 
   final String title;
-  final _RosaryStepStrings strings;
+  final AppStrings strings;
   final VoidCallback onBack;
   final VoidCallback onRestart;
 
@@ -186,7 +187,7 @@ class _TopBar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: strings.back,
+            tooltip: strings.rosaryStepBack,
             onPressed: onBack,
             icon: const Icon(Icons.arrow_back),
           ),
@@ -200,7 +201,7 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: strings.restart,
+            tooltip: strings.rosaryStepRestart,
             onPressed: onRestart,
             icon: const Icon(Icons.restart_alt),
           ),
@@ -214,7 +215,7 @@ class _ProgressHeader extends StatelessWidget {
   const _ProgressHeader({required this.session, required this.strings});
 
   final RosarySession session;
-  final _RosaryStepStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +223,10 @@ class _ProgressHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          strings.stepLabel(session.stepIndex + 1, session.steps.length),
+          strings.rosaryStepStepLabel(
+            session.stepIndex + 1,
+            session.steps.length,
+          ),
           style: Theme.of(context).textTheme.labelSmall,
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -240,14 +244,16 @@ class _BeadProgress extends StatelessWidget {
   const _BeadProgress({required this.step, required this.strings});
 
   final RosaryStep step;
-  final _RosaryStepStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
     final label = step.isIntro
         ? 'Mwanzo - ${step.beadNumber}/${step.beadTotal}'
         : step.decadeIndex > 5
-        ? (step.prayer.usesLitanyStyle ? strings.litany : strings.closing)
+        ? (step.prayer.usesLitanyStyle
+              ? strings.rosaryStepLitany
+              : strings.rosaryStepClosing)
         : 'Tendo ${step.decadeIndex} - ${step.beadNumber}/${step.beadTotal}';
 
     return AppCard(
@@ -350,7 +356,7 @@ class _StepControls extends StatelessWidget {
   });
 
   final RosarySession session;
-  final _RosaryStepStrings strings;
+  final AppStrings strings;
   final VoidCallback onPrevious;
   final VoidCallback onPause;
   final VoidCallback onNext;
@@ -378,13 +384,13 @@ class _StepControls extends StatelessWidget {
           child: Row(
             children: [
               IconButton(
-                tooltip: strings.previous,
+                tooltip: strings.rosaryStepPrevious,
                 onPressed: session.canGoPrevious ? onPrevious : null,
                 icon: const Icon(Icons.chevron_left),
               ),
               const SizedBox(width: AppSpacing.sm),
               IconButton(
-                tooltip: strings.pause,
+                tooltip: strings.rosaryStepPause,
                 onPressed: onPause,
                 icon: const Icon(Icons.pause),
               ),
@@ -396,7 +402,9 @@ class _StepControls extends StatelessWidget {
                     session.canGoNext ? Icons.chevron_right : Icons.check,
                   ),
                   label: Text(
-                    session.canGoNext ? strings.next : strings.finish,
+                    session.canGoNext
+                        ? strings.rosaryStepNext
+                        : strings.rosaryStepFinish,
                   ),
                 ),
               ),
@@ -406,33 +414,4 @@ class _StepControls extends StatelessWidget {
       ),
     );
   }
-}
-
-class _RosaryStepStrings {
-  const _RosaryStepStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia hatua...' : 'Loading step...';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get restart => _sw ? 'Anza Upya' : 'Restart';
-  String get previous => _sw ? 'Iliyotangulia' : 'Previous';
-  String get pause => _sw ? 'Sitisha' : 'Pause';
-  String get next => _sw ? 'Inayofuata' : 'Next';
-  String get finish => _sw ? 'Maliza' : 'Finish';
-  String get litany => _sw ? 'Litania' : 'Litany';
-  String get closing => _sw ? 'Hitimisho' : 'Closing';
-  String get errorTitle => _sw ? 'Rozari haijapakia' : 'Rosary did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma hatua za rozari.'
-      : 'There was a problem reading Rosary steps.';
-  String get missingTitle =>
-      _sw ? 'Maendeleo yameondolewa' : 'Progress was reset';
-  String get missingMessage => _sw
-      ? 'Maendeleo ya zamani hayakulingana na maudhui ya sasa.'
-      : 'Saved progress did not match the current Rosary content.';
-  String stepLabel(int current, int total) =>
-      _sw ? 'Hatua $current kati ya $total' : 'Step $current of $total';
 }
