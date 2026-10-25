@@ -1,3 +1,4 @@
+import '../../core/localization/app_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 
@@ -14,8 +15,6 @@ abstract final class HomeWidgetService {
   static const _labelKey = 'widget_prayer_label';
   static const _prayerIdKey = 'widget_prayer_id';
 
-  static const _labelEn = "TODAY'S PRAYER";
-  static const _labelSw = 'SALA YA LEO';
   static const _snippetMaxLength = 140;
 
   /// The payload most recently written successfully.
@@ -30,7 +29,7 @@ abstract final class HomeWidgetService {
   }) async {
     final title = prayer.localizedTitle;
     final snippet = _snippet(prayer);
-    final label = languageCode == 'sw' ? _labelSw : _labelEn;
+    final label = AppStrings(languageCode).homeWidgetLabel;
 
     // The prayer of the day only changes once a day, but this is called on
     // every rebuild of the today screen. Skip the platform round trip when
