@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _PrayerLibraryStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
     final novenasState = ref.watch(novenasProvider);
@@ -67,7 +68,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
         ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
     return prayersState.when(
-      loading: () => AppLoading(label: strings.loading),
+      loading: () => AppLoading(label: strings.prayerLibraryLoading),
       error: (error, stackTrace) => _PrayerLoadError(
         strings: strings,
         onRetry: () => ref.invalidate(prayersProvider),
@@ -101,18 +102,18 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
           ),
           children: [
             Text(
-              strings.title,
+              strings.prayerLibraryTitle,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              strings.subtitle,
+              strings.prayerLibrarySubtitle,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: AppSpacing.lg),
             AppSearchBar(
               controller: _searchController,
-              hintText: strings.searchHint,
+              hintText: strings.prayerLibrarySearchHint,
               onChanged: _onQueryChanged,
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -121,7 +122,7 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
                 prayers: scoredPrayers,
                 novenas: scoredNovenas,
                 favoriteIds: favoriteIds,
-                emptyMessage: strings.noSearchResults,
+                emptyMessage: strings.prayerLibraryNoSearchResults,
                 onFavoriteToggle: (prayerId) => ref
                     .read(favoritePrayerIdsProvider.notifier)
                     .toggle(prayerId),
@@ -130,9 +131,9 @@ class _PrayerLibraryScreenState extends ConsumerState<PrayerLibraryScreen> {
               categoriesState.when(
                 loading: () => const AppLoading(),
                 error: (error, stackTrace) => AppErrorState(
-                  title: strings.categoriesErrorTitle,
-                  message: strings.categoriesErrorMessage,
-                  actionLabel: strings.retry,
+                  title: strings.prayerLibraryCategoriesErrorTitle,
+                  message: strings.prayerLibraryCategoriesErrorMessage,
+                  actionLabel: strings.prayerLibraryRetry,
                   onAction: () => ref.invalidate(categoriesProvider),
                 ),
                 data: (categories) => _CategoryGrid(
@@ -235,7 +236,7 @@ class _CategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = _PrayerLibraryStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final categoriesById = {
       for (final category in categories) category.id: category,
     };
@@ -255,7 +256,7 @@ class _CategoryGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _PrayerSection(
-          title: strings.corePrayers,
+          title: strings.prayerLibraryCorePrayers,
           entries: [
             if (categoriesById['common_prayers'] != null)
               _PrayerCategoryEntry(
@@ -268,7 +269,7 @@ class _CategoryGrid extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         _PrayerSection(
-          title: strings.marianAndRosary,
+          title: strings.prayerLibraryMarianAndRosary,
           entries: [
             if (categoriesById['marian_prayers'] != null)
               _PrayerCategoryEntry(
@@ -276,14 +277,14 @@ class _CategoryGrid extends StatelessWidget {
                 count: countsByCategory['marian_prayers'] ?? 0,
               ),
             _PrayerFeatureEntry(
-              title: strings.rosaryAndMysteries,
-              description: strings.rosaryAndMysteriesDescription,
+              title: strings.prayerLibraryRosaryAndMysteries,
+              description: strings.prayerLibraryRosaryAndMysteriesDescription,
               iconName: 'rosary',
               route: '/rosary',
             ),
             _PrayerFeatureEntry(
-              title: strings.divineMercyRosary,
-              description: strings.divineMercyRosaryDescription,
+              title: strings.prayerLibraryDivineMercyRosary,
+              description: strings.prayerLibraryDivineMercyRosaryDescription,
               iconName: 'heart',
               route: '/rosary/step/divine_mercy_rosary',
             ),
@@ -293,7 +294,7 @@ class _CategoryGrid extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         _PrayerSection(
-          title: strings.devotions,
+          title: strings.prayerLibraryDevotions,
           entries: [
             if (categoriesById['litanies'] != null)
               _PrayerCategoryEntry(
@@ -345,7 +346,7 @@ class _PrayerSection extends StatelessWidget {
   final String title;
   final List<_PrayerEntry> entries;
   final String languageCode;
-  final _PrayerLibraryStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +367,7 @@ class _PrayerSection extends StatelessWidget {
               category: entry.category,
               count: entry.count,
               languageCode: languageCode,
-              unavailableLabel: strings.comingSoon,
+              unavailableLabel: strings.prayerLibraryComingSoon,
             ),
             _PrayerFeatureEntry() => _FeatureCard(entry: entry),
           },
@@ -519,68 +520,16 @@ class _CategoryIcon extends StatelessWidget {
 class _PrayerLoadError extends StatelessWidget {
   const _PrayerLoadError({required this.strings, required this.onRetry});
 
-  final _PrayerLibraryStrings strings;
+  final AppStrings strings;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     return AppErrorState(
-      title: strings.loadErrorTitle,
-      message: strings.loadErrorMessage,
-      actionLabel: strings.retry,
+      title: strings.prayerLibraryLoadErrorTitle,
+      message: strings.prayerLibraryLoadErrorMessage,
+      actionLabel: strings.prayerLibraryRetry,
       onAction: onRetry,
     );
   }
-}
-
-class _PrayerLibraryStrings {
-  const _PrayerLibraryStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Sala' : 'Pray';
-  String get subtitle => _sw
-      ? 'Chagua sala, ibada, novena, na rozari kwa mpangilio.'
-      : 'Choose prayers, devotions, novenas, and rosary in order.';
-  String get loading => _sw ? 'Inapakia sala...' : 'Loading prayers...';
-  String get searchHint => _sw ? 'Tafuta sala...' : 'Search prayers...';
-  String get corePrayers => _sw ? 'Sala Muhimu' : 'Essential Prayers';
-  String get marianAndRosary =>
-      _sw ? 'Bikira Maria na Rozari' : 'Mary and Rosary';
-  String get devotions => _sw ? 'Ibada Maalum' : 'Devotions';
-  String get rosaryAndMysteries =>
-      _sw ? 'Rozari na Mafumbo' : 'Rosary and Mysteries';
-  String get rosaryAndMysteriesDescription => _sw
-      ? 'Sali rozari kwa hatua na mafumbo ya siku.'
-      : 'Pray the rosary step by step with the mysteries of the day.';
-  String get divineMercyRosary =>
-      _sw ? 'Rozari ya Huruma ya Mungu' : 'Divine Mercy Rosary';
-  String get divineMercyRosaryDescription => _sw
-      ? 'Rozari ya Huruma ya Mungu bila mafumbo.'
-      : 'Divine Mercy Rosary without mysteries.';
-  String get comingSoon => _sw ? 'Inaandaliwa' : 'Coming soon';
-  String countLabel(int count) {
-    if (_sw) {
-      return count == 1 ? 'Sala 1' : 'Sala $count';
-    }
-
-    return count == 1 ? '1 prayer' : '$count prayers';
-  }
-
-  String get noSearchResults => _sw
-      ? 'Hakuna sala inayolingana na utafutaji huu.'
-      : 'No prayers match this search.';
-  String get loadErrorTitle =>
-      _sw ? 'Sala hazijapakia' : 'Prayers did not load';
-  String get loadErrorMessage => _sw
-      ? 'Kuna tatizo kusoma maudhui ya ndani.'
-      : 'There was a problem reading local content.';
-  String get categoriesErrorTitle =>
-      _sw ? 'Makundi hayajapakia' : 'Categories did not load';
-  String get categoriesErrorMessage => _sw
-      ? 'Kuna tatizo kusoma makundi ya sala.'
-      : 'There was a problem reading prayer categories.';
-  String get retry => _sw ? 'Jaribu tena' : 'Retry';
 }
