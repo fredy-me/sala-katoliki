@@ -151,6 +151,20 @@ void main() {
     expect(result.stderr, contains('must have at least one day'));
   });
 
+  test('declared day count is required and must be an integer', () async {
+    final novena = read(novenaPath);
+    novena.remove('day_count');
+    write(novenaPath, novena);
+    var result = await run(validator);
+    expect(result.exitCode, isNot(0));
+    expect(result.stderr, contains('day_count'));
+    novena['day_count'] = '12';
+    write(novenaPath, novena);
+    result = await run(validator);
+    expect(result.exitCode, isNot(0));
+    expect(result.stderr, contains('day_count'));
+  });
+
   test('different language day counts fail validation', () async {
     final novena = read(novenaPath);
     (novena['days'] as List).removeLast();
