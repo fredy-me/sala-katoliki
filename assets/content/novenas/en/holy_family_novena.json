@@ -1,6 +1,7 @@
 {
   "id": "holy_family_novena",
   "style": "all_saints",
+  "day_count": 9,
   "language": "en",
   "title": "Holy Family Novena",
   "description": "A nine-day novena asking the Holy Family to intercede for families.",
