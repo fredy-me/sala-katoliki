@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,18 +19,18 @@ class MysterySelectionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _MysterySelectionStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final mysteriesState = ref.watch(rosaryMysteriesProvider);
     final suggested = ref.watch(suggestedRosaryMysteryProvider).asData?.value;
 
     return Scaffold(
       body: SafeArea(
         child: mysteriesState.when(
-          loading: () => AppLoading(label: strings.loading),
+          loading: () => AppLoading(label: strings.mysterySelectionLoading),
           error: (error, stackTrace) => AppErrorState(
-            title: strings.errorTitle,
-            message: strings.errorMessage,
-            actionLabel: strings.back,
+            title: strings.mysterySelectionErrorTitle,
+            message: strings.mysterySelectionErrorMessage,
+            actionLabel: strings.mysterySelectionBack,
             onAction: () => context.popOrGo('/rosary'),
           ),
           data: (mysteries) => ListView(
@@ -43,14 +44,14 @@ class MysterySelectionScreen extends ConsumerWidget {
               Row(
                 children: [
                   IconButton(
-                    tooltip: strings.back,
+                    tooltip: strings.mysterySelectionBack,
                     onPressed: () => context.popOrGo('/rosary'),
                     icon: const Icon(Icons.arrow_back),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
-                      strings.title,
+                      strings.mysterySelectionTitle,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
@@ -95,7 +96,7 @@ class _MysteryOption extends StatelessWidget {
 
   final RosaryMysteryModel mystery;
   final bool isSuggested;
-  final _MysterySelectionStrings strings;
+  final AppStrings strings;
   final VoidCallback onTap;
 
   @override
@@ -117,7 +118,9 @@ class _MysteryOption extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  isSuggested ? strings.suggested : mystery.description,
+                  isSuggested
+                      ? strings.mysterySelectionSuggested
+                      : mystery.description,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -127,22 +130,4 @@ class _MysteryOption extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MysterySelectionStrings {
-  const _MysterySelectionStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Chagua Mafumbo' : 'Choose Mysteries';
-  String get loading => _sw ? 'Inapakia mafumbo...' : 'Loading mysteries...';
-  String get suggested => _sw ? 'Limependekezwa leo' : 'Suggested today';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get errorTitle =>
-      _sw ? 'Mafumbo hayajapakia' : 'Mysteries did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma mafumbo ya rozari.'
-      : 'There was a problem reading Rosary mysteries.';
 }
