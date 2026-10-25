@@ -17,6 +17,7 @@ class PrayerModel extends PrayerEntity {
     super.isOfflineAvailable,
     super.isFavorite,
     super.showTitle,
+    super.style,
   });
 
   factory PrayerModel.fromJson(
@@ -25,6 +26,7 @@ class PrayerModel extends PrayerEntity {
   }) {
     return PrayerModel(
       id: json['id'] as String,
+      style: json['style'] as String? ?? 'standard',
       type: json['type'] as String,
       categoryId: json['category'] as String,
       language: json['language'] as String,
