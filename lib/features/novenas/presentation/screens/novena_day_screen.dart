@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
   @override
   Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _NovenaDayStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final novenaState = ref.watch(novenaByIdProvider(widget.novenaId));
     final progress = ref.watch(novenaProgressProvider).asData?.value;
     final favoriteNovenaIds =
@@ -61,11 +62,11 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
       child: Scaffold(
         body: SafeArea(
           child: novenaState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.novenaDayLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.errorTitle,
-              message: strings.errorMessage,
-              actionLabel: strings.back,
+              title: strings.novenaDayErrorTitle,
+              message: strings.novenaDayErrorMessage,
+              actionLabel: strings.novenaDayBack,
               onAction: () => context.popOrGo('/novenas/${widget.novenaId}'),
             ),
             data: (novena) {
@@ -73,9 +74,9 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                   widget.day < 1 ||
                   widget.day > novena.days.length) {
                 return AppErrorState(
-                  title: strings.missingTitle,
-                  message: strings.missingMessage,
-                  actionLabel: strings.back,
+                  title: strings.novenaDayMissingTitle,
+                  message: strings.novenaDayMissingMessage,
+                  actionLabel: strings.novenaDayBack,
                   onAction: () =>
                       context.popOrGo('/novenas/${widget.novenaId}'),
                 );
@@ -121,7 +122,10 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                       ),
                       children: [
                         Text(
-                          strings.dayProgress(widget.day, novena.days.length),
+                          strings.novenaDayDayProgress(
+                            widget.day,
+                            novena.days.length,
+                          ),
                           style: Theme.of(
                             context,
                           ).textTheme.labelMedium?.copyWith(letterSpacing: 1.6),
@@ -202,7 +206,7 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
 
   Future<void> _toggleLanguage(
     String activeLanguageCode,
-    _NovenaDayStrings strings,
+    AppStrings strings,
   ) async {
     final nextLanguageCode = activeLanguageCode == 'sw' ? 'en' : 'sw';
     await ref
@@ -214,7 +218,9 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(strings.languageChanged(nextLanguageCode))),
+      SnackBar(
+        content: Text(strings.novenaDayLanguageChanged(nextLanguageCode)),
+      ),
     );
   }
 
@@ -222,11 +228,11 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
     required NovenaModel novena,
     required String dayTitle,
     required String dayBody,
-    required _NovenaDayStrings strings,
+    required AppStrings strings,
   }) async {
     final shareText =
-        '${novena.title}\n\n${strings.dayProgress(widget.day, novena.days.length)}: '
-        '$dayTitle\n\n$dayBody\n\n${strings.source}: Sala Katoliki App';
+        '${novena.title}\n\n${strings.novenaDayDayProgress(widget.day, novena.days.length)}: '
+        '$dayTitle\n\n$dayBody\n\n${strings.novenaDaySource}: Sala Katoliki App';
 
     try {
       await SharePlus.instance.share(
@@ -239,7 +245,7 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(strings.shareFailed)));
+      ).showSnackBar(SnackBar(content: Text(strings.novenaDayShareFailed)));
     }
   }
 
@@ -272,7 +278,7 @@ class _ActionBar extends StatelessWidget {
     required this.onToggleFavorite,
   });
 
-  final _NovenaDayStrings strings;
+  final AppStrings strings;
   final bool isFavorite;
   final VoidCallback onBack;
   final VoidCallback onToggleLanguage;
@@ -286,23 +292,25 @@ class _ActionBar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: strings.back,
+            tooltip: strings.novenaDayBack,
             onPressed: onBack,
             icon: const Icon(Icons.arrow_back),
           ),
           const Spacer(),
           IconButton(
-            tooltip: strings.changeLanguage,
+            tooltip: strings.novenaDayChangeLanguage,
             onPressed: onToggleLanguage,
             icon: const Icon(Icons.translate_outlined),
           ),
           IconButton(
-            tooltip: strings.share,
+            tooltip: strings.novenaDayShare,
             onPressed: onShare,
             icon: const Icon(Icons.share_outlined),
           ),
           IconButton(
-            tooltip: isFavorite ? strings.removeFavorite : strings.saveFavorite,
+            tooltip: isFavorite
+                ? strings.novenaDayRemoveFavorite
+                : strings.novenaDaySaveFavorite,
             onPressed: onToggleFavorite,
             icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
           ),
@@ -365,7 +373,7 @@ class _CompleteBar extends StatelessWidget {
 
   final int day;
   final bool completed;
-  final _NovenaDayStrings strings;
+  final AppStrings strings;
   final VoidCallback? onComplete;
 
   @override
@@ -391,7 +399,9 @@ class _CompleteBar extends StatelessWidget {
                   size: 18,
                 ),
                 label: Text(
-                  completed ? strings.completed : strings.completeDay(day),
+                  completed
+                      ? strings.novenaDayCompleted
+                      : strings.novenaDayCompleteDay(day),
                 ),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(0, 44),
@@ -406,50 +416,5 @@ class _CompleteBar extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _NovenaDayStrings {
-  const _NovenaDayStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia siku...' : 'Loading day...';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String completeDay(int day) =>
-      _sw ? 'Nimemaliza Siku $day' : 'Complete Day $day';
-  String get completed => _sw ? 'Imekamilika' : 'Completed';
-  String dayLabel(int day) => _sw ? 'Siku ya $day' : 'Day $day';
-  String dayProgress(int day, int totalDays) =>
-      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
-  String get changeLanguage => _sw ? 'Badili lugha' : 'Change language';
-  String get share => _sw ? 'Shiriki' : 'Share';
-  String get removeFavorite => _sw ? 'Ondoa kipendwa' : 'Remove favorite';
-  String get saveFavorite => _sw ? 'Hifadhi' : 'Save';
-  String get source => _sw ? 'Chanzo' : 'Source';
-  String get shareFailed => _sw
-      ? 'Imeshindikana kushiriki novena hii.'
-      : 'Could not share this novena.';
-  String get errorTitle => _sw ? 'Siku haijapakia' : 'Day did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma siku hii ya novena.'
-      : 'There was a problem reading this novena day.';
-  String get missingTitle => _sw ? 'Siku haikupatikana' : 'Day not found';
-  String get missingMessage => _sw
-      ? 'Siku hii haipo kwenye novena hii.'
-      : 'This day is not available in this novena.';
-
-  String languageChanged(String nextLanguageCode) {
-    if (nextLanguageCode == 'sw') {
-      return _sw
-          ? 'Lugha imebadilishwa kwenda Kiswahili.'
-          : 'Language changed to Kiswahili.';
-    }
-
-    return _sw
-        ? 'Lugha imebadilishwa kwenda Kiingereza.'
-        : 'Language changed to English.';
   }
 }
