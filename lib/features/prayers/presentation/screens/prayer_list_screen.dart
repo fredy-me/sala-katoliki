@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -42,6 +43,7 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
   @override
   Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
+    final strings = AppStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final categoriesState = ref.watch(categoriesProvider);
     final favoriteIds =
@@ -52,13 +54,9 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
         child: prayersState.when(
           loading: () => const AppLoading(),
           error: (error, stackTrace) => AppErrorState(
-            title: languageCode == 'sw'
-                ? 'Sala hazijapakia'
-                : 'Prayers did not load',
-            message: languageCode == 'sw'
-                ? 'Kuna tatizo kusoma sala za kundi hili.'
-                : 'There was a problem reading this category.',
-            actionLabel: languageCode == 'sw' ? 'Rudi' : 'Back',
+            title: strings.prayerListErrorTitle,
+            message: strings.prayerListErrorMessage,
+            actionLabel: strings.prayerListBack,
             onAction: () => context.popOrGo('/prayers'),
           ),
           data: (prayers) {
@@ -94,7 +92,7 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
                 Row(
                   children: [
                     IconButton(
-                      tooltip: languageCode == 'sw' ? 'Rudi' : 'Back',
+                      tooltip: strings.prayerListBack,
                       onPressed: () => context.popOrGo('/prayers'),
                       icon: const Icon(Icons.arrow_back),
                     ),
@@ -110,24 +108,18 @@ class _PrayerListScreenState extends ConsumerState<PrayerListScreen> {
                 const SizedBox(height: AppSpacing.lg),
                 AppSearchBar(
                   controller: _searchController,
-                  hintText: languageCode == 'sw'
-                      ? 'Tafuta ndani ya $categoryTitle...'
-                      : 'Search in $categoryTitle...',
+                  hintText: strings.prayerListSearchHint(categoryTitle),
                   onChanged: (value) => setState(() => _query = value),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 if (categoryPrayers.isEmpty)
                   AppEmptyState(
-                    message: languageCode == 'sw'
-                        ? 'Hakuna sala katika kundi hili bado.'
-                        : 'No prayers are available in this category yet.',
+                    message: strings.prayerListEmptyMessage,
                     icon: Icons.menu_book_outlined,
                   )
                 else if (visiblePrayers.isEmpty)
                   AppEmptyState(
-                    message: languageCode == 'sw'
-                        ? 'Hakuna sala inayolingana na utafutaji huu.'
-                        : 'No prayers match this search.',
+                    message: strings.prayerListNoSearchResults,
                     icon: Icons.search_off_outlined,
                   )
                 else
