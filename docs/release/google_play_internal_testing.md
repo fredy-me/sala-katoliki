@@ -37,19 +37,20 @@ The MVP:
 
 Notification permission is requested only when the user enables reminders.
 
-## Internal Testing Release Notes
+## Internal Testing Release Notes — 1.1.0 (build 13)
 
-Initial Android MVP internal testing build.
+Mid-size update to the existing Android MVP:
 
-Included:
+- Prayer and novena content now supports declared presentation styles and a
+  variable number of novena days, including the 12-day St. Rita devotion.
+- Switching between bottom-navigation tabs keeps each visited tab's scroll
+  position.
+- Content loading, startup work, and reading rendering have been streamlined.
+- English and Kiswahili prayer, Rosary, favorites, search, and local reminders
+  remain available offline.
 
-- English and Kiswahili language selection.
-- Offline prayer library loaded from bundled JSON.
-- Prayer categories, details, search, and favorites.
-- Interactive Rosary flow.
-- Divine Mercy novena progress.
-- Local daily reminder settings.
-- About and content source screens.
+Device visual and performance checks are still required before publishing these
+notes with a release.
 
 Known limitations:
 
