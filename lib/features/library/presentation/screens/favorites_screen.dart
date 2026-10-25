@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,7 +38,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _FavoritesStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final novenasState = ref.watch(novenasProvider);
     final favoriteIds =
@@ -57,11 +58,11 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
       child: Scaffold(
         body: SafeArea(
           child: prayersState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.favoritesLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.loadErrorTitle,
-              message: strings.loadErrorMessage,
-              actionLabel: strings.back,
+              title: strings.favoritesLoadErrorTitle,
+              message: strings.favoritesLoadErrorMessage,
+              actionLabel: strings.favoritesBack,
               onAction: () => context.popOrGo('/today'),
             ),
             data: (prayers) {
@@ -99,14 +100,14 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                   Row(
                     children: [
                       IconButton(
-                        tooltip: strings.back,
+                        tooltip: strings.favoritesBack,
                         onPressed: () => context.popOrGo('/today'),
                         icon: const Icon(Icons.arrow_back),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
-                          strings.title,
+                          strings.favoritesTitle,
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
@@ -116,7 +117,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 56),
                     child: Text(
-                      strings.subtitle(
+                      strings.favoritesSubtitle(
                         favorites.length + favoriteNovenas.length,
                       ),
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -125,19 +126,19 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   AppSearchBar(
                     controller: _searchController,
-                    hintText: strings.searchHint,
+                    hintText: strings.favoritesSearchHint,
                     onChanged: (value) => setState(() => _query = value),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   if (favorites.isEmpty && favoriteNovenas.isEmpty)
                     AppEmptyState(
-                      title: strings.emptyTitle,
-                      message: strings.emptyMessage,
+                      title: strings.favoritesEmptyTitle,
+                      message: strings.favoritesEmptyMessage,
                       icon: Icons.favorite_border,
                     )
                   else if (visible.isEmpty && visibleNovenas.isEmpty)
                     AppEmptyState(
-                      message: strings.noSearchResults,
+                      message: strings.favoritesNoSearchResults,
                       icon: Icons.search_off_outlined,
                     )
                   else ...[
@@ -242,31 +243,4 @@ class _FavoriteNovenaCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _FavoritesStrings {
-  const _FavoritesStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Vipendwa' : 'Favorites';
-  String subtitle(int count) =>
-      _sw ? '$count vipendwa vilivyohifadhiwa' : '$count saved favorites';
-  String get loading => _sw ? 'Inapakia vipendwa...' : 'Loading favorites...';
-  String get searchHint => _sw ? 'Tafuta vipendwa...' : 'Search favorites...';
-  String get emptyTitle => _sw ? 'Hakuna vipendwa bado' : 'No favorites yet';
-  String get emptyMessage => _sw
-      ? 'Gusa alama ya moyo kwenye sala ili kuihifadhi hapa.'
-      : 'Tap the heart on any prayer to save it here.';
-  String get noSearchResults => _sw
-      ? 'Hakuna kipendwa kinacholingana na utafutaji huu.'
-      : 'No favorite prayer matches this search.';
-  String get loadErrorTitle =>
-      _sw ? 'Vipendwa havijapakia' : 'Favorites did not load';
-  String get loadErrorMessage => _sw
-      ? 'Kuna tatizo kusoma sala zilizohifadhiwa.'
-      : 'There was a problem reading saved prayers.';
-  String get back => _sw ? 'Rudi' : 'Back';
 }
