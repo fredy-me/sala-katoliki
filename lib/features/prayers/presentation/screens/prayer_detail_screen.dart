@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -64,26 +65,26 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
   Widget build(BuildContext context) {
     final prayerState = ref.watch(prayerByIdProvider(widget.prayerId));
     final activeLanguageCode = ref.watch(activeLanguageProvider);
-    final strings = _PrayerDetailStrings(activeLanguageCode);
+    final strings = AppStrings(activeLanguageCode);
     final favorites =
         ref.watch(favoritePrayerIdsProvider).asData?.value ?? <String>{};
 
     return Scaffold(
       body: SafeArea(
         child: prayerState.when(
-          loading: () => AppLoading(label: strings.loading),
+          loading: () => AppLoading(label: strings.prayerDetailLoading),
           error: (error, stackTrace) => _DetailMessage(
-            title: strings.notFoundTitle,
-            message: strings.loadErrorMessage,
-            actionLabel: strings.back,
+            title: strings.prayerDetailNotFoundTitle,
+            message: strings.prayerDetailLoadErrorMessage,
+            actionLabel: strings.prayerDetailBack,
             onBack: () => context.popOrGo('/prayers'),
           ),
           data: (prayer) {
             if (prayer == null) {
               return _DetailMessage(
-                title: strings.notFoundTitle,
-                message: strings.missingMessage,
-                actionLabel: strings.back,
+                title: strings.prayerDetailNotFoundTitle,
+                message: strings.prayerDetailMissingMessage,
+                actionLabel: strings.prayerDetailBack,
                 onBack: () => context.popOrGo('/prayers'),
               );
             }
@@ -102,26 +103,26 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                   child: Row(
                     children: [
                       IconButton(
-                        tooltip: strings.back,
+                        tooltip: strings.prayerDetailBack,
                         onPressed: () => context.popOrGo('/prayers'),
                         icon: const Icon(Icons.arrow_back),
                       ),
                       const Spacer(),
                       IconButton(
-                        tooltip: strings.changeLanguage,
+                        tooltip: strings.prayerDetailChangeLanguage,
                         onPressed: () =>
                             _toggleLanguage(activeLanguageCode, strings),
                         icon: const Icon(Icons.translate_outlined),
                       ),
                       IconButton(
-                        tooltip: strings.share,
+                        tooltip: strings.prayerDetailShare,
                         onPressed: () => _sharePrayer(prayer, strings),
                         icon: const Icon(Icons.share_outlined),
                       ),
                       IconButton(
                         tooltip: isFavorite
-                            ? strings.removeFavorite
-                            : strings.saveFavorite,
+                            ? strings.prayerDetailRemoveFavorite
+                            : strings.prayerDetailSaveFavorite,
                         onPressed: () => _toggleFavorite(ref, prayer.id),
                         icon: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -206,7 +207,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
 
   Future<void> _toggleLanguage(
     String activeLanguageCode,
-    _PrayerDetailStrings strings,
+    AppStrings strings,
   ) async {
     final nextLanguageCode = activeLanguageCode == 'sw' ? 'en' : 'sw';
     await ref
@@ -218,19 +219,18 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(strings.languageChanged(nextLanguageCode))),
+      SnackBar(
+        content: Text(strings.prayerDetailLanguageChanged(nextLanguageCode)),
+      ),
     );
   }
 
-  Future<void> _sharePrayer(
-    PrayerEntity prayer,
-    _PrayerDetailStrings strings,
-  ) async {
+  Future<void> _sharePrayer(PrayerEntity prayer, AppStrings strings) async {
     final source = prayer.source?.trim().isNotEmpty == true
         ? prayer.source!
-        : strings.defaultSource;
+        : strings.prayerDetailDefaultSource;
     final shareText =
-        '${prayer.title()}\n\n${prayer.text()}\n\n${strings.source}: $source';
+        '${prayer.title()}\n\n${prayer.text()}\n\n${strings.prayerDetailSource}: $source';
 
     try {
       await SharePlus.instance.share(
@@ -243,7 +243,7 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(strings.shareFailed)));
+      ).showSnackBar(SnackBar(content: Text(strings.prayerDetailShareFailed)));
     }
   }
 
@@ -330,44 +330,5 @@ class _DetailMessage extends StatelessWidget {
       actionLabel: actionLabel,
       onAction: onBack,
     );
-  }
-}
-
-class _PrayerDetailStrings {
-  const _PrayerDetailStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia sala...' : 'Loading prayer...';
-  String get notFoundTitle => _sw ? 'Sala haikupatikana' : 'Prayer not found';
-  String get loadErrorMessage => _sw
-      ? 'Jaribu kurudi kwenye orodha ya sala.'
-      : 'Try returning to the prayer list.';
-  String get missingMessage =>
-      _sw ? 'Jaribu kuchagua sala nyingine.' : 'Try choosing another prayer.';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get changeLanguage => _sw ? 'Badili lugha' : 'Change language';
-  String get share => _sw ? 'Shiriki' : 'Share';
-  String get removeFavorite => _sw ? 'Ondoa kipendwa' : 'Remove favorite';
-  String get saveFavorite => _sw ? 'Hifadhi' : 'Save';
-  String get source => _sw ? 'Chanzo' : 'Source';
-  String get defaultSource =>
-      _sw ? 'Sala ya kimapokeo ya Kikatoliki' : 'Traditional Catholic Prayer';
-  String get shareFailed => _sw
-      ? 'Imeshindikana kushiriki sala hii.'
-      : 'Could not share this prayer.';
-
-  String languageChanged(String nextLanguageCode) {
-    if (nextLanguageCode == 'sw') {
-      return _sw
-          ? 'Lugha imebadilishwa kwenda Kiswahili.'
-          : 'Language changed to Kiswahili.';
-    }
-
-    return _sw
-        ? 'Lugha imebadilishwa kwenda Kiingereza.'
-        : 'Language changed to English.';
   }
 }
