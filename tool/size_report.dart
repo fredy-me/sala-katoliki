@@ -1,18 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Prints the shipped-size breakdown used by app_optimization.md section 1.
+/// Prints a comparable AAB entry-size breakdown used by app_optimization.md.
 ///
-/// Reads an already-built bundle and reports what a single device actually
-/// receives, separated into the two measurement bases:
-///
-///   Basis A - the split APK as stored on the device, where native `.so` files
-///             are stored uncompressed so the loader can memory-map them.
-///   Basis B - the same payload compressed for transport.
-///
-/// Both figures are exact. The ZIP central directory records each entry's
-/// uncompressed size, its compressed size and its compression method, so the
-/// on-disk and transfer sizes are derived rather than estimated.
+/// Reads uncompressed and compressed entry sizes from an already-built bundle.
+/// Entry sizes are exact for the AAB itself. They are not split APK sizes,
+/// installed bytes, or a Play download measurement.
 ///
 /// This tool never builds anything. Point it at an existing bundle:
 ///
@@ -84,8 +77,7 @@ void _printSourceAssets() {
   }
   stdout.writeln('');
   stdout.writeln(
-    '  A removed asset shrinks Basis A by its raw size and Basis B by its '
-    'gzip size.',
+    '  Source sizes are not a direct prediction of installed or download size.',
   );
 }
 
@@ -138,12 +130,18 @@ void _printBundle(File bundle) {
 
   stdout.writeln('Shipped once for all devices - ABI independent');
   _printRow('dex', dex);
-  _printRow('assets logo.png', _pick(flutterAssets, (e) => e.path.endsWith('logo.png')));
+  _printRow(
+    'assets logo.png',
+    _pick(flutterAssets, (e) => e.path.endsWith('logo.png')),
+  );
   _printRow(
     'assets content',
     _pickAll(flutterAssets, (e) => e.path.contains('/assets/content/')),
   );
-  _printRow('assets NOTICES.Z', _pick(flutterAssets, (e) => e.path.endsWith('NOTICES.Z')));
+  _printRow(
+    'assets NOTICES.Z',
+    _pick(flutterAssets, (e) => e.path.endsWith('NOTICES.Z')),
+  );
   _printRow(
     'assets other',
     _pickAll(
@@ -158,9 +156,14 @@ void _printBundle(File bundle) {
   _printRow('manifest + config', rootConfig);
   stdout.writeln('');
 
-  stdout.writeln('Shipped per device ABI - only the matching slice is installed');
+  stdout.writeln(
+    'Shipped per device ABI - only the matching slice is installed',
+  );
   for (final abi in _abis(native)) {
-    _printRow('lib/$abi', _pickAll(native, (e) => e.path.contains('/lib/$abi/')));
+    _printRow(
+      'lib/$abi',
+      _pickAll(native, (e) => e.path.contains('/lib/$abi/')),
+    );
   }
   stdout.writeln('');
 
@@ -181,7 +184,9 @@ void _printTotals(
   List<_Entry> androidRes,
   List<_Entry> rootConfig,
 ) {
-  final abi = _abis(native).contains('arm64-v8a') ? 'arm64-v8a' : _abis(native).first;
+  final abi = _abis(native).contains('arm64-v8a')
+      ? 'arm64-v8a'
+      : _abis(native).first;
   final perAbi = _pickAll(native, (e) => e.path.contains('/lib/$abi/'));
 
   final abiIndependent = <_Entry>[
@@ -197,7 +202,10 @@ void _printTotals(
   stdout.writeln('Per device, $abi');
   _printRow('libflutter.so', [engine], note: 'engine, not ours to shrink');
   _printRow('libapp.so', [app], note: 'our Dart in AOT form');
-  _printRow('other native', perAbi.where((e) => e != engine && e != app).toList());
+  _printRow(
+    'other native',
+    perAbi.where((e) => e != engine && e != app).toList(),
+  );
   _printRow('ABI independent', abiIndependent);
   stdout.writeln('');
 
@@ -206,15 +214,15 @@ void _printTotals(
   final otherTransfer = abiIndependent.fold(0, (sum, e) => sum + e.storedSize);
   final otherRaw = abiIndependent.fold(0, (sum, e) => sum + e.size);
 
-  stdout.writeln('  Transfer size   what the user downloads, exact');
+  stdout.writeln(
+    '  Selected AAB entry compressed-size sum (not download size)',
+  );
   stdout.writeln('                 ${_mb(libTransfer + otherTransfer)}');
   stdout.writeln('                   ${_mb(libTransfer)} native libraries');
   stdout.writeln('                   ${_mb(otherTransfer)} everything else');
   stdout.writeln('');
 
-  stdout.writeln(
-    '  On-device size  estimated, not measured from the bundle',
-  );
+  stdout.writeln('  Illustrative installed-size approximation (not measured)');
   stdout.writeln(
     '                 ${_mb(libRaw + otherTransfer)}   native libraries stored',
   );
@@ -222,19 +230,27 @@ void _printTotals(
     '                 uncompressed so the loader can mmap them; everything',
   );
   stdout.writeln('                 else transferred at its compressed size.');
-  stdout.writeln('                 Confirm with an installed split APK, not the AAB.');
+  stdout.writeln(
+    '                 Confirm with an installed split APK, not the AAB.',
+  );
   stdout.writeln('');
 
   stdout.writeln('  Floor           ${_mb(libRaw)}   native libraries alone,');
-  stdout.writeln('                 fully uncompressed. This is the hard lower bound');
-  stdout.writeln('                 for any change made to Dart code or assets, since');
+  stdout.writeln(
+    '                 fully uncompressed. This is the hard lower bound',
+  );
+  stdout.writeln(
+    '                 for any change made to Dart code or assets, since',
+  );
   stdout.writeln('                 the engine version sets it.');
   stdout.writeln('');
 
   stdout.writeln(
     '  Addressable     ${_mb(otherRaw - otherTransfer)}   of compressible content,',
   );
-  stdout.writeln('                 the ABI independent part, is what shrinking assets');
+  stdout.writeln(
+    '                 the ABI independent part, is what shrinking assets',
+  );
   stdout.writeln('                 and Dart code can actually recover.');
 }
 
@@ -247,7 +263,7 @@ void _printRow(String label, List<_Entry> entries, {String? note}) {
   final suffix = note == null ? '' : '  ($note)';
   stdout.writeln(
     '  ${label.padRight(22)}${_kb(raw).padLeft(12)} uncompressed'
-    '${_kb(stored).padLeft(13)} transfer   ${entries.length} file$suffix',
+    '${_kb(stored).padLeft(13)} AAB compressed   ${entries.length} file$suffix',
   );
 }
 
