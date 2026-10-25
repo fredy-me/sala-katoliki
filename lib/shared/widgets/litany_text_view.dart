@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../utils/text_split_cache.dart';
+import '../content/reading_markup.dart';
 import 'text_style_rules.dart';
 
 /// Renders litany text line by line.
@@ -61,7 +62,10 @@ class _LitanyLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final normalized = text
+    final declared = ReadingMarkup.hasMarkers(text)
+        ? ReadingMarkup.block(text)
+        : null;
+    final normalized = (declared?.content ?? text)
         .replaceAll('"', '')
         .replaceAll('“', '')
         .replaceAll('”', '')
@@ -71,15 +75,21 @@ class _LitanyLine extends StatelessWidget {
     // 4.3: all three classifiers below need a lowercased form of the same
     // string, so derive it once instead of once per classifier.
     final plainLower = plainText.toLowerCase();
-    final isHighlighted = isMarked || _isHighlightedLine(plainLower);
-    final isLambOfGod = startsWithAny(plainText, kLambOfGodPrefixes);
+    final isHighlighted = declared != null
+        ? declared.kind == 'panel_gold'
+        : isMarked || _isHighlightedLine(plainLower);
+    final isLambOfGod = declared != null
+        ? declared.kind == 'lamb' || declared.kind == 'panel_outline'
+        : startsWithAny(plainText, kLambOfGodPrefixes);
     final baseStyle = Theme.of(context).textTheme.bodyLarge;
     final scaledStyle = baseStyle?.copyWith(
       fontSize: (baseStyle.fontSize ?? 16) * fontScale,
     );
 
     if (stRitaStyle) {
-      if (_isResponseLine(plainLower)) {
+      if (declared != null
+          ? declared.kind == 'response'
+          : _isResponseLine(plainLower)) {
         return Text(
           plainText,
           style: scaledStyle?.copyWith(
@@ -100,7 +110,9 @@ class _LitanyLine extends StatelessWidget {
         );
       }
 
-      if (_isStRitaHeading(plainLower, plainText)) {
+      if (declared != null
+          ? declared.kind == 'heading'
+          : _isStRitaHeading(plainLower, plainText)) {
         return Text(
           plainText.toUpperCase(),
           style: scaledStyle?.copyWith(
