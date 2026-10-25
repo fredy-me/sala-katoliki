@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,8 +32,8 @@ class _AppShellState extends ConsumerState<AppShell> {
     // on every navigation — so switching tabs allocated four objects and a
     // list to produce values that never changed. Caching per language keeps
     // the rendered output identical and drops the allocation.
-    final strings = _BottomNavStrings.of(languageCode);
-    final destinations = _BottomNavStrings.destinationsFor(strings);
+    final strings = AppStrings.of(languageCode);
+    final destinations = _BottomNavDestinations.forStrings(strings);
 
     return PopScope(
       canPop: false,
@@ -41,7 +42,7 @@ class _AppShellState extends ConsumerState<AppShell> {
           return;
         }
 
-        _handleBack(strings.exitPrompt);
+        _handleBack(strings.bottomNavExitPrompt);
       },
       child: Scaffold(
         body: SafeArea(
@@ -93,56 +94,34 @@ class _AppShellState extends ConsumerState<AppShell> {
   }
 }
 
-class _BottomNavStrings {
-  const _BottomNavStrings(this.languageCode);
+abstract final class _BottomNavDestinations {
+  static final Map<String, List<AppBottomNavDestination>>
+  _destinationsByLanguage = <String, List<AppBottomNavDestination>>{};
 
-  final String languageCode;
-
-  // Only two languages are supported, so a two-entry map is the whole cache.
-  static final Map<String, _BottomNavStrings> _byLanguage = {
-    'en': const _BottomNavStrings('en'),
-    'sw': const _BottomNavStrings('sw'),
-  };
-
-  static final Map<String, List<AppBottomNavDestination>> _destinationsByLanguage =
-      <String, List<AppBottomNavDestination>>{};
-
-  static _BottomNavStrings of(String languageCode) {
-    return _byLanguage[languageCode] ?? _byLanguage['en']!;
-  }
-
-  static List<AppBottomNavDestination> destinationsFor(
-    _BottomNavStrings strings,
-  ) {
+  static List<AppBottomNavDestination> forStrings(AppStrings strings) {
     return _destinationsByLanguage.putIfAbsent(strings.languageCode, () {
       return <AppBottomNavDestination>[
-        AppBottomNavDestination('/today', strings.today, Icons.home_outlined),
+        AppBottomNavDestination(
+          '/today',
+          strings.bottomNavToday,
+          Icons.home_outlined,
+        ),
         AppBottomNavDestination(
           '/prayers',
-          strings.pray,
+          strings.bottomNavPray,
           Icons.menu_book_outlined,
         ),
         AppBottomNavDestination(
           '/novenas',
-          strings.novenas,
+          strings.bottomNavNovenas,
           Icons.calendar_month_outlined,
         ),
         AppBottomNavDestination(
           '/settings',
-          strings.settings,
+          strings.bottomNavSettings,
           Icons.settings_outlined,
         ),
       ];
     });
   }
-
-  bool get _sw => languageCode == 'sw';
-
-  String get today => _sw ? 'Leo' : 'Today';
-  String get pray => _sw ? 'Sala' : 'Pray';
-  String get novenas => _sw ? 'Novenas' : 'Novenas';
-  String get settings => _sw ? 'Mipangilio' : 'Settings';
-  String get exitPrompt => _sw
-      ? 'Bonyeza tena kufunga Sala Katoliki.'
-      : 'Press back again to close Sala Katoliki.';
 }
