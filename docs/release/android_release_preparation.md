@@ -8,7 +8,14 @@ Phase 13 prepares the Android-first Sala Katoliki MVP for Google Play internal t
 - Android application ID: `com.busaradigital.salakatoliki`
 - Android namespace: `com.busaradigital.salakatoliki`
 - Version source: `pubspec.yaml`
-- Current version: `1.0.12+12`
+- Current version: `1.1.0+13` (`versionName` 1.1.0, `versionCode` 13)
+
+Version count: `1.0.12+12` → `1.1.0+13`. `1.1.0` is the minor update
+(major 1, minor 1, patch 0); `13` is the next monotonically increasing build
+number. Keep historical release records at their original versions. Android
+reads these values through Flutter from `pubspec.yaml`; iOS Runner uses
+`FLUTTER_BUILD_NAME` and `FLUTTER_BUILD_NUMBER` from the same source. The iOS
+Flutter framework and RunnerTests bundle have their own internal versions.
 
 ## SDK Requirements
 
