@@ -33,12 +33,12 @@ void main() {
       expect(height, 312);
     });
 
-    test('is small enough to keep in the binary without quantization loss',
-        () {
+    test('is small enough to keep in the binary without quantization loss', () {
       expect(
         bytes.length,
         lessThan(64 * 1024),
-        reason: 'logo.png regressed past the size budget; the original asset '
+        reason:
+            'logo.png regressed past the size budget; the original asset '
             'was over 1 MB',
       );
     });
@@ -103,24 +103,31 @@ void main() {
     });
 
     test('declares a resolvable offset map', () {
-      expect(mapMatch, isNotNull, reason: 'offset map should still be declared');
+      expect(
+        mapMatch,
+        isNotNull,
+        reason: 'offset map should still be declared',
+      );
     });
 
     test('the obsolete abbreviation map is gone', () {
       expect(
         source,
         isNot(contains('_timeZoneNameByAbbreviation')),
-        reason: 'it mapped UTC+1 to Europe/London and UTC+2 to Europe/Paris, '
+        reason:
+            'it mapped UTC+1 to Europe/London and UTC+2 to Europe/Paris, '
             'which are wrong for half of every year, and had no UTC+4 entry, '
             'so UAE devices fell back to UTC',
       );
     });
 
-    test('validates a candidate against the device offset before accepting it',
-        () {
-      expect(source, contains('_matchesCurrentOffset'));
-      expect(source, contains('deviceOffset'));
-    });
+    test(
+      'validates a candidate against the device offset before accepting it',
+      () {
+        expect(source, contains('_matchesCurrentOffset'));
+        expect(source, contains('deviceOffset'));
+      },
+    );
 
     test('every mapped zone exists and has no daylight saving', () {
       final body = mapMatch!.group(1)!;
@@ -139,8 +146,10 @@ void main() {
         try {
           location = tz.getLocation(name);
         } catch (_) {
-          fail('$name (for UTC${expected.inMinutes >= 0 ? '+' : ''}'
-              '${expected.inHours}h) is not a known time-zone ID');
+          fail(
+            '$name (for UTC${expected.inMinutes >= 0 ? '+' : ''}'
+            '${expected.inHours}h) is not a known time-zone ID',
+          );
         }
 
         final offsets = <Duration>{};
@@ -153,7 +162,8 @@ void main() {
         expect(
           offsets.length,
           1,
-          reason: '$name observes daylight saving, so a device mapped to it '
+          reason:
+              '$name observes daylight saving, so a device mapped to it '
               'by a single observed offset would be wrong for half the year',
         );
         expect(
@@ -179,7 +189,8 @@ void main() {
       expect(
         mapped[240],
         'Asia/Dubai',
-        reason: 'UAE is UTC+4 and was previously unmapped, so reminders fired '
+        reason:
+            'UAE is UTC+4 and was previously unmapped, so reminders fired '
             'four hours late',
       );
       expect(mapped[60], isNotNull, reason: 'western DRC is UTC+1');
@@ -188,8 +199,9 @@ void main() {
   });
 
   group('2.6 recent-prayer recording', () {
-    final screen =
-        _read('lib/features/prayers/presentation/screens/prayer_detail_screen.dart');
+    final screen = _read(
+      'lib/features/prayers/presentation/screens/prayer_detail_screen.dart',
+    );
     final provider = _read(
       'lib/features/prayers/presentation/providers/prayer_providers.dart',
     );
@@ -206,7 +218,8 @@ void main() {
       expect(
         registrations,
         1,
-        reason: 'the post-frame callback belongs to the one-time helper and '
+        reason:
+            'the post-frame callback belongs to the one-time helper and '
             'must not be registered from anywhere else in the screen',
       );
 
@@ -219,7 +232,8 @@ void main() {
       expect(
         callbackIndex,
         lessThan(buildIndex),
-        reason: 'build() must not register the post-frame callback itself; it '
+        reason:
+            'build() must not register the post-frame callback itself; it '
             'delegates to _recordRecentOnce instead',
       );
       expect(
@@ -274,20 +288,12 @@ void main() {
   });
 
   group('2.8 st rita litany set', () {
-    final screen =
-        _read('lib/features/prayers/presentation/screens/prayer_detail_screen.dart');
-    final rules =
-        _read('lib/shared/widgets/text_style_rules.dart');
+    final screen = _read(
+      'lib/features/prayers/presentation/screens/prayer_detail_screen.dart',
+    );
 
-    test('is a static const set rather than a per-build literal', () {
-      // 4.8 moved the set out of the screen so the rule is content-editable
-      // in one place. The requirement is unchanged: it must be a top-level
-      // const, not a literal rebuilt on every build().
-      expect(
-        rules,
-        contains('const Set<String> kStRitaLitanies'),
-        reason: 'the set should live in text_style_rules.dart as a const',
-      );
+    test('uses the content style without building an id set', () {
+      expect(screen, contains('prayer.usesStRitaStyle'));
       expect(
         screen,
         isNot(contains('Set<String> {')),
