@@ -115,7 +115,7 @@ Sala Katoliki — web URL scheme for App Indexing.
 | `https://busaradigital.com/salakatoliki/prayers/divine-mercy/kwa-ajili-ya-mateso-makali` | `divine_mercy_small_bead_prayer` |
 | `https://busaradigital.com/salakatoliki/prayers/divine-mercy/mungu-mtakatifu-mwenye-enzi-mwenye-milele` | `divine_mercy_closing_prayer` |
 
-> **Note A — EN/SW ID mismatch:** `divine_mercy_eternal_father` exists only in EN; Swahili uses the equivalent ID `divine_mercy_prayer` ("Baba wa Milele"). The web must serve **one canonical page** — `baba-wa-milele` — that deep-links into that screen. Resolving this is a pre-release item.
+> **Note A — declared EN/SW alias:** `divine_mercy_eternal_father` (EN) and `divine_mercy_prayer` (SW, "Baba wa Milele") remain stable persisted IDs. `assets/content/metadata/id_aliases.json` declares their equivalence; content validation and app deep-link resolution consume that same declaration. The app selects the active-language ID. The web must serve **one canonical page**, `baba-wa-milele`; verification of the published web canonical URL remains a release check.
 
 ---
 
@@ -245,6 +245,27 @@ These routes exist in the app but should **not** be indexed (no useful crawlable
 2. Every web page must carry `<link rel="alternate" android-app="com.busaradigital.salakatoliki/reference">` pointing at the same web URL, so Google maps page ↔ screen.
 3. Language is resolved by the app (device/selected language); web pages serve EN + SW content with `hreflang` alternates on a **single** URL — no `/en/` or `/sw/` path prefixes.
 4. `st_rita_novena` exception: day range `1..12`, all other novenas `1..9`.
-5. **Known to fix (Note A):** `divine_mercy_eternal_father` / `divine_mercy_prayer` EN–SW ID mismatch — consolidate to one canonical web URL `baba-wa-milele`.
+5. **Alias contract (Note A):** app mapping and parity validation share `id_aliases.json`; retain the existing IDs and verify the published web URL is canonicalized to `baba-wa-milele`.
 
 *Sala Katoliki · Busara Digital — generated from real app content, 2026-09-06.*
+
+## Content authoring and app routing (Part 6)
+
+Add one JSON file per language for a new prayer or novena, then run
+`dart run tool/generate_content_manifest.dart`. Validate with
+`dart run tools/validate_content.dart`; use the generator's `--check` in review.
+New files require no Dart edits. The model/repository path and deep-link indexes
+are populated from the generated manifest and loaded content.
+
+Use matching EN/SW IDs unless an intentional prayer alias is declared in
+`assets/content/metadata/id_aliases.json`. Existing IDs must remain stable for
+favorites, recents, and saved devotional progress. A novena's required
+`day_count` must match its ordered, non-empty `days` array in both languages;
+the array remains the runtime authority.
+
+Every prayer/novena declares a `style` and every body declares explicit reading
+markers. Follow [the content guide](docs/CONTENT_GUIDE.md) for supported roles.
+App routes remain `/prayers/{id}`, `/novenas/{id}`, and
+`/novenas/{id}/day/{day}`. Validated IDs and localized title slugs feed the
+existing deep-link resolver; web publication and canonical metadata remain
+separate release work. Update this URL inventory when publishing new content.
