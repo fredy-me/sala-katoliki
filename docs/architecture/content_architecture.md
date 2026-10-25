@@ -17,7 +17,7 @@ assets/content/prayers/en/common_prayers.json
 assets/content/prayers/sw/common_prayers.json
 ```
 
-The screen should load a prayer entity and display its `title`, `body`, metadata, and favorite state.
+The screen loads a prayer entity and displays its `title`, `readingText`, metadata, and favorite state. Reading widgets interpret the explicit markers in `readingText`; `body`/`text()` remove those markers for search, sharing, and widget snippets. Formatting roles and profiles are documented in [the content guide](../CONTENT_GUIDE.md#explicit-reading-markers-part-67).
 
 ## Content Groups
 
