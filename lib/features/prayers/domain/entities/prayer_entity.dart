@@ -1,3 +1,5 @@
+import '../../../../shared/content/reading_markup.dart';
+
 class PrayerEntity {
   const PrayerEntity({
     required this.id,
@@ -5,7 +7,7 @@ class PrayerEntity {
     required this.categoryId,
     required this.language,
     required this.localizedTitle,
-    required this.body,
+    required String body,
     required this.categoryTitles,
     this.description,
     this.tags = const [],
@@ -15,14 +17,17 @@ class PrayerEntity {
     this.isOfflineAvailable = true,
     this.isFavorite = false,
     this.showTitle = true,
-  });
+    this.style = 'standard',
+  }) : _body = body;
 
   final String id;
   final String type;
   final String categoryId;
   final String language;
   final String localizedTitle;
-  final String body;
+  final String _body;
+  String get body => ReadingMarkup.plainText(_body);
+  String get readingText => _body;
   final Map<String, String> categoryTitles;
   final String? description;
   final List<String> tags;
@@ -32,6 +37,10 @@ class PrayerEntity {
   final bool isOfflineAvailable;
   final bool isFavorite;
   final bool showTitle;
+  final String style;
+
+  bool get usesLitanyStyle => style == 'litany' || style == 'litany_st_rita';
+  bool get usesStRitaStyle => style == 'litany_st_rita';
 
   /// 4.7: the lowercased search haystack, computed once per language.
   ///
@@ -48,8 +57,7 @@ class PrayerEntity {
       Expando<Map<String, _PrayerSearchIndex>>('prayerSearchIndexes');
 
   _PrayerSearchIndex _searchIndexFor(String languageCode) {
-    final cache =
-        _searchIndexes[this] ??= <String, _PrayerSearchIndex>{};
+    final cache = _searchIndexes[this] ??= <String, _PrayerSearchIndex>{};
     return cache.putIfAbsent(languageCode, () {
       return _PrayerSearchIndex(
         title: title(languageCode).toLowerCase(),
