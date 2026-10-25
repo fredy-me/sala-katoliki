@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +22,7 @@ class NovenaDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _NovenaDetailStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final sessionState = ref.watch(novenaSessionProvider(novenaId));
 
     return PopScope(
@@ -35,19 +36,19 @@ class NovenaDetailScreen extends ConsumerWidget {
       child: Scaffold(
         body: SafeArea(
           child: sessionState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.novenaDetailLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.errorTitle,
-              message: strings.errorMessage,
-              actionLabel: strings.back,
+              title: strings.novenaDetailErrorTitle,
+              message: strings.novenaDetailErrorMessage,
+              actionLabel: strings.novenaDetailBack,
               onAction: () => context.popOrGo('/novenas'),
             ),
             data: (session) {
               if (session == null) {
                 return AppErrorState(
-                  title: strings.missingTitle,
-                  message: strings.missingMessage,
-                  actionLabel: strings.back,
+                  title: strings.novenaDetailMissingTitle,
+                  message: strings.novenaDetailMissingMessage,
+                  actionLabel: strings.novenaDetailBack,
                   onAction: () => context.popOrGo('/novenas'),
                 );
               }
@@ -62,7 +63,7 @@ class NovenaDetailScreen extends ConsumerWidget {
                 children: [
                   _Header(
                     title: session.novena.title,
-                    backLabel: strings.back,
+                    backLabel: strings.novenaDetailBack,
                     onBack: () => context.popOrGo('/novenas'),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -168,7 +169,7 @@ class _ClosingPrayerCard extends StatelessWidget {
 
   final String title;
   final String description;
-  final _NovenaDetailStrings strings;
+  final AppStrings strings;
   final VoidCallback onTap;
 
   @override
@@ -197,7 +198,7 @@ class _ClosingPrayerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  strings.afterNovena,
+                  strings.novenaDetailAfterNovena,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.gold,
                     letterSpacing: 1.2,
@@ -264,7 +265,7 @@ class _ProgressPanel extends StatelessWidget {
   });
 
   final NovenaSession session;
-  final _NovenaDetailStrings strings;
+  final AppStrings strings;
   final VoidCallback onStart;
   final VoidCallback onContinue;
   final VoidCallback onRestart;
@@ -287,14 +288,19 @@ class _ProgressPanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      started ? strings.progress : strings.notStarted,
+                      started
+                          ? strings.novenaDetailProgress
+                          : strings.novenaDetailNotStarted,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       started
-                          ? strings.dayProgress(nextDay, session.totalDays)
-                          : strings.startPrompt,
+                          ? strings.novenaDetailDayProgress(
+                              nextDay,
+                              session.totalDays,
+                            )
+                          : strings.novenaDetailStartPrompt,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
@@ -331,7 +337,9 @@ class _ProgressPanel extends StatelessWidget {
                   onPressed: started ? onContinue : onStart,
                   style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
                   child: Text(
-                    started ? strings.continueDay(nextDay) : strings.start,
+                    started
+                        ? strings.novenaDetailContinueDay(nextDay)
+                        : strings.novenaDetailStart,
                   ),
                 ),
               ),
@@ -342,7 +350,7 @@ class _ProgressPanel extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(0, 44),
                   ),
-                  child: Text(strings.restart),
+                  child: Text(strings.novenaDetailRestart),
                 ),
               ],
             ],
@@ -363,7 +371,7 @@ class _DayRow extends StatelessWidget {
 
   final NovenaDayModel day;
   final NovenaDayStatus status;
-  final _NovenaDetailStrings strings;
+  final AppStrings strings;
   final VoidCallback? onTap;
 
   @override
@@ -407,7 +415,7 @@ class _DayRow extends StatelessWidget {
                 Text(day.title, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  strings.statusLabel(status),
+                  _statusLabel(strings, status),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -474,40 +482,11 @@ class _ThanksgivingSectionRow extends StatelessWidget {
   }
 }
 
-class _NovenaDetailStrings {
-  const _NovenaDetailStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia novena...' : 'Loading novena...';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get progress => _sw ? 'Maendeleo' : 'Progress';
-  String get notStarted => _sw ? 'Haijaanza' : 'Not Started';
-  String get startPrompt => _sw ? 'Anza Siku ya 1' : 'Start Day 1';
-  String get start => _sw ? 'Anza Novena' : 'Start Novena';
-  String continueDay(int day) =>
-      _sw ? 'Endelea Siku ya $day' : 'Continue to Day $day';
-  String get restart => _sw ? 'Anza Upya' : 'Restart';
-  String get afterNovena => _sw ? 'Baada ya Novena' : 'After the Novena';
-  String dayProgress(int day, int totalDays) =>
-      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
-  String get errorTitle => _sw ? 'Novena haijapakia' : 'Novena did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma novena hii.'
-      : 'There was a problem reading this novena.';
-  String get missingTitle => _sw ? 'Novena haikupatikana' : 'Novena not found';
-  String get missingMessage =>
-      _sw ? 'Jaribu kuchagua novena nyingine.' : 'Try choosing another novena.';
-
-  String statusLabel(NovenaDayStatus status) {
-    return switch (status) {
-      NovenaDayStatus.completed => _sw ? 'Imekamilika' : 'Completed',
-      NovenaDayStatus.current => _sw ? 'Siku ya sasa' : 'Current day',
-      NovenaDayStatus.open => _sw ? 'Fungua' : 'Open',
-      NovenaDayStatus.locked => _sw ? 'Imefungwa' : 'Locked',
-      NovenaDayStatus.notStarted => _sw ? 'Haijaanza' : 'Not started',
+String _statusLabel(AppStrings strings, NovenaDayStatus status) =>
+    switch (status) {
+      NovenaDayStatus.completed => strings.novenaDetailStatusCompleted,
+      NovenaDayStatus.current => strings.novenaDetailStatusCurrent,
+      NovenaDayStatus.open => strings.novenaDetailStatusOpen,
+      NovenaDayStatus.locked => strings.novenaDetailStatusLocked,
+      NovenaDayStatus.notStarted => strings.novenaDetailStatusNotStarted,
     };
-  }
-}
