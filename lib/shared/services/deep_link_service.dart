@@ -15,7 +15,8 @@ class DeepLinkService {
     required List<PrayerEntity> activePrayers,
     required List<NovenaModel> novenas,
     required List<RosaryMysteryModel> mysteries,
-  }) {
+    Map<String, String> prayerIdAliases = const {},
+  }) : _prayerIdAliases = Map.unmodifiable(prayerIdAliases) {
     for (final prayer in prayerIndex) {
       _prayerIdsBySlug
           .putIfAbsent(slugify(prayer.title()), () => <String>[])
@@ -54,11 +55,7 @@ class DeepLinkService {
     'divine-mercy': 'divine_mercy',
   };
 
-  /// Known EN<->SW id mismatches for the same content (see APP_INDEXES.md
-  /// Note A). Format: sw-only id -> en-only id.
-  static const prayerIdAliases = <String, String>{
-    'divine_mercy_prayer': 'divine_mercy_eternal_father',
-  };
+  final Map<String, String> _prayerIdAliases;
 
   final Map<String, List<String>> _prayerIdsBySlug = {};
   final Map<String, String> _prayerCategoryById = {};
@@ -281,7 +278,7 @@ class DeepLinkService {
       }
     }
     for (final id in candidates) {
-      final alias = prayerIdAliases[id];
+      final alias = _prayerIdAliases[id];
       if (alias != null && _activePrayerIds.contains(alias)) {
         return alias;
       }
