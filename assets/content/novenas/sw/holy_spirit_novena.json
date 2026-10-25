@@ -1,6 +1,7 @@
 {
   "id": "holy_spirit_novena",
   "style": "holy_spirit",
+  "day_count": 9,
   "language": "sw",
   "title": "Novena kwa Roho Mtakatifu",
   "description": "Novena ya siku tisa kwa Roho Mtakatifu.",
