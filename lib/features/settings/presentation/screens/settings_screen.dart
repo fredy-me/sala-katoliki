@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,7 @@ class SettingsScreen extends ConsumerWidget {
         ref.watch(selectedLanguageProvider).asData?.value ??
         SupportedLanguages.english.code;
     final settingsState = ref.watch(userSettingsProvider);
-    final strings = _SettingsStrings(selectedLanguage);
+    final strings = AppStrings(selectedLanguage);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: _systemOverlayStyle(context),
@@ -42,7 +43,7 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 _SettingsHeader(strings: strings),
                 const SizedBox(height: AppSpacing.section),
-                AppLoading(label: strings.loading),
+                AppLoading(label: strings.settingsLoading),
               ],
             ),
             error: (error, stackTrace) => ListView(
@@ -51,7 +52,7 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsHeader(strings: strings),
                 const SizedBox(height: AppSpacing.section),
                 _NoticeCard(
-                  message: strings.loadError,
+                  message: strings.settingsLoadError,
                   icon: Icons.error_outline_rounded,
                 ),
               ],
@@ -61,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 _SettingsHeader(strings: strings),
                 const SizedBox(height: AppSpacing.section),
-                SettingsSectionLabel(strings.preferences),
+                SettingsSectionLabel(strings.settingsPreferences),
                 const SizedBox(height: AppSpacing.md),
                 _SettingsPanel(
                   padding: EdgeInsets.zero,
@@ -69,13 +70,13 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       _SettingsTile(
                         icon: Icons.language,
-                        title: strings.language,
+                        title: strings.settingsLanguage,
                         trailing: _TileValue(
                           value: _languageLabel(selectedLanguage),
                         ),
                         onTap: () => _showOptionPickerSheet<String>(
                           context,
-                          title: strings.language,
+                          title: strings.settingsLanguage,
                           value: selectedLanguage,
                           options: [
                             _PickerOption(
@@ -97,7 +98,7 @@ class SettingsScreen extends ConsumerWidget {
                       const _TileDivider(),
                       _SettingsTile(
                         icon: Icons.alarm,
-                        title: strings.dailyReminder,
+                        title: strings.settingsDailyReminder,
                         trailing: Switch(
                           value: settings.reminderEnabled,
                           activeThumbColor: SettingsColors.selectedText(
@@ -111,7 +112,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       _ReminderTimeTile(
                         enabled: settings.reminderEnabled,
-                        label: strings.changeTime,
+                        label: strings.settingsChangeTime,
                         time: _formatDisplayTime(settings.reminderTime),
                         onTap: () =>
                             _pickTime(context, ref, settings.reminderTime),
@@ -119,30 +120,31 @@ class SettingsScreen extends ConsumerWidget {
                       const _TileDivider(),
                       _SettingsTile(
                         icon: Icons.text_fields,
-                        title: strings.fontSize,
+                        title: strings.settingsFontSize,
                         trailing: _TileValue(
-                          value: strings.textSizeLabel(
+                          value: _textSizeLabel(
+                            strings,
                             _textSizeValue(settings.fontScale),
                           ),
                         ),
                         onTap: () => _showOptionPickerSheet<_TextSizeValue>(
                           context,
-                          title: strings.fontSize,
+                          title: strings.settingsFontSize,
                           value: _textSizeValue(settings.fontScale),
                           options: [
                             _PickerOption(
                               value: _TextSizeValue.small,
-                              label: strings.small,
+                              label: strings.settingsSmall,
                               icon: Icons.text_decrease,
                             ),
                             _PickerOption(
                               value: _TextSizeValue.medium,
-                              label: strings.medium,
+                              label: strings.settingsMedium,
                               icon: Icons.text_fields,
                             ),
                             _PickerOption(
                               value: _TextSizeValue.large,
-                              label: strings.large,
+                              label: strings.settingsLarge,
                               icon: Icons.text_increase,
                             ),
                           ],
@@ -154,28 +156,28 @@ class SettingsScreen extends ConsumerWidget {
                       const _TileDivider(),
                       _SettingsTile(
                         icon: Icons.contrast,
-                        title: strings.theme,
+                        title: strings.settingsTheme,
                         trailing: _TileValue(
                           value: _themeLabel(settings.themeMode, strings),
                         ),
                         onTap: () => _showOptionPickerSheet<ThemeMode>(
                           context,
-                          title: strings.theme,
+                          title: strings.settingsTheme,
                           value: settings.themeMode,
                           options: [
                             _PickerOption(
                               value: ThemeMode.system,
-                              label: strings.system,
+                              label: strings.settingsSystem,
                               icon: Icons.phone_android,
                             ),
                             _PickerOption(
                               value: ThemeMode.light,
-                              label: strings.light,
+                              label: strings.settingsLight,
                               icon: Icons.light_mode_outlined,
                             ),
                             _PickerOption(
                               value: ThemeMode.dark,
-                              label: strings.dark,
+                              label: strings.settingsDark,
                               icon: Icons.dark_mode_outlined,
                             ),
                           ],
@@ -189,10 +191,10 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 if (settings.permissionDenied) ...[
                   const SizedBox(height: AppSpacing.md),
-                  _NoticeCard(message: strings.permissionDenied),
+                  _NoticeCard(message: strings.settingsPermissionDenied),
                 ],
                 const SizedBox(height: AppSpacing.section),
-                SettingsSectionLabel(strings.supportInfo),
+                SettingsSectionLabel(strings.settingsSupportInfo),
                 const SizedBox(height: AppSpacing.md),
                 _SettingsPanel(
                   padding: EdgeInsets.zero,
@@ -200,17 +202,17 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       _SettingsTile(
                         icon: Icons.info_outline,
-                        title: strings.about,
+                        title: strings.settingsAbout,
                         onTap: () => context.push('/about'),
                       ),
                       const _TileDivider(),
                       _SettingsTile(
                         icon: Icons.verified_user_outlined,
-                        title: strings.privacyTitle,
+                        title: strings.settingsPrivacyTitle,
                         onTap: () => _showLegalSheet(
                           context,
                           selectedLanguage,
-                          strings.privacyTitle,
+                          strings.settingsPrivacyTitle,
                         ),
                       ),
                     ],
@@ -354,18 +356,18 @@ class SettingsScreen extends ConsumerWidget {
         );
   }
 
-  String _languageLabel(String languageCode) {
-    if (languageCode == SupportedLanguages.kiswahili.code) {
-      return SupportedLanguages.kiswahili.name;
-    }
-    return SupportedLanguages.english.name;
-  }
+  String _languageLabel(String languageCode) =>
+      SupportedLanguages.all
+          .where((language) => language.code == languageCode)
+          .firstOrNull
+          ?.name ??
+      SupportedLanguages.english.name;
 
-  String _themeLabel(ThemeMode mode, _SettingsStrings strings) {
+  String _themeLabel(ThemeMode mode, AppStrings strings) {
     return switch (mode) {
-      ThemeMode.light => strings.light,
-      ThemeMode.dark => strings.dark,
-      ThemeMode.system => strings.system,
+      ThemeMode.light => strings.settingsLight,
+      ThemeMode.dark => strings.settingsDark,
+      ThemeMode.system => strings.settingsSystem,
     };
   }
 
@@ -386,11 +388,14 @@ SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
 class _SettingsHeader extends StatelessWidget {
   const _SettingsHeader({required this.strings});
 
-  final _SettingsStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
-    return Text(strings.title, style: SettingsTextStyles.display(context));
+    return Text(
+      strings.settingsTitle,
+      style: SettingsTextStyles.display(context),
+    );
   }
 }
 
@@ -648,62 +653,9 @@ class _PickerOption<T> {
 
 enum _TextSizeValue { small, medium, large }
 
-class _SettingsStrings {
-  const _SettingsStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Mipangilio' : 'Settings';
-  String get loading => _sw ? 'Inapakia mipangilio...' : 'Loading settings...';
-  String get loadError => _sw
-      ? 'Kuna tatizo kusoma mipangilio.'
-      : 'There was a problem reading settings.';
-  String get preferences => _sw ? 'Mapendeleo' : 'Preferences';
-  String get supportInfo => _sw ? 'Msaada na Taarifa' : 'Support & Info';
-  String get language => _sw ? 'Lugha' : 'Language';
-  String get languageSubtitle =>
-      _sw ? 'Chagua lugha ya programu' : 'Choose app language';
-  String get reminders => _sw ? 'Vikumbusho' : 'Reminders';
-  String get dailyReminder =>
-      _sw ? 'Kikumbusho cha Kila Siku' : 'Daily Reminder';
-  String get reminderSubtitle =>
-      _sw ? 'Pokea ukumbusho wa kusali' : 'Receive a reminder to pray';
-  String reminderEnabled(String time) =>
-      _sw ? 'Kimewekwa saa $time' : 'Set for $time';
-  String get reminderDisabled =>
-      _sw ? 'Kikumbusho hakijawekwa' : 'No reminder set';
-  String get changeTime => _sw ? 'Muda wa Kikumbusho' : 'Reminder Time';
-  String get permissionDenied => _sw
-      ? 'Ruhusa ya arifa haijatolewa. Unaweza kuiwasha kwenye mipangilio ya kifaa.'
-      : 'Notification permission was denied. You can enable it in device settings.';
-  String get fontSize => _sw ? 'Ukubwa wa Maandishi' : 'Text Size';
-  String get fontSizeSubtitle =>
-      _sw ? 'Badili ukubwa wa kusoma' : 'Adjust reading size';
-  String get small => _sw ? 'Ndogo' : 'Small';
-  String get medium => _sw ? 'Wastani' : 'Medium';
-  String get large => _sw ? 'Kubwa' : 'Large';
-  String textSizeLabel(_TextSizeValue value) {
-    return switch (value) {
-      _TextSizeValue.small => small,
-      _TextSizeValue.medium => medium,
-      _TextSizeValue.large => large,
+String _textSizeLabel(AppStrings strings, _TextSizeValue value) =>
+    switch (value) {
+      _TextSizeValue.small => strings.settingsSmall,
+      _TextSizeValue.medium => strings.settingsMedium,
+      _TextSizeValue.large => strings.settingsLarge,
     };
-  }
-
-  String get theme => _sw ? 'Mandhari' : 'Theme';
-  String get themeSubtitle =>
-      _sw ? 'Chagua mwonekano wa programu' : 'Select app appearance';
-  String get system => _sw ? 'Mfumo' : 'System';
-  String get light => _sw ? 'Mwanga' : 'Light';
-  String get dark => _sw ? 'Giza' : 'Dark';
-  String get information => _sw ? 'Taarifa' : 'Information';
-  String get about => _sw ? 'Kuhusu Programu' : 'About App';
-  String get aboutSubtitle =>
-      _sw ? 'Toleo, msanidi, na zaidi' : 'Version, developer and more';
-  String get privacyTitle => _sw ? 'Faragha na Sera' : 'Privacy & Policies';
-  String get privacySubtitle => _sw
-      ? 'Sera ya Faragha, Masharti na Tahadhari'
-      : 'Privacy Policy, Terms & Disclaimer';
-}
