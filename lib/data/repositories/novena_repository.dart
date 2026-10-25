@@ -21,4 +21,16 @@ class NovenaRepository {
       languageCode: languageCode,
     );
   }
+
+  /// 6.2. Day count without loading the whole corpus. See
+  /// [LocalContentDataSource.getNovenaDayCount].
+  Future<int?> getNovenaDayCount(
+    String novenaId, {
+    String languageCode = 'sw',
+  }) {
+    return _contentDataSource.getNovenaDayCount(
+      novenaId,
+      languageCode: languageCode,
+    );
+  }
 }
