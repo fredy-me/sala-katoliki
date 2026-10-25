@@ -127,7 +127,7 @@ Validation should fail when:
 - A language code is not `en` or `sw`.
 - A duplicate ID exists.
 - A prayer references an unknown category.
-- A novena has no days, unordered/duplicate/missing day numbers, an incorrect optional `day_count`, or different day counts across languages.
+- A novena has no days, unordered/duplicate/missing day numbers, a missing/non-integer or incorrect `day_count`, or different day counts across languages.
 - A content file is missing from the manifest, a listed file is absent, or a path is duplicated.
 - EN/SW prayer or novena IDs differ without a valid declared prayer alias.
 - Rosary steps reference unknown prayers or mystery IDs.
@@ -172,8 +172,8 @@ It does not rename IDs already stored in favorites or recents.
 
 Presentation profiles and explicit body markers are declared in JSON. New
 content using the documented roles requires no Dart edits. A new visual
-treatment still requires implementation. Localization consolidation (6.8)
-is pending.
+treatment still requires implementation. The shared UI localization workflow
+is documented below.
 
 ### Declaring presentation styles (Part 6.1)
 
@@ -271,3 +271,66 @@ translation, run the generator and validator shown above. Corpus parity tests
 compare the 244 baseline readings with the pre-marker renderer. New IDs can be
 added without editing those fixtures; changing an existing baseline requires a
 deliberate update to its preservation evidence.
+
+
+### Novena declaration and day-count checks
+
+Each novena declares `id`, `language`, `title`, `description`, `style`,
+`day_count`, and a non-empty `days` array. Every day declares `day`, `title`, and
+an explicitly marked `body`. Day numbers must be ordered from 1 without gaps.
+The required integer `day_count` must equal `days.length`, and translations
+must agree on the count. The app derives progress bounds from the array.
+Standard novenas remain nine days; the existing St Rita devotion has twelve.
+New devotion lengths require the normal content/product review, not Dart edits.
+Optional closing/thanksgiving sections use their existing documented renderers.
+
+### UI translations (Part 6.8)
+
+All screen, reminder, onboarding, and home-widget messages use `AppStrings` in
+`lib/core/localization/app_strings.dart`. The source catalogs are
+`lib/core/localization/catalogs/en.json` and `sw.json`. Do not create a new
+screen-specific strings class or inline a language-dependent label.
+
+Catalogs contain `locale` and `messages`. Keys are namespaced, such as
+`today.loading`. A message is a string or a definition with typed parameters:
+
+```json
+{
+  "text": "Day {day} of {totalDays}",
+  "parameters": {"day": "int", "totalDays": "int"}
+}
+```
+
+Supported parameter types are `String` and `int`. Parameter names must match
+placeholders exactly in each language. Definitions may instead use a `select`
+parameter with string `cases` (including `other`), or an integer `plural`
+parameter with `one` and `other` forms. The current English/Kiswahili plural
+rule selects `one` for 1 and `other` otherwise. A future locale needing other
+plural rules should extend that rule centrally rather than branching in screens.
+
+After changing a catalog, run:
+
+```sh
+dart run tool/generate_localizations.dart
+dart run tool/generate_localizations.dart --check
+```
+
+The generator validates message-key parity, placeholder types, and selection
+shapes, then emits one typed API and constant catalogs in `app_strings.g.dart`.
+Do not edit that generated file. Loading messages requires no asset reads,
+network, or asynchronous startup. Unknown locales use the English fallback;
+missing translations in a declared catalog fail generation instead of silently
+falling back per screen.
+
+For a third UI language, add one complete catalog with the existing keys,
+register its name/code in `SupportedLanguages`, and regenerate. Onboarding
+builds its options from that registry. Bundled prayer translations and content
+language/tooling registration are separate and still require the complete
+content-authoring checks; a new UI catalog alone does not translate prayers.
+No new per-screen translation classes are needed.
+
+The Part 6 tests verify original EN/SW wording, parameterized messages, fallback,
+third-catalog generation, invalid translation rejection, generated-file drift,
+and the absence of new private string classes. End-to-end authoring tests add
+bilingual prayer/novena files in temporary content trees, generate a manifest,
+validate it, resolve deep links, and open the actual reading screens.
