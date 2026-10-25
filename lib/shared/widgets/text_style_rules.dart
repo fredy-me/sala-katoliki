@@ -1,19 +1,7 @@
-/// Every presentation rule the text views used to hardcode, in one place.
-///
-/// The text views classified lines by matching literal string prefixes, and the
-/// screens classified content by hardcoded id sets. That meant a content author
-/// who rephrased `"In the name of the Father..."` silently lost its formatting,
-/// and adding a litany that needed St Rita styling meant editing Dart. This file
-/// removes that coupling: the rules are data, the views are code that reads data,
-/// and a content author edits one table instead of three widgets.
-///
-/// Nothing here is language-aware. Every literal is already in the form the
-/// classifier receives — lowercased for the `startsWith`/`contains` rules,
-/// verbatim for the equality rules — so a view can pass its normalized string
-/// straight in.
-///
-/// Part 6 replaces these tables with rules loaded from the content bundle. The
-/// call sites do not need to change when that happens.
+/// Compatibility rules for unmarked text supplied directly to reading widgets.
+/// Bundled readings now use explicit, validated markers (Part 6.7); their
+/// formatting no longer depends on these language-specific prefixes.
+/// Historical unmarked callers and regression tests retain the previous rules.
 library;
 
 // ---------------------------------------------------------------------------
