@@ -60,19 +60,19 @@ class PrayerEntity {
     final cache = _searchIndexes[this] ??= <String, _PrayerSearchIndex>{};
     return cache.putIfAbsent(languageCode, () {
       return _PrayerSearchIndex(
-        title: title(languageCode).toLowerCase(),
+        title: title().toLowerCase(),
         category: categoryLabel(languageCode).toLowerCase(),
-        body: text(languageCode).toLowerCase(),
+        body: text().toLowerCase(),
         tags: [for (final tag in tags) tag.toLowerCase()],
       );
     });
   }
 
-  String title([String? languageCode]) {
+  String title() {
     return localizedTitle;
   }
 
-  String text([String? languageCode]) {
+  String text() {
     return body;
   }
 
