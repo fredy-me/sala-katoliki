@@ -128,7 +128,7 @@ void _printBundle(File bundle) {
   );
   stdout.writeln('');
 
-  stdout.writeln('Shipped once for all devices - ABI independent');
+  stdout.writeln('ABI-independent entries in this AAB');
   _printRow('dex', dex);
   _printRow(
     'assets logo.png',
@@ -156,9 +156,7 @@ void _printBundle(File bundle) {
   _printRow('manifest + config', rootConfig);
   stdout.writeln('');
 
-  stdout.writeln(
-    'Shipped per device ABI - only the matching slice is installed',
-  );
+  stdout.writeln('Native entries in this AAB, grouped by ABI');
   for (final abi in _abis(native)) {
     _printRow(
       'lib/$abi',
@@ -173,11 +171,10 @@ void _printBundle(File bundle) {
   }
   stdout.writeln('');
 
-  _printTotals(bundle, native, dex, flutterAssets, androidRes, rootConfig);
+  _printTotals(native, dex, flutterAssets, androidRes, rootConfig);
 }
 
 void _printTotals(
-  File bundle,
   List<_Entry> native,
   List<_Entry> dex,
   List<_Entry> flutterAssets,
@@ -209,10 +206,8 @@ void _printTotals(
   _printRow('ABI independent', abiIndependent);
   stdout.writeln('');
 
-  final libRaw = perAbi.fold(0, (sum, e) => sum + e.size);
   final libTransfer = perAbi.fold(0, (sum, e) => sum + e.storedSize);
   final otherTransfer = abiIndependent.fold(0, (sum, e) => sum + e.storedSize);
-  final otherRaw = abiIndependent.fold(0, (sum, e) => sum + e.size);
 
   stdout.writeln(
     '  Selected AAB entry compressed-size sum (not download size)',
@@ -220,38 +215,10 @@ void _printTotals(
   stdout.writeln('                 ${_mb(libTransfer + otherTransfer)}');
   stdout.writeln('                   ${_mb(libTransfer)} native libraries');
   stdout.writeln('                   ${_mb(otherTransfer)} everything else');
-  stdout.writeln('');
-
-  stdout.writeln('  Illustrative installed-size approximation (not measured)');
   stdout.writeln(
-    '                 ${_mb(libRaw + otherTransfer)}   native libraries stored',
+    '  Actual delivered and installed sizes require split APKs or',
   );
-  stdout.writeln(
-    '                 uncompressed so the loader can mmap them; everything',
-  );
-  stdout.writeln('                 else transferred at its compressed size.');
-  stdout.writeln(
-    '                 Confirm with an installed split APK, not the AAB.',
-  );
-  stdout.writeln('');
-
-  stdout.writeln('  Floor           ${_mb(libRaw)}   native libraries alone,');
-  stdout.writeln(
-    '                 fully uncompressed. This is the hard lower bound',
-  );
-  stdout.writeln(
-    '                 for any change made to Dart code or assets, since',
-  );
-  stdout.writeln('                 the engine version sets it.');
-  stdout.writeln('');
-
-  stdout.writeln(
-    '  Addressable     ${_mb(otherRaw - otherTransfer)}   of compressible content,',
-  );
-  stdout.writeln(
-    '                 the ABI independent part, is what shrinking assets',
-  );
-  stdout.writeln('                 and Dart code can actually recover.');
+  stdout.writeln('  a Play Console measurement. No such size is derived here.');
 }
 
 void _printRow(String label, List<_Entry> entries, {String? note}) {
@@ -300,14 +267,20 @@ List<String> _abis(List<_Entry> native) {
 }
 
 int _gzip9Size(File file) {
-  final result = Process.runSync('gzip', ['-9', '-c', file.path]);
-  final output = result.stdout;
-  return output is List<int> ? output.length : file.lengthSync();
+  final result = Process.runSync('gzip', [
+    '-9',
+    '-c',
+    file.path,
+  ], stdoutEncoding: null);
+  if (result.exitCode != 0) {
+    throw StateError('gzip failed for ${file.path}: ${result.stderr}');
+  }
+  return (result.stdout as List<int>).length;
 }
 
-String _mb(int bytes) => '${(bytes / 1048576).toStringAsFixed(2)} MB';
+String _mb(int bytes) => '${(bytes / 1048576).toStringAsFixed(2)} MiB';
 
-String _kb(int bytes) => '${(bytes / 1024).toStringAsFixed(1)} KB';
+String _kb(int bytes) => '${(bytes / 1024).toStringAsFixed(1)} KiB';
 
 enum _Compression { stored, deflated }
 
