@@ -9,10 +9,25 @@ import '../../../../data/models/novena_model.dart';
 import '../../../../data/repositories/novena_repository.dart';
 import '../../../prayers/presentation/providers/prayer_providers.dart';
 import '../../../today/presentation/providers/today_providers.dart';
+import '../../domain/novena_day_counts.dart';
 import '../../domain/novena_state.dart';
+
+export '../../domain/novena_day_counts.dart' show defaultNovenaDayCount;
 
 final novenaRepositoryProvider = Provider<NovenaRepository>((ref) {
   return NovenaRepository(ref.watch(localContentDataSourceProvider));
+});
+
+/// Resolves one novena's length without loading the corpus.
+/// Null means unknown: saved progress must not be clamped to a guessed length.
+final novenaDayCountProvider = FutureProvider.family<int?, String>((
+  ref,
+  novenaId,
+) {
+  final languageCode = ref.watch(activeLanguageProvider);
+  return ref
+      .watch(novenaRepositoryProvider)
+      .getNovenaDayCount(novenaId, languageCode: languageCode);
 });
 
 final novenasProvider = FutureProvider<List<NovenaModel>>((ref) {
@@ -149,18 +164,41 @@ class FavoriteNovenaIdsNotifier extends AsyncNotifier<Set<String>> {
 }
 
 class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
+  /// 6.2. Day counts resolved from content, loaded once and reused.
+  ///
+  /// Held on the notifier rather than watched per call because
+  /// `completeDay` and `_writeProgressMap` need it synchronously, and watching
+  /// inside them would rebuild the notifier on every progress write.
+  Map<String, int> _dayCounts = const {};
+
   @override
   Future<NovenaProgress> build() async {
     final preferences = await SharedPreferences.getInstance();
     final activeNovenaId = preferences.getString(StorageKeys.activeNovenaId);
     final completedDaysByNovenaId = _readCompletedDaysByNovenaId(preferences);
 
-    if (activeNovenaId != null &&
-        !completedDaysByNovenaId.containsKey(activeNovenaId)) {
+    final needsMigration =
+        activeNovenaId != null &&
+        !completedDaysByNovenaId.containsKey(activeNovenaId);
+    if (needsMigration) {
+      // Preserve positive day numbers until the content bound is known.
       completedDaysByNovenaId[activeNovenaId] = _validCompletedDaysForNovena(
         activeNovenaId,
         preferences.getStringList(StorageKeys.completedNovenaDays) ?? const [],
+        const {},
       );
+    }
+    _dayCounts = await _resolveDayCountsFor(
+      completedDaysByNovenaId.keys.toSet(),
+    );
+    for (final id in completedDaysByNovenaId.keys.toList()) {
+      completedDaysByNovenaId[id] = _validCompletedDaysForNovena(
+        id,
+        completedDaysByNovenaId[id]!,
+        _dayCounts,
+      );
+    }
+    if (needsMigration) {
       await _writeProgressMap(preferences, completedDaysByNovenaId);
     }
 
@@ -168,6 +206,15 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
       activeNovenaId: activeNovenaId,
       completedDaysByNovenaId: completedDaysByNovenaId,
     );
+  }
+
+  Future<Map<String, int>> _resolveDayCountsFor(Set<String> ids) async {
+    final counts = <String, int>{};
+    for (final id in ids) {
+      final count = await ref.read(novenaDayCountProvider(id).future);
+      if (count != null && count > 0) counts[id] = count;
+    }
+    return counts;
   }
 
   Future<void> start(String novenaId) async {
@@ -197,16 +244,15 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
   }
 
   Future<void> completeDay(String novenaId, int day) async {
-    if (day < 1 || day > _maxDaysForNovena(novenaId)) {
-      return;
-    }
-
     final current = state.asData?.value ?? await future;
+    await _ensureDayCount(novenaId);
+    final maxDays = _dayCounts[novenaId];
+    if (day < 1 || (maxDays != null && day > maxDays)) return;
     final completedDaysByNovenaId = _copyCompletedDaysByNovenaId(current);
     final completedDays = current.completedDaysFor(novenaId);
     completedDaysByNovenaId[novenaId] = {...completedDays, day};
 
-    final completedNovena = day == _maxDaysForNovena(novenaId);
+    final completedNovena = maxDays != null && day == maxDays;
     if (completedNovena) {
       completedDaysByNovenaId.remove(novenaId);
     }
@@ -229,7 +275,19 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
     );
   }
 
+  Future<void> _ensureDayCount(String novenaId) async {
+    if (!_dayCounts.containsKey(novenaId)) {
+      _dayCounts = {
+        ..._dayCounts,
+        ...await _resolveDayCountsFor({novenaId}),
+      };
+    }
+  }
+
   Future<void> _save(NovenaProgress progress) async {
+    for (final id in progress.completedDaysByNovenaId.keys) {
+      await _ensureDayCount(id);
+    }
     final preferences = await SharedPreferences.getInstance();
     if (progress.activeNovenaId == null) {
       await preferences.remove(StorageKeys.activeNovenaId);
@@ -277,6 +335,7 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
           entry.key as String: _validCompletedDaysForNovena(
             entry.key as String,
             entry.value as List,
+            const {},
           ),
     };
   }
@@ -299,7 +358,11 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
 
     final encoded = jsonEncode({
       for (final entry in completedDaysByNovenaId.entries)
-        entry.key: _sortedValidDaysForNovena(entry.key, entry.value),
+        entry.key: _sortedValidDaysForNovena(
+          entry.key,
+          entry.value,
+          _dayCounts,
+        ),
     });
     await preferences.setString(StorageKeys.novenaProgressById, encoded);
   }
@@ -313,27 +376,33 @@ class NovenaProgressNotifier extends AsyncNotifier<NovenaProgress> {
       _sortedValidDaysForNovena(
         progress.activeNovenaId!,
         progress.completedDays,
+        _dayCounts,
       ).map((day) => day.toString()).toList(growable: false),
     );
   }
 
-  List<int> _sortedValidDaysForNovena(String novenaId, Iterable<int> days) {
-    final maxDays = _maxDaysForNovena(novenaId);
-    return days.where((day) => day >= 1 && day <= maxDays).toList()..sort();
+  List<int> _sortedValidDaysForNovena(
+    String novenaId,
+    Iterable<int> days,
+    Map<String, int> dayCounts,
+  ) {
+    final maxDays = dayCounts[novenaId];
+    return days
+        .where((day) => day >= 1 && (maxDays == null || day <= maxDays))
+        .toList()
+      ..sort();
   }
 
   Set<int> _validCompletedDaysForNovena(
     String novenaId,
     Iterable<Object?> rawDays,
+    Map<String, int> dayCounts,
   ) {
-    final maxDays = _maxDaysForNovena(novenaId);
+    final maxDays = dayCounts[novenaId];
     return rawDays
         .map((day) => int.tryParse(day.toString()))
         .whereType<int>()
-        .where((day) => day >= 1 && day <= maxDays)
+        .where((day) => day >= 1 && (maxDays == null || day <= maxDays))
         .toSet();
   }
-
-  int _maxDaysForNovena(String novenaId) =>
-      novenaId == 'st_rita_novena' ? 12 : 9;
 }
