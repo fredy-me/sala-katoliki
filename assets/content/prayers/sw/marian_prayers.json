@@ -1,12 +1,13 @@
 [
   {
     "id": "hail_mary",
+    "style": "standard",
     "type": "prayer",
     "category": "marian_prayers",
     "language": "sw",
     "title": "Salamu Maria",
     "description": "Sala ya kimapokeo kwa Bikira Maria.",
-    "body": "Salamu, Maria, umejaa neema; Bwana yu nawe. Umebarikiwa kuliko wanawake wote, na Yesu mzao wa tumbo lako amebarikiwa.\nMaria Mtakatifu mama wa Mungu, utuombee sisi wakosefu. Sasa na saa ya kufa kwetu. Amina.",
+    "body": "[[plain]]Salamu, Maria, umejaa neema; Bwana yu nawe. Umebarikiwa kuliko wanawake wote, na Yesu mzao wa tumbo lako amebarikiwa.[[/plain]]\n[[plain]]Maria Mtakatifu mama wa Mungu, utuombee sisi wakosefu. Sasa na saa ya kufa kwetu. Amina.[[/plain]]",
     "tags": ["maria", "rozari", "sala"],
     "source": "Sala ya kimapokeo ya Kikatoliki",
     "version": 1,
