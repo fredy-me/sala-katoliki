@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +20,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _ThanksgivingStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final novenaState = ref.watch(novenaByIdProvider(novenaId));
 
     return PopScope(
@@ -33,11 +34,11 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
       child: Scaffold(
         body: SafeArea(
           child: novenaState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.thanksgivingLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.errorTitle,
-              message: strings.errorMessage,
-              actionLabel: strings.back,
+              title: strings.thanksgivingErrorTitle,
+              message: strings.thanksgivingErrorMessage,
+              actionLabel: strings.thanksgivingBack,
               onAction: () => context.popOrGo('/novenas/$novenaId'),
             ),
             data: (novena) {
@@ -45,9 +46,9 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
               final section = novena?.thanksgivingSection;
               if (novena == null || section == null) {
                 return AppErrorState(
-                  title: strings.missingTitle,
-                  message: strings.missingMessage,
-                  actionLabel: strings.back,
+                  title: strings.thanksgivingMissingTitle,
+                  message: strings.thanksgivingMissingMessage,
+                  actionLabel: strings.thanksgivingBack,
                   onAction: () => context.popOrGo('/novenas/$novenaId'),
                 );
               }
@@ -63,7 +64,7 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
                   Row(
                     children: [
                       IconButton(
-                        tooltip: strings.back,
+                        tooltip: strings.thanksgivingBack,
                         onPressed: () => context.popOrGo('/novenas/$novenaId'),
                         icon: const Icon(Icons.arrow_back),
                       ),
@@ -115,25 +116,4 @@ class NovenaThanksgivingScreen extends ConsumerWidget {
       ),
     );
   }
-}
-
-class _ThanksgivingStrings {
-  const _ThanksgivingStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading =>
-      _sw ? 'Inapakia shukrani...' : 'Loading thanksgiving...';
-  String get back => _sw ? 'Rudi' : 'Back';
-  String get errorTitle =>
-      _sw ? 'Shukrani haijapakia' : 'Thanksgiving did not load';
-  String get errorMessage => _sw
-      ? 'Kuna tatizo kusoma sehemu hii.'
-      : 'There was a problem reading this section.';
-  String get missingTitle => _sw ? 'Sehemu haikupatikana' : 'Section not found';
-  String get missingMessage => _sw
-      ? 'Sehemu hii haipo kwenye novena hii.'
-      : 'This section is not available for this novena.';
 }
