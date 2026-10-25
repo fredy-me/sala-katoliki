@@ -67,7 +67,8 @@ Required fields:
   "category": "common_prayers",
   "language": "en",
   "title": "Hail Mary",
-  "body": "Hail Mary, full of grace..."
+  "style": "standard",
+  "body": "[[plain]]Hail Mary, full of grace...[[/plain]]"
 }
 ```
 
@@ -81,7 +82,8 @@ Recommended full fields:
   "language": "en",
   "title": "Hail Mary",
   "description": "Traditional Marian prayer.",
-  "body": "Hail Mary, full of grace...",
+  "style": "standard",
+  "body": "[[plain]]Hail Mary, full of grace...[[/plain]]",
   "tags": ["marian", "daily", "rosary"],
   "source": "Traditional Catholic prayer",
   "version": 1,
@@ -168,9 +170,10 @@ exception is declared in `assets/content/metadata/id_aliases.json` as
 must exist; this declaration is shared by validation and deep-link resolution.
 It does not rename IDs already stored in favorites or recents.
 
-Presentation remains selected by the existing Dart style rules. New content
-requiring a new visual style still needs that work until optimization items
-6.1 and 6.7 are implemented. Localization consolidation (6.8) is also pending.
+Presentation profiles and explicit body markers are declared in JSON. New
+content using the documented roles requires no Dart edits. A new visual
+treatment still requires implementation. Localization consolidation (6.8)
+is pending.
 
 ### Declaring presentation styles (Part 6.1)
 
@@ -191,8 +194,9 @@ than content IDs or prayer categories to select their text renderer.
 Use the same style for both translations. These profiles preserve the existing
 rendering; they do not change prayer text or saved progress. For novenas other
 than `st_rita`, closing and thanksgiving sections retain their existing cards.
-Line classification still uses the current prefix rules; explicit authored
-line markers and i18n consolidation remain separate pending Part 6 tasks.
+Bundled readings declare formatting with the markers below. The legacy
+prefix rules remain only for unmarked widget callers; validation requires
+explicit markers in all bundled content.
 
 After creating or changing content, run:
 
@@ -200,3 +204,68 @@ After creating or changing content, run:
 dart run tool/generate_content_manifest.dart
 dart run tools/validate_content.dart
 ```
+
+
+### Explicit reading markers (Part 6.7)
+
+Wrap each non-empty prayer/litany line, or each novena paragraph, in a paired
+marker. Keep existing newlines between lines and blank lines between novena
+paragraphs. Marker names are lowercase and do not depend on language or wording.
+
+```json
+{
+  "id": "authoring_probe",
+  "type": "prayer",
+  "category": "common_prayers",
+  "language": "en",
+  "title": "Authoring probe",
+  "style": "standard",
+  "body": "[[heading]]A rephrased title[[/heading]]\n\n[[plain]]Prayer text.[[/plain]]\n[[response]]A rephrased answer.[[/response]]"
+}
+```
+
+| Reading | Allowed roles |
+| --- | --- |
+| Standard prayer | `plain`, `heading`, `response` |
+| Litany, including a novena closing prayer | `plain`, `heading`, `response`, `lamb`, `panel_gold`, `panel_outline` |
+| Novena day or thanksgiving | `plain`, `heading`, `response`, `invocation`, `italic`, `rich`, `group`, `highlight` |
+
+`heading` keeps the existing heading appearance (uppercased for litanies and
+novenas). `invocation` adds the existing colored cross before a novena opening.
+`response` uses the selected prayer/litany response appearance; a novena response
+is colored italic text. `lamb` is italic in the St Rita litany profile and an
+outlined inline panel in the standard litany profile. `panel_gold` and
+`panel_outline` reproduce existing standard-litany line highlights; use them
+with `style: "litany"`. `highlight` reproduces the existing individual novena
+line panel. None of these markers wraps a whole reading in a card.
+
+Use `group` for parts of one novena paragraph separated by the existing small
+vertical gap. Each non-empty child must have its own marker:
+
+```text
+[[group]][[heading]]Let us pray:[[/heading]][[plain]]The prayer body.[[/plain]][[/group]]
+```
+
+Use `rich` for inline italic text without a paragraph break. Only `italic`
+markers may be nested inside `rich`:
+
+```text
+[[rich]]Prayer text, [[italic]]an italic refrain[[/italic]], and more text.[[/rich]]
+```
+
+Other leaf roles cannot contain nested markers. Groups may contain supported
+novena roles; nesting is limited to eight levels. Keep each group or rich block
+inside one paragraph. Standard prayer underscore italics remain supported
+inside a marked line; existing asterisks retain their previous display behavior.
+
+Models expose `readingText` to reading widgets. Their `body`/`text()` APIs
+remove only these annotations, so search, sharing, native widget snippets, and
+saved-progress keys keep their existing content. Do not pass raw marked asset
+strings to those plain-text consumers.
+
+Validation rejects unknown/mismatched markers, missing declarations, empty
+blocks, roles unsupported by the renderer, and invalid nesting. Rephrasing the
+text inside a marker keeps its declared formatting. After editing either
+translation, run the generator and validator shown above. Corpus parity tests
+compare all bundled readings with the pre-marker renderer; intended future
+appearance/content changes require a deliberate update to that evidence.
