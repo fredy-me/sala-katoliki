@@ -40,7 +40,7 @@ Stores prayer records by language and category. MVP languages are:
 
 `assets/content/novenas/{language}/{novena_id}.json`
 
-Stores 9-day novena content. A valid MVP novena must include exactly 9 day objects.
+Stores ordered novena days with a required integer `day_count` matching the array length and both translations. Standard novenas have nine days; the existing 12-day St Rita exception remains recorded in the implementation plan. The app derives progress bounds from the array rather than an ID-specific constant.
 
 ### Rosary
 
