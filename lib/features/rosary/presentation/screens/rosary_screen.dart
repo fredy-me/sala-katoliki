@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +20,7 @@ class RosaryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _RosaryStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final mysteriesState = ref.watch(rosaryMysteriesProvider);
     final suggestedState = ref.watch(suggestedRosaryMysteryProvider);
     final activeSessionState = ref.watch(activeRosarySessionProvider);
@@ -37,11 +38,11 @@ class RosaryScreen extends ConsumerWidget {
         color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           child: mysteriesState.when(
-            loading: () => AppLoading(label: strings.loading),
+            loading: () => AppLoading(label: strings.rosaryLoading),
             error: (error, stackTrace) => AppErrorState(
-              title: strings.loadErrorTitle,
-              message: strings.loadErrorMessage,
-              actionLabel: strings.retry,
+              title: strings.rosaryLoadErrorTitle,
+              message: strings.rosaryLoadErrorMessage,
+              actionLabel: strings.rosaryRetry,
               onAction: () {
                 ref.invalidate(rosaryMysteriesProvider);
                 ref.invalidate(suggestedRosaryMysteryProvider);
@@ -50,8 +51,8 @@ class RosaryScreen extends ConsumerWidget {
             data: (mysteries) {
               if (mysteries.isEmpty) {
                 return AppEmptyState(
-                  title: strings.emptyTitle,
-                  message: strings.emptyMessage,
+                  title: strings.rosaryEmptyTitle,
+                  message: strings.rosaryEmptyMessage,
                   icon: Icons.radio_button_checked,
                 );
               }
@@ -68,12 +69,12 @@ class RosaryScreen extends ConsumerWidget {
                 ),
                 children: [
                   Text(
-                    strings.title,
+                    strings.rosaryTitle,
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    strings.subtitle,
+                    strings.rosarySubtitle,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -88,7 +89,7 @@ class RosaryScreen extends ConsumerWidget {
                     _ContinueCard(
                       mystery: activeSession.mystery,
                       progress: activeSession.progress,
-                      stepLabel: strings.stepLabel(
+                      stepLabel: strings.rosaryStepLabel(
                         activeSession.stepIndex + 1,
                         activeSession.steps.length,
                       ),
@@ -101,7 +102,7 @@ class RosaryScreen extends ConsumerWidget {
                     ),
                   ],
                   const SizedBox(height: AppSpacing.section),
-                  SectionHeader(title: strings.allMysteries),
+                  SectionHeader(title: strings.rosaryAllMysteries),
                   const SizedBox(height: AppSpacing.md),
                   for (final mystery in mysteries) ...[
                     _MysteryRow(
@@ -151,7 +152,7 @@ class _TodayMysteryCard extends StatelessWidget {
   });
 
   final RosaryMysteryModel mystery;
-  final _RosaryStrings strings;
+  final AppStrings strings;
   final VoidCallback onStart;
   final VoidCallback onSelect;
 
@@ -164,7 +165,7 @@ class _TodayMysteryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            strings.todayMystery,
+            strings.rosaryTodayMystery,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.gold,
               letterSpacing: 1.2,
@@ -188,12 +189,12 @@ class _TodayMysteryCard extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onStart,
                 icon: const Icon(Icons.play_arrow),
-                label: Text(strings.start),
+                label: Text(strings.rosaryStart),
               ),
               OutlinedButton.icon(
                 onPressed: onSelect,
                 icon: const Icon(Icons.grid_view),
-                label: Text(strings.choose),
+                label: Text(strings.rosaryChoose),
               ),
             ],
           ),
@@ -216,7 +217,7 @@ class _ContinueCard extends StatelessWidget {
   final RosaryMysteryModel mystery;
   final double progress;
   final String stepLabel;
-  final _RosaryStrings strings;
+  final AppStrings strings;
   final VoidCallback onContinue;
   final VoidCallback onRestart;
 
@@ -227,7 +228,7 @@ class _ContinueCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            strings.savedProgress,
+            strings.rosarySavedProgress,
             style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -246,12 +247,12 @@ class _ContinueCard extends StatelessWidget {
               Expanded(
                 child: FilledButton(
                   onPressed: onContinue,
-                  child: Text(strings.continueLabel),
+                  child: Text(strings.rosaryContinueLabel),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               IconButton(
-                tooltip: strings.restart,
+                tooltip: strings.rosaryRestart,
                 onPressed: onRestart,
                 icon: const Icon(Icons.restart_alt),
               ),
@@ -273,7 +274,7 @@ class _MysteryRow extends StatelessWidget {
 
   final RosaryMysteryModel mystery;
   final bool isSuggested;
-  final _RosaryStrings strings;
+  final AppStrings strings;
   final VoidCallback onTap;
 
   @override
@@ -305,7 +306,9 @@ class _MysteryRow extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  isSuggested ? strings.suggestedToday : mystery.description,
+                  isSuggested
+                      ? strings.rosarySuggestedToday
+                      : mystery.description,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -319,40 +322,4 @@ class _MysteryRow extends StatelessWidget {
       ),
     );
   }
-}
-
-class _RosaryStrings {
-  const _RosaryStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Rozari ya Bikira Maria' : 'Rosary of Mary';
-  String get subtitle => _sw
-      ? 'Fuata matendo, fadhila, na sala kwa mpangilio.'
-      : 'Follow the mysteries, virtues, and prayers in order.';
-  String get loading => _sw ? 'Inapakia rozari...' : 'Loading Rosary...';
-  String get todayMystery => _sw ? 'Fumbo la Leo' : "Today's Mystery";
-  String get start => _sw ? 'Anza' : 'Start';
-  String get choose => _sw ? 'Chagua' : 'Choose';
-  String get savedProgress =>
-      _sw ? 'Maendeleo Yaliyohifadhiwa' : 'Saved Progress';
-  String get continueLabel => _sw ? 'Endelea' : 'Continue';
-  String get restart => _sw ? 'Anza Upya' : 'Restart';
-  String get allMysteries => _sw ? 'Mafumbo Yote' : 'All Mysteries';
-  String get suggestedToday => _sw ? 'Limependekezwa leo' : 'Suggested today';
-  String stepLabel(int current, int total) =>
-      _sw ? 'Hatua $current kati ya $total' : 'Step $current of $total';
-  String get retry => _sw ? 'Jaribu tena' : 'Retry';
-  String get loadErrorTitle =>
-      _sw ? 'Rozari haijapakia' : 'Rosary did not load';
-  String get loadErrorMessage => _sw
-      ? 'Kuna tatizo kusoma maudhui ya rozari ya ndani.'
-      : 'There was a problem reading local Rosary content.';
-  String get emptyTitle =>
-      _sw ? 'Hakuna maudhui ya rozari' : 'No Rosary content';
-  String get emptyMessage => _sw
-      ? 'Mafumbo ya rozari hayajapatikana kwenye maudhui ya ndani.'
-      : 'Rosary mysteries were not found in local content.';
 }
