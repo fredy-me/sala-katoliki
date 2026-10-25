@@ -1,3 +1,5 @@
+import '../../shared/content/reading_markup.dart';
+
 class NovenaModel {
   const NovenaModel({
     required this.id,
@@ -10,9 +12,16 @@ class NovenaModel {
     this.lastUpdated,
     this.closingPrayer,
     this.thanksgivingSection,
+    this.style = 'standard',
   });
 
   final String id;
+  final String style;
+
+  bool get usesAllSaintsStyle =>
+      style == 'all_saints' || usesHolySpiritStyle || usesStRitaStyle;
+  bool get usesHolySpiritStyle => style == 'holy_spirit';
+  bool get usesStRitaStyle => style == 'st_rita';
   final String language;
   final String title;
   final String description;
@@ -30,6 +39,7 @@ class NovenaModel {
   factory NovenaModel.fromJson(Map<String, dynamic> json) {
     return NovenaModel(
       id: json['id'] as String,
+      style: json['style'] as String? ?? 'standard',
       language: json['language'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
@@ -61,13 +71,15 @@ class NovenaThanksgivingSectionModel {
     required this.afterDay,
     required this.title,
     required this.description,
-    required this.body,
-  });
+    required String body,
+  }) : _body = body;
 
   final int afterDay;
   final String title;
   final String description;
-  final String body;
+  final String _body;
+  String get body => ReadingMarkup.plainText(_body);
+  String get readingText => _body;
 
   factory NovenaThanksgivingSectionModel.fromJson(Map<String, dynamic> json) {
     return NovenaThanksgivingSectionModel(
@@ -83,12 +95,14 @@ class NovenaClosingPrayerModel {
   const NovenaClosingPrayerModel({
     required this.title,
     required this.description,
-    required this.body,
-  });
+    required String body,
+  }) : _body = body;
 
   final String title;
   final String description;
-  final String body;
+  final String _body;
+  String get body => ReadingMarkup.plainText(_body);
+  String get readingText => _body;
 
   factory NovenaClosingPrayerModel.fromJson(Map<String, dynamic> json) {
     return NovenaClosingPrayerModel(
@@ -124,7 +138,8 @@ class NovenaDayModel {
   /// Day bodies are ~120 KB of the ~135 KB a novena file holds, and list views
   /// only need the day number and title. Deferring keeps the corpus cheap to
   /// open while the day screen still gets the same text.
-  String get body => _body ?? _deferredBody!['body'] as String;
+  String get readingText => _body ?? _deferredBody!['body'] as String;
+  String get body => ReadingMarkup.plainText(readingText);
 
   factory NovenaDayModel.fromJson(Map<String, dynamic> json) {
     return NovenaDayModel._deferred(
