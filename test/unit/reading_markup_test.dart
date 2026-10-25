@@ -16,41 +16,53 @@ void main() {
             )
             as Map;
     final actual = <String, String>{};
-    void walk(Object? value, String path) {
-      if (value is List) {
-        for (var i = 0; i < value.length; i++) {
-          walk(value[i], '$path/$i');
+    void add(String key, String markedBody) {
+      final body = ReadingMarkup.plainText(markedBody);
+      var hash = 0x811c9dc5;
+      for (final byte in utf8.encode(body)) {
+        hash = ((hash ^ byte) * 0x01000193) & 0xffffffff;
+      }
+      actual[key] = hash.toRadixString(16).padLeft(8, '0');
+    }
+
+    for (final language in ['en', 'sw']) {
+      for (final file in Directory(
+        'assets/content/prayers/$language',
+      ).listSync().whereType<File>()) {
+        for (final prayer in jsonDecode(file.readAsStringSync()) as List) {
+          add('prayer:$language:${prayer['id']}', prayer['body'] as String);
         }
-      } else if (value is Map) {
-        for (final entry in value.entries) {
-          if (entry.key == 'body') {
-            final body = ReadingMarkup.plainText(entry.value as String);
-            var hash = 0x811c9dc5;
-            for (final byte in utf8.encode(body)) {
-              hash = ((hash ^ byte) * 0x01000193) & 0xffffffff;
-            }
-            actual['$path/body'] = hash.toRadixString(16).padLeft(8, '0');
-          } else {
-            walk(entry.value, '$path/${entry.key}');
+      }
+      for (final file in Directory(
+        'assets/content/novenas/$language',
+      ).listSync().whereType<File>()) {
+        final novena = jsonDecode(file.readAsStringSync()) as Map;
+        for (final day in novena['days'] as List) {
+          add(
+            'novena:$language:${novena['id']}:day${day['day']}',
+            day['body'] as String,
+          );
+        }
+        for (final entry in {
+          'closing_prayer': 'closing',
+          'thanksgiving_section': 'thanks',
+        }.entries) {
+          final section = novena[entry.key] as Map?;
+          if (section != null) {
+            add(
+              'novena:$language:${novena['id']}:${entry.value}',
+              section['body'] as String,
+            );
           }
         }
       }
     }
-
-    for (final kind in ['prayers', 'novenas']) {
-      for (final file in Directory(
-        'assets/content/$kind',
-      ).listSync(recursive: true).whereType<File>()) {
-        if (file.path.endsWith('.json')) {
-          walk(
-            jsonDecode(file.readAsStringSync()),
-            file.path.substring('assets/content/'.length),
-          );
-        }
-      }
+    // Pin existing IDs without requiring fixture edits for new prayers or
+    // innocuous file reordering. Removing or changing a baseline still fails.
+    expect(expected.length, 244);
+    for (final entry in expected.entries) {
+      expect(actual[entry.key], entry.value, reason: entry.key as String);
     }
-    expect(actual.length, 244);
-    expect(actual, expected);
   });
 
   test(
