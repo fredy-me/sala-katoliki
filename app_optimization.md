@@ -1,6 +1,6 @@
 # Sala Katoliki — App Optimization Plan
 
-**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 in progress: day counts, manifest tooling, ID parity, 6.1 presentation profiles, and 6.7 authored reading markers are implemented; i18n consolidation remains pending.
+**Status:** Part 1 done. Part 2: implemented (with documented deviation), all four gate commands green. Part 3: implemented (with documented deviations on 3.4 and 3.5), all four gate commands green and the full test suite green. Part 4: 4.1–4.5 and 4.7 implemented and measured, all four gate commands green; 4.6 deliberately not started, it needs the mandatory OWNER screenshot pass first and a call-site refactor. Part 5: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6 and 5.7 implemented and AGENT-verified; 5.8 investigated and closed as not-warranted (its premise is false). All four gate commands green and the full suite green at 179/179. **Outstanding, OWNER-only:** first-frame timing vs the Part 1.7 baseline, memory vs Part 1.9, and a cold-launch check from the home-screen widget — 5.1 and 5.4 both touch launch behaviour. Part 6 (6.1–6.9): all implementation and AGENT acceptance work complete. The final full suite passed 215/215; content validation, both generator checks, and final analysis passed. Physical-device visual sign-off remains outstanding.
 **Created:** 2026-09-27
 **Baseline commit:** `e605f0e` (v1.0.12+12)
 **Scope:** App weight, startup time, frame responsiveness, memory, and content-authoring flexibility. UI/UX appearance must not change.
@@ -816,6 +816,24 @@ The 4.7 figure counts only the scoring work, so it understates the user-visible 
 
 ### Part 6 — Content-authoring flexibility
 
+**Current implementation:** all nine tasks (6.1–6.9) and the host acceptance
+gate are complete. Final results are recorded in the completion entry at the
+end of this file. Earlier continuation notes below are historical.
+Physical-device visual sign-off and release measurements remain separate.
+
+| Item | Final implementation |
+| --- | --- |
+| 6.1 | Required presentation profiles in both language corpora; screens select profiles from models. |
+| 6.2 | Runtime progress bounds use the authored `days` array. |
+| 6.3 | Every novena now declares integer `day_count`; validator checks it against ordered days and translation parity. The earlier optional-field deviation is closed. |
+| 6.4 | Deterministic manifest generator with read-only `--check`. |
+| 6.5 | Manifest/disk omissions, missing paths, and duplicate paths fail validation. |
+| 6.6 | Bilingual ID parity and a shared declared prayer-alias contract. |
+| 6.7 | All 244 existing reading bodies use explicit, validated formatting markers, with plain-text and layout parity evidence. |
+| 6.8 | One typed `AppStrings` API, 241 messages per locale, validated catalogs/generator, and no per-screen translation classes. |
+| 6.9 | Content, translation, routing, alias, marker, and required day-count workflows documented, including APP_INDEXES. |
+
+
 **Continuation record — 2026-10-25 (partial Part 6, not a full sign-off):**
 
 - 6.2: use each novena's `days.length`; resolve bounds before filtering or migrating saved progress. Starting a new session resolves its bound before a progress write. Unknown lengths preserve positive saved days instead of clamping them to nine; nine is only a Today display fallback.
@@ -1059,3 +1077,64 @@ Parts 2–5 OWNER checks remain outstanding; see each part above. Part 6 additio
 - After the validator import correction, all 9 temporary-fixture content-authoring tests passed. `git diff --check` passed. Flutter currently reports **No authorized devices detected**, so this continuation has not been installed or launched on the phone; the prior Part 6.1 device screenshot does not verify the new marker renderer. An updated debug APK is being prepared separately.
 - Final baseline-fixture refinement: preservation evidence is keyed by content ID/day rather than file position. All existing readings remain pinned, while new IDs and harmless file reordering require no fixture or Dart edits. All 8 marker/preservation/rendering tests passed after that refinement; final analysis reported **No issues found**. The earlier 203-test full-suite result and the later focused reruns together cover the completed change; no further full-suite run was performed.
 - `flutter build apk --debug --no-pub` completed successfully and produced `build/app/outputs/flutter-apk/app-debug.apk`. A final `flutter devices` check still reported no authorized devices, so installation and a physical-device reading-screen check remain pending. This build result does not imply a release-size or performance target was met. `git diff --check` passed.
+
+
+### Part 6 final implementation — 2026-10-25
+
+- Consolidated the 17 remaining private string classes found in this checkout,
+  plus inline onboarding/prayer-list/native-widget translations, into one
+  synchronous typed `AppStrings` API. The audit's original “18 classes” count
+  no longer describes the checkout at the start of this pass; no private
+  per-screen strings classes remain. English and Kiswahili each provide 241
+  catalog messages. Existing wording is pinned against frozen pre-refactor
+  implementations, including numeric/temporal parameters, plural/select
+  branches, status labels, version labels, and unknown-language fallback.
+- `tool/generate_localizations.dart` validates complete keys, typed placeholders,
+  and selector/plural definitions, then generates a constant catalog and typed
+  accessors. `--check` rejects stale output. English fixes method parameter
+  order even when a new locale sorts earlier or reorders its metadata. A new
+  language needs a catalog/central registration, not more screen string classes.
+  The documented plural mechanism preserves the current EN/SW one/other rule.
+- Closed the earlier 6.3 deviation: all 18 localized novena declarations now
+  include required integer `day_count`. Runtime bounds still derive from days;
+  validation rejects missing/non-integer/mismatched counts. IDs and saved data
+  are unchanged.
+- Added actual app-level authoring tests for EN/SW. Each temporary tree receives
+  a new prayer and a two-day novena in paired JSON files, runs one manifest
+  generation command, validates, resolves external-form deep links, and renders
+  the real prayer/day routes. New content is searchable, displays the authored
+  formatting without marker leakage, and has no reading-card ancestor. These
+  temporary probes are never shipped or written to user preferences outside
+  test mocks.
+- Updated CONTENT_GUIDE, content architecture, adding-prayer guidance, and
+  APP_INDEXES. The latter now distinguishes implemented app alias resolution
+  from the remaining published-web canonical-URL check.
+- The first new end-to-end test run timed out because a data source cached
+  futures in `runAsync`; the widget phase now starts a fresh synchronous bundle
+  chain in its own fake-async zone. Native event channels are stubbed for the
+  fixture. Both corrected end-to-end tests passed.
+- Final verification follows the documented low-resource order: full suite
+  with `nice -n 15`, `--concurrency=1`, then content/generator checks, then
+  analysis. Results are appended after completion; no unmeasured speed or
+  release-size claim is made.
+
+- **Final host acceptance gate: passed.** `nice -n 15 flutter test --no-pub
+  --concurrency=1` passed **215/215** in one complete run. Content validation,
+  manifest `--check`, localization `--check`, and `git diff --check` passed.
+  Analysis first reported one null-aware-collection style issue in the new
+  generator; after that syntax-only correction, the generator check passed
+  again and `flutter analyze --no-pub` reported **No issues found**. No second
+  full-suite run was needed for that equivalent collection syntax change.
+- All Part 6 AGENT items and 6.1–6.9 implementation items are complete.
+  Outstanding OWNER work is physical-device visual confirmation across the
+  reading screens and the broader previously recorded release/performance
+  checks; this host gate does not claim those were performed. Part 7 is a
+  separate subsequent part.
+- Final Part 6 debug build: `nice -n 15 flutter build apk --debug --no-pub`
+  passed and refreshed `build/app/outputs/flutter-apk/app-debug.apk` with the
+  complete 6.1–6.9 implementation. Device availability was requested separately;
+  earlier no-device results must not be treated as a successful installation.
+- The post-build device check still returned **No authorized devices detected**.
+  This final APK has therefore not been installed or visually verified on a
+  phone in this pass. All implementation/host acceptance items are complete;
+  physical-device OWNER sign-off remains explicitly open.
