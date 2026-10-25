@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,8 +22,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isKiswahili =
-        _selectedLanguageCode == SupportedLanguages.kiswahili.code;
+    final strings = AppStrings(_selectedLanguageCode);
     final languageState = ref.watch(selectedLanguageProvider);
 
     return Scaffold(
@@ -42,60 +42,52 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const _AppMark(),
                 const SizedBox(height: AppSpacing.section),
                 Text(
-                  isKiswahili
-                      ? 'Chagua Lugha Yako ya Sala'
-                      : 'Choose Your Prayer Language',
+                  strings.onboardingTitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(
-                  isKiswahili
-                      ? 'Chagua lugha unayopendelea kwa sala na maudhui ya programu.'
-                      : 'Select the language you prefer for prayers and app content.',
+                  strings.onboardingSubtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: AppSpacing.section),
-                _LanguageOptionCard(
-                  language: SupportedLanguages.english,
-                  selected:
-                      _selectedLanguageCode == SupportedLanguages.english.code,
-                  onTap: () => setState(
-                    () =>
-                        _selectedLanguageCode = SupportedLanguages.english.code,
+                for (
+                  var index = 0;
+                  index < SupportedLanguages.all.length;
+                  index++
+                ) ...[
+                  _LanguageOptionCard(
+                    language: SupportedLanguages.all[index],
+                    selected:
+                        _selectedLanguageCode ==
+                        SupportedLanguages.all[index].code,
+                    onTap: () => setState(
+                      () => _selectedLanguageCode =
+                          SupportedLanguages.all[index].code,
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                _LanguageOptionCard(
-                  language: SupportedLanguages.kiswahili,
-                  selected:
-                      _selectedLanguageCode ==
-                      SupportedLanguages.kiswahili.code,
-                  onTap: () => setState(
-                    () => _selectedLanguageCode =
-                        SupportedLanguages.kiswahili.code,
-                  ),
-                ),
+                  if (index != SupportedLanguages.all.length - 1)
+                    const SizedBox(height: AppSpacing.md),
+                ],
                 const SizedBox(height: AppSpacing.section),
                 FilledButton(
                   onPressed: languageState.isLoading
                       ? null
                       : () => _selectLanguage(_selectedLanguageCode),
-                  child: Text(isKiswahili ? 'Endelea' : 'Continue'),
+                  child: Text(strings.onboardingContinueLabel),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextButton(
                   onPressed: languageState.isLoading
                       ? null
                       : () => _selectLanguage(SupportedLanguages.english.code),
-                  child: Text(isKiswahili ? 'Ruka' : 'Skip'),
+                  child: Text(strings.onboardingSkip),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  isKiswahili
-                      ? 'Unaweza kubadilisha hii baadaye katika Mipangilio.'
-                      : 'You can change this later in Settings.',
+                  strings.onboardingChangeLater,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
