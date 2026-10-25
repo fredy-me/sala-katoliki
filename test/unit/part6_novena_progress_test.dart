@@ -119,8 +119,9 @@ class _CountingBundle extends TestAssetBundle {
 
   @override
   Future<String> loadString(String key, {bool cache = true}) {
-    if (key.contains('/novenas/'))
+    if (key.contains('/novenas/')) {
       reads.update(key, (n) => n + 1, ifAbsent: () => 1);
+    }
     if (renameId && key.endsWith('/en/st_rita_novena.json')) {
       // TestAssetBundle resolves synchronously; a transformed future is safe in
       // these plain unit tests (no widget fake-async zone).
