@@ -1024,3 +1024,12 @@ Parts 2–5 OWNER checks remain outstanding; see each part above. Part 6 additio
 - Check a daily prayer widget cold launch and external EN/SW prayer links, including the Divine Mercy alias.
 - Confirm all reading screens retain their current appearance and the documented card exceptions.
 - Capture low-end device startup, scroll and memory measurements. No new speed or size claim is made by this continuation.
+
+### 2026-10-25 continuation — final host verification
+
+- Full suite: 190 passed, 2 fixture failures; affected file after correction: 8/8 passed. All 192 distinct tests passed across those runs (no second full-suite run).
+- `dart run tools/validate_content.dart`: passed.
+- `dart run tool/generate_content_manifest.dart --check`: passed; existing manifest unchanged.
+- Final `flutter analyze --no-pub`: **No issues found**. The first analysis reported one unused import and two brace-style issues; those were corrected before the successful rerun. These final edits only removed an unused import and added braces around existing statements.
+- Checks ran sequentially at reduced priority. No application build, launch, installation, or integration-device test was performed. `git diff --check` passed.
+- This completes the current data/progress/tooling continuation, not all of Part 6 or the production device sign-off. Pending presentation/i18n work and OWNER checks are listed above.
