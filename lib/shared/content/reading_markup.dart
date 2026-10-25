@@ -9,8 +9,17 @@ class ReadingNode {
 
 abstract final class ReadingMarkup {
   static const kinds = {
-    'plain', 'response', 'heading', 'invocation', 'italic', 'rich', 'group',
-    'lamb', 'highlight', 'panel_gold', 'panel_outline',
+    'plain',
+    'response',
+    'heading',
+    'invocation',
+    'italic',
+    'rich',
+    'group',
+    'lamb',
+    'highlight',
+    'panel_gold',
+    'panel_outline',
   };
   static final _marker = RegExp(r'\[\[(/?)([a-z_]+)\]\]');
   static final _plainCache = <String, String>{};
@@ -57,7 +66,9 @@ abstract final class ReadingMarkup {
       if (match.group(1)!.isEmpty) {
         if (stack.isEmpty) {
           if (match.start > cursor) {
-            result.add(ReadingNode('text', text.substring(cursor, match.start)));
+            result.add(
+              ReadingNode('text', text.substring(cursor, match.start)),
+            );
           }
           contentStart = match.end;
         }
@@ -70,7 +81,9 @@ abstract final class ReadingMarkup {
           throw FormatException('Unmatched reading marker: $kind');
         }
         if (stack.isEmpty) {
-          result.add(ReadingNode(kind, text.substring(contentStart, match.start)));
+          result.add(
+            ReadingNode(kind, text.substring(contentStart, match.start)),
+          );
           cursor = match.end;
         }
       }
@@ -97,13 +110,31 @@ abstract final class ReadingMarkup {
         : text.split('\n');
     final allowed = switch (mode) {
       'prayer' => const {'plain', 'response', 'heading'},
-      'litany' => const {'plain', 'response', 'heading', 'lamb', 'panel_gold', 'panel_outline'},
-      'novena' => const {'plain', 'response', 'heading', 'invocation', 'italic', 'rich', 'group', 'highlight'},
+      'litany' => const {
+        'plain',
+        'response',
+        'heading',
+        'lamb',
+        'panel_gold',
+        'panel_outline',
+      },
+      'novena' => const {
+        'plain',
+        'response',
+        'heading',
+        'invocation',
+        'italic',
+        'rich',
+        'group',
+        'highlight',
+      },
       _ => throw ArgumentError.value(mode, 'mode'),
     };
     void check(ReadingNode node) {
       if (!allowed.contains(node.kind)) {
-        throw FormatException('Reading marker ${node.kind} is not supported in $mode');
+        throw FormatException(
+          'Reading marker ${node.kind} is not supported in $mode',
+        );
       }
       if (plainText(node.content).replaceAll('*', '').trim().isEmpty) {
         throw const FormatException('Empty reading marker');
@@ -113,7 +144,9 @@ abstract final class ReadingMarkup {
         for (final child in children) {
           if (child.kind == 'text') {
             if (child.content.replaceAll('*', '').trim().isNotEmpty) {
-              throw const FormatException('Group text must have an explicit marker');
+              throw const FormatException(
+                'Group text must have an explicit marker',
+              );
             }
           } else {
             check(child);
@@ -122,16 +155,24 @@ abstract final class ReadingMarkup {
       } else if (node.kind == 'rich') {
         for (final child in children) {
           if (child.kind != 'text' && child.kind != 'italic') {
-            throw const FormatException('Rich paragraphs allow only inline italic markers');
+            throw const FormatException(
+              'Rich paragraphs allow only inline italic markers',
+            );
           }
-          if (child.kind == 'italic' && (hasMarkers(child.content) || child.content.trim().isEmpty)) {
-            throw const FormatException('Inline italic markers must contain plain text');
+          if (child.kind == 'italic' &&
+              (hasMarkers(child.content) || child.content.trim().isEmpty)) {
+            throw const FormatException(
+              'Inline italic markers must contain plain text',
+            );
           }
         }
       } else if (hasMarkers(node.content)) {
-        throw FormatException('Nested markers are not supported inside ${node.kind}');
+        throw FormatException(
+          'Nested markers are not supported inside ${node.kind}',
+        );
       }
     }
+
     for (final part in parts.where((part) => part.trim().isNotEmpty)) {
       check(block(part));
     }
@@ -141,9 +182,9 @@ abstract final class ReadingMarkup {
   }
 
   static ReadingNode block(String text) {
-    final nodes = parse(text).where(
-      (node) => node.kind != 'text' || node.content.trim().isNotEmpty,
-    ).toList(growable: false);
+    final nodes = parse(text)
+        .where((node) => node.kind != 'text' || node.content.trim().isNotEmpty)
+        .toList(growable: false);
     if (nodes.length != 1 || nodes.single.kind == 'text') {
       throw const FormatException('Expected one explicit reading block');
     }
