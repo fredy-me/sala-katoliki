@@ -178,9 +178,13 @@ void main() {
 
   test('novena progress is preserved when switching between novenas', () async {
     SharedPreferences.setMockInitialValues({});
-    final container = ProviderContainer(overrides: [
-      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
+        ),
+      ],
+    );
 
     await container
         .read(novenaProgressProvider.notifier)
@@ -263,9 +267,13 @@ void main() {
     'completing the final day clears local progress for that novena',
     () async {
       SharedPreferences.setMockInitialValues({});
-      final container = ProviderContainer(overrides: [
-      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
-    ]);
+      final container = ProviderContainer(
+        overrides: [
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
+        ],
+      );
 
       await container
           .read(novenaProgressProvider.notifier)
@@ -290,9 +298,13 @@ void main() {
 
   test('Holy Family final day clears its local progress', () async {
     SharedPreferences.setMockInitialValues({});
-    final container = ProviderContainer(overrides: [
-      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
+        ),
+      ],
+    );
 
     await container
         .read(novenaProgressProvider.notifier)
