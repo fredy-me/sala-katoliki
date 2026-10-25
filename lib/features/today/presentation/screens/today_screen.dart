@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,17 +20,20 @@ class TodayScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _TodayStrings(languageCode);
+    final strings = AppStrings(languageCode);
     final prayersState = ref.watch(prayersProvider);
     final localState = ref.watch(todayLocalStateProvider).asData?.value;
     // 5.3: the title alone, not a whole novena session. The other novena
     // screens still use activeNovenaSessionProvider, which needs the days.
-    final activeNovenaTitle = ref.watch(activeNovenaTitleProvider).asData?.value;
+    final activeNovenaTitle = ref
+        .watch(activeNovenaTitleProvider)
+        .asData
+        ?.value;
     final recentIds =
         ref.watch(recentPrayerIdsProvider).asData?.value ?? const <String>[];
 
     return prayersState.when(
-      loading: () => AppLoading(label: strings.loading),
+      loading: () => AppLoading(label: strings.todayLoading),
       error: (error, stackTrace) => _TodayContent(
         strings: strings,
         dailyPrayer: null,
@@ -76,7 +80,7 @@ class _TodayContent extends StatelessWidget {
     required this.activeNovenaTitle,
   });
 
-  final _TodayStrings strings;
+  final AppStrings strings;
   final PrayerEntity? dailyPrayer;
   final PrayerEntity? recentPrayer;
   final TodayLocalState? localState;
@@ -95,7 +99,7 @@ class _TodayContent extends StatelessWidget {
       ),
       children: [
         Text(
-          strings.eyebrow,
+          strings.todayEyebrow,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: AppColors.gold,
             letterSpacing: 2,
@@ -117,7 +121,7 @@ class _TodayContent extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         _RosaryTodayCard(strings: strings),
         const SizedBox(height: AppSpacing.xl),
-        SectionHeader(title: strings.quickActions),
+        SectionHeader(title: strings.todayQuickActions),
         const SizedBox(height: AppSpacing.md),
         _QuickActionGrid(strings: strings, recentPrayer: recentPrayer),
         const SizedBox(height: AppSpacing.lg),
@@ -130,7 +134,7 @@ class _TodayContent extends StatelessWidget {
 class _DailyPrayerCard extends StatelessWidget {
   const _DailyPrayerCard({required this.strings, required this.prayer});
 
-  final _TodayStrings strings;
+  final AppStrings strings;
   final PrayerEntity? prayer;
 
   @override
@@ -144,7 +148,7 @@ class _DailyPrayerCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            strings.todaysPrayer,
+            strings.todayTodaysPrayer,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.gold,
               letterSpacing: 1.1,
@@ -152,7 +156,7 @@ class _DailyPrayerCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            prayer?.title() ?? strings.noDailyPrayerTitle,
+            prayer?.title() ?? strings.todayNoDailyPrayerTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: AppColors.background,
               fontSize: 20,
@@ -160,7 +164,7 @@ class _DailyPrayerCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            prayer?.description ?? strings.noDailyPrayerBody,
+            prayer?.description ?? strings.todayNoDailyPrayerBody,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -173,7 +177,7 @@ class _DailyPrayerCard extends StatelessWidget {
                 ? () => context.go('/prayers')
                 : () => context.push('/prayers/${prayer!.id}'),
             icon: const Icon(Icons.chevron_right),
-            label: Text(strings.prayNow),
+            label: Text(strings.todayPrayNow),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.gold,
               foregroundColor: AppColors.text,
@@ -189,7 +193,7 @@ class _DailyPrayerCard extends StatelessWidget {
 class _NoActiveNovenaCard extends StatelessWidget {
   const _NoActiveNovenaCard({required this.strings});
 
-  final _TodayStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -203,12 +207,12 @@ class _NoActiveNovenaCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  strings.novenas,
+                  strings.todayNovenas,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  strings.noActiveNovena,
+                  strings.todayNoActiveNovena,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -216,7 +220,7 @@ class _NoActiveNovenaCard extends StatelessWidget {
           ),
           OutlinedButton(
             onPressed: () => context.go('/novenas'),
-            child: Text(strings.browse),
+            child: Text(strings.todayBrowse),
           ),
         ],
       ),
@@ -231,7 +235,7 @@ class _ContinueNovenaCard extends StatelessWidget {
     required this.title,
   });
 
-  final _TodayStrings strings;
+  final AppStrings strings;
   final TodayLocalState state;
   final String? title;
 
@@ -250,16 +254,16 @@ class _ContinueNovenaCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      strings.continueNovena,
+                      strings.todayContinueNovena,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      title ?? strings.activeNovenaUnavailable,
+                      title ?? strings.todayActiveNovenaUnavailable,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Text(
-                      strings.dayProgress(
+                      strings.todayDayProgress(
                         state.nextNovenaDay,
                         state.totalNovenaDays,
                       ),
@@ -282,7 +286,7 @@ class _ContinueNovenaCard extends StatelessWidget {
             onPressed: () => context.push(
               '/novenas/${state.activeNovenaId}/day/${state.nextNovenaDay}',
             ),
-            child: Text(strings.continueAction),
+            child: Text(strings.todayContinueAction),
           ),
         ],
       ),
@@ -293,7 +297,7 @@ class _ContinueNovenaCard extends StatelessWidget {
 class _RosaryTodayCard extends StatelessWidget {
   const _RosaryTodayCard({required this.strings});
 
-  final _TodayStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -307,16 +311,16 @@ class _RosaryTodayCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  strings.rosaryToday,
+                  strings.todayRosaryToday,
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  strings.suggestedMystery,
+                  strings.todaySuggestedMystery,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  strings.todayDay,
+                  strings.todayTodayDay,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -333,7 +337,7 @@ class _RosaryTodayCard extends StatelessWidget {
               ),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: Text(strings.startRosary),
+            child: Text(strings.todayStartRosary),
           ),
         ],
       ),
@@ -344,26 +348,34 @@ class _RosaryTodayCard extends StatelessWidget {
 class _QuickActionGrid extends StatelessWidget {
   const _QuickActionGrid({required this.strings, required this.recentPrayer});
 
-  final _TodayStrings strings;
+  final AppStrings strings;
   final PrayerEntity? recentPrayer;
 
   @override
   Widget build(BuildContext context) {
     final actions = [
-      _QuickAction(Icons.menu_book_outlined, strings.commonPrayers, '/prayers'),
+      _QuickAction(
+        Icons.menu_book_outlined,
+        strings.todayCommonPrayers,
+        '/prayers',
+      ),
       _QuickAction(
         Icons.history,
-        strings.recentlyOpened,
+        strings.todayRecentlyOpened,
         recentPrayer == null ? null : '/prayers/${recentPrayer!.id}',
         usePush: true,
       ),
       _QuickAction(
         Icons.favorite_border,
-        strings.favorites,
+        strings.todayFavorites,
         '/favorites',
         usePush: true,
       ),
-      _QuickAction(Icons.calendar_month_outlined, strings.novenas, '/novenas'),
+      _QuickAction(
+        Icons.calendar_month_outlined,
+        strings.todayNovenas,
+        '/novenas',
+      ),
     ];
 
     return GridView.count(
@@ -417,7 +429,7 @@ class _QuickActionGrid extends StatelessWidget {
 class _ReminderStatusCard extends StatelessWidget {
   const _ReminderStatusCard({required this.strings, required this.state});
 
-  final _TodayStrings strings;
+  final AppStrings strings;
   final TodayLocalState? state;
 
   @override
@@ -436,12 +448,12 @@ class _ReminderStatusCard extends StatelessWidget {
               children: [
                 Text(
                   reminderEnabled
-                      ? strings.reminderEnabled(reminderTime)
-                      : strings.reminderDisabled,
+                      ? strings.todayReminderEnabled(reminderTime)
+                      : strings.todayReminderDisabled,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  strings.availableOffline,
+                  strings.todayAvailableOffline,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -449,7 +461,7 @@ class _ReminderStatusCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => context.go('/settings'),
-            child: Text(strings.edit),
+            child: Text(strings.todayEdit),
           ),
         ],
       ),
@@ -485,48 +497,4 @@ class _QuickAction {
   final String label;
   final String? path;
   final bool usePush;
-}
-
-class _TodayStrings {
-  const _TodayStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get loading => _sw ? 'Inapakia leo...' : 'Loading today...';
-  String get eyebrow => _sw ? 'AMANI IWE NAWE' : 'PEACE BE WITH YOU';
-  String get todaysPrayer => _sw ? 'SALA YA LEO' : "TODAY'S PRAYER";
-  String get noDailyPrayerTitle =>
-      _sw ? 'Sala haijapatikana' : 'Prayer unavailable';
-  String get noDailyPrayerBody => _sw
-      ? 'Fungua maktaba ya sala kuona sala zilizopo.'
-      : 'Open the prayer library to view available prayers.';
-  String get prayNow => _sw ? 'Sali Sasa' : 'Pray Now';
-  String get quickActions => _sw ? 'Fikia Haraka' : 'Quick Actions';
-  String get continueNovena => _sw ? 'Endelea Novena' : 'Continue Novena';
-  String get activeNovenaUnavailable =>
-      _sw ? 'Novena haijapatikana' : 'Novena unavailable';
-  String get continueAction => _sw ? 'Endelea' : 'Continue';
-  String get novenas => _sw ? 'Novenas' : 'Novenas';
-  String get noActiveNovena =>
-      _sw ? 'Hakuna novena inayoendelea kwa sasa.' : 'No active novena yet.';
-  String get browse => _sw ? 'Fungua' : 'Browse';
-  String dayProgress(int day, int totalDays) =>
-      _sw ? 'Siku ya $day kati ya $totalDays' : 'Day $day of $totalDays';
-  String get rosaryToday => _sw ? 'Rozari Leo' : 'Rosary Today';
-  String get suggestedMystery => _sw ? 'Mafumbo ya Leo' : "Today's Mysteries";
-  String get todayDay => _sw ? 'Kulingana na siku ya leo' : 'Based on today';
-  String get startRosary => _sw ? 'Anza Rozari' : 'Start Rosary';
-  String get commonPrayers => _sw ? 'Sala za Kawaida' : 'Common Prayers';
-  String get recentlyOpened =>
-      _sw ? 'Zilizofunguliwa Karibuni' : 'Recently Opened';
-  String get favorites => _sw ? 'Vipendwa' : 'Favorites';
-  String reminderEnabled(String time) =>
-      _sw ? 'Kikumbusho kimewekwa saa $time' : 'Reminder set for $time';
-  String get reminderDisabled =>
-      _sw ? 'Kikumbusho hakijawekwa' : 'No reminder set';
-  String get availableOffline =>
-      _sw ? 'Inapatikana nje ya mtandao' : 'Available offline';
-  String get edit => _sw ? 'Hariri' : 'Edit';
 }
