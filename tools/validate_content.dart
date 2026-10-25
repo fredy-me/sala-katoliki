@@ -114,8 +114,9 @@ class _ContentValidator {
         final id = _string(novena, 'id', 'novena ${file.path}');
         if (id != null) {
           _validateSnakeCase(id, 'novena id');
-          if (!seenIds.add(id))
+          if (!seenIds.add(id)) {
             _errors.add('Duplicate novena id: $language:$id');
+          }
         }
         final novenaLanguage = _string(novena, 'language', 'novena $id');
         _string(novena, 'title', 'novena $id');
