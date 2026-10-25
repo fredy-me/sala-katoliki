@@ -106,7 +106,7 @@ The MVP must not depend on authentication, a backend or CMS, cloud sync, payment
 ### 6. Android internal testing — in progress
 
 - Current app identity: `com.busaradigital.salakatoliki`.
-- Current app version: `1.0.12+12` / `1.0.12`.
+- Current app version: `1.1.0+13` / `1.1.0` (Android versionCode 13).
 - Current target SDK: 36 (Android 16); minimum SDK is 24 (Android 7.0), inherited from the Flutter toolchain.
 - Release signing configuration is supported through `android/key.properties`; never commit the keystore or credentials.
 - Produce and test a release-signed AAB before internal upload.
@@ -157,6 +157,7 @@ Add an entry only after performing the check; do not mark an item complete from 
 | --- | --- | --- | --- | --- | --- |
 | 2026-07-14 | 1.0.4+4 | Bundled content validator | Local development checkout | Passed | `dart run tools/validate_content.dart` |
 | 2026-10-25 | 1.0.12+12 | Content-authoring optimization Part 6, all nine implementation items | Host; tests run sequentially at reduced priority | 215/215 tests passed; content/manifest/localization checks passed; final analysis clean | [Detailed Part 6 evidence](app_optimization.md#part-6-final-implementation--2026-10-25); device visual sign-off remains pending |
+| 2026-10-25 | 1.1.0+13 | Minor-version increment and metadata alignment | Host; source and test checks only | Version sources agree; localization tests 9/9, content validation passed, analysis clean | No device run or release build; owner sign-off remains pending |
 
 ## Change-control rule
 
