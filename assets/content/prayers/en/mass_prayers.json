@@ -1,12 +1,13 @@
 [
   {
     "id": "apostles_creed",
+    "style": "standard",
     "type": "prayer",
     "category": "mass_prayers",
     "language": "en",
     "title": "The Apostles' Creed",
     "description": "A profession of Christian faith.",
-    "body": "I believe in God the Father Almighty, Creator of Heaven and earth. And in Jesus Christ, his only Son, our Lord. He was conceived by the power of the Holy Spirit and born of the Virgin Mary. He suffered under Pontius Pilate. He was crucified, died, and was buried. He descended into hell. On the third day he rose again from the dead. He ascended into Heaven and is seated at the right hand of God the Father Almighty. From there he will come again to judge the living and the dead.\n\nI believe in the Holy Spirit, the holy Catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
+    "body": "[[plain]]I believe in God the Father Almighty, Creator of Heaven and earth. And in Jesus Christ, his only Son, our Lord. He was conceived by the power of the Holy Spirit and born of the Virgin Mary. He suffered under Pontius Pilate. He was crucified, died, and was buried. He descended into hell. On the third day he rose again from the dead. He ascended into Heaven and is seated at the right hand of God the Father Almighty. From there he will come again to judge the living and the dead.[[/plain]]\n\n[[plain]]I believe in the Holy Spirit, the holy Catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.[[/plain]]",
     "tags": ["creed", "mass", "faith"],
     "source": "Rozary.txt",
     "version": 1,
