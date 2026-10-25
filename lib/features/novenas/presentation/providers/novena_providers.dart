@@ -9,7 +9,6 @@ import '../../../../data/models/novena_model.dart';
 import '../../../../data/repositories/novena_repository.dart';
 import '../../../prayers/presentation/providers/prayer_providers.dart';
 import '../../../today/presentation/providers/today_providers.dart';
-import '../../domain/novena_day_counts.dart';
 import '../../domain/novena_state.dart';
 
 export '../../domain/novena_day_counts.dart' show defaultNovenaDayCount;
