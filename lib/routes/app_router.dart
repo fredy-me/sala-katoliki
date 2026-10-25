@@ -79,11 +79,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // scroll offset. This is the one intentional behaviour change in Part 5
       // and it needs release-note wording.
       //
-      // Note the trade-off this introduces, which the plan did not call out:
-      // an IndexedStack builds every branch eagerly, so all four tab screens
-      // now build at startup instead of only `/today`. That works against the
-      // 5.1/5.2/5.3 work in this same part, and is measured in the Part 5
-      // status table rather than assumed away.
+      // Branches load on first visit (StatefulShellBranch.preload defaults to
+      // false), then remain mounted to preserve their navigation/scroll state.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return AppShell(navigationShell: navigationShell);
