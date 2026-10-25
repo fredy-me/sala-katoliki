@@ -73,7 +73,7 @@ Iterable<_Reading> _readings(String language) sync* {
   ).listSync().whereType<File>()) {
     for (final json in jsonDecode(file.readAsStringSync()) as List) {
       yield _Reading(
-        '$language:${json['id']}',
+        'prayer:$language:${json['id']}',
         json['body'] as String,
         json['style'] == 'standard' ? 'prayer' : 'litany',
         st: json['style'] == 'litany_st_rita',
@@ -81,7 +81,7 @@ Iterable<_Reading> _readings(String language) sync* {
       // Rosary has always used the St Rita renderer for litany steps.
       if (json['style'] == 'litany') {
         yield _Reading(
-          '$language:${json['id']}:rosary',
+          'prayer:$language:${json['id']}:rosary',
           json['body'] as String,
           'litany',
           st: true,
@@ -96,7 +96,7 @@ Iterable<_Reading> _readings(String language) sync* {
     final st = json['style'] == 'st_rita';
     for (final day in json['days'] as List) {
       yield _Reading(
-        '$language:${json['id']}:day${day['day']}',
+        'novena:$language:${json['id']}:day${day['day']}',
         day['body'] as String,
         'novena',
         st: st,
@@ -105,22 +105,24 @@ Iterable<_Reading> _readings(String language) sync* {
       );
     }
     final closing = json['closing_prayer'] as Map?;
-    if (closing != null)
+    if (closing != null) {
       yield _Reading(
-        '$language:${json['id']}:closing',
+        'novena:$language:${json['id']}:closing',
         closing['body'] as String,
         'litany',
         st: st,
       );
+    }
     final thanks = json['thanksgiving_section'] as Map?;
-    if (thanks != null)
+    if (thanks != null) {
       yield _Reading(
-        '$language:${json['id']}:thanks',
+        'novena:$language:${json['id']}:thanks',
         thanks['body'] as String,
         'novena',
         allSaints: st,
         thanks: st,
       );
+    }
   }
 }
 
@@ -164,6 +166,15 @@ List<Object?> _snapshot(WidgetTester tester) {
 }
 
 void main() {
+  final baselineIds =
+      (jsonDecode(
+                File(
+                  'test/fixtures/pre_marker_body_hashes.json',
+                ).readAsStringSync(),
+              )
+              as Map)
+          .keys
+          .toSet();
   for (final language in ['en', 'sw']) {
     for (final narrow in [false, true]) {
       testWidgets(
@@ -193,7 +204,10 @@ void main() {
             return _snapshot(tester);
           }
 
-          for (final reading in _readings(language)) {
+          // New IDs may use roles the old wording heuristics never recognized.
+          final readings = _readings(language).where((reading) => baselineIds.contains(reading.label)).toList();
+          expect(readings.length, baselineIds.where((id) => id.toString().split(':')[1] == language).length);
+          for (final reading in readings) {
             final before = await render(reading.widget(true));
             final after = await render(reading.widget(false));
             expect(after, before, reason: reading.label);
