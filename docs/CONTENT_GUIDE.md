@@ -171,3 +171,32 @@ It does not rename IDs already stored in favorites or recents.
 Presentation remains selected by the existing Dart style rules. New content
 requiring a new visual style still needs that work until optimization items
 6.1 and 6.7 are implemented. Localization consolidation (6.8) is also pending.
+
+### Declaring presentation styles (Part 6.1)
+
+Every prayer and novena must declare a top-level `style` string. The validator
+rejects missing or unknown styles. The reading screens use this field rather
+than content IDs or prayer categories to select their text renderer.
+
+| Content | Style | Rendering |
+| --- | --- | --- |
+| Prayer | `standard` | Standard prayer paragraphs |
+| Prayer | `litany` | Litany paragraphs |
+| Prayer | `litany_st_rita` | Litany with the existing St Rita response formatting |
+| Novena | `standard` | Standard novena paragraphs |
+| Novena | `all_saints` | All Saints paragraph formatting |
+| Novena | `holy_spirit` | All Saints formatting with virtue headings |
+| Novena | `st_rita` | All Saints formatting with St Rita responses and the existing uncarded closing/thanksgiving sections |
+
+Use the same style for both translations. These profiles preserve the existing
+rendering; they do not change prayer text or saved progress. For novenas other
+than `st_rita`, closing and thanksgiving sections retain their existing cards.
+Line classification still uses the current prefix rules; explicit authored
+line markers and i18n consolidation remain separate pending Part 6 tasks.
+
+After creating or changing content, run:
+
+```sh
+dart run tool/generate_content_manifest.dart
+dart run tools/validate_content.dart
+```
