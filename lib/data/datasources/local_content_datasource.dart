@@ -47,14 +47,24 @@ class LocalContentDataSource {
 
   final AssetBundle _bundle;
 
+  Future<Map<String, String>>? _prayerIdAliases;
   Future<ContentManifestModel>? _manifest;
   Future<List<CategoryModel>>? _categories;
   final Map<String, Future<List<PrayerModel>>> _prayersByLanguage = {};
   final Map<String, Future<List<NovenaModel>>> _novenasByLanguage = {};
   final Map<String, Future<NovenaModel?>> _novenaByIdCache = {};
-  final Map<String, Future<int?>> _novenaDayCountCache = {};
+  final Map<String, Future<NovenaModel>> _novenaModelsByPath = {};
   final Map<String, Future<List<RosaryPrayerModel>>> _rosaryPrayersByLanguage = {};
   final Map<String, Future<List<RosaryMysteryModel>>> _mysteriesByLanguage = {};
+
+  Future<Map<String, String>> getPrayerIdAliases() {
+    return _prayerIdAliases ??= _readPrayerIdAliases();
+  }
+
+  Future<Map<String, String>> _readPrayerIdAliases() async {
+    final json = await _loadMap('assets/content/metadata/id_aliases.json');
+    return Map<String, String>.from(json['prayer_id_aliases'] as Map);
+  }
 
   Future<ContentManifestModel> getManifest() {
     return _manifest ??= _readManifest();
@@ -90,72 +100,19 @@ class LocalContentDataSource {
     );
   }
 
-  /// 6.2. How many days a novena has, without building the whole model.
-  ///
-  /// Progress validation needs this number on the Today path, where loading the
-  /// full novena corpus would undo 5.3. Reads the single file for this id and
-  /// returns only the `days` array length, so the cost is one file — the same
-  /// one `getNovenaById` already pays — instead of all nine.
-  ///
-  /// Novena files are single objects, not lists; `_loadList` on one throws a
-  /// cast error. That is the bug this method's first draft had, and it surfaced
-  /// as a provider error rather than a wrong number, which is why it is worth
-  /// stating explicitly.
+  /// Reads the same cached model used by title, list and detail lookups.
+  /// Unknown or unreadable content must never erase saved progress.
   Future<int?> getNovenaDayCount(
     String novenaId, {
     String languageCode = 'sw',
-  }) {
-    return _novenaDayCountCache.putIfAbsent(
-      '$languageCode/$novenaId',
-      () => _readNovenaDayCount(novenaId, languageCode),
-    );
-  }
-
-  // Never throws. Progress validation asks for a day count on the Today path,
-  // and a content file that fails to parse must not be able to take the user's
-  // saved progress down with it: `null` reads as "unknown length" and the caller
-  // falls back. Before this, progress was pure `SharedPreferences` and could not
-  // fail for content reasons at all; 6.2 would otherwise have introduced that.
-  Future<int?> _readNovenaDayCount(
-    String novenaId,
-    String languageCode,
-  ) async {
+  }) async {
     try {
-      return await _readNovenaDayCountUnchecked(novenaId, languageCode);
+      final novena = await getNovenaById(novenaId, languageCode: languageCode);
+      final count = novena?.days.length;
+      return count != null && count > 0 ? count : null;
     } on Object {
       return null;
     }
-  }
-
-  Future<int?> _readNovenaDayCountUnchecked(
-    String novenaId,
-    String languageCode,
-  ) async {
-    final manifest = await getManifest();
-    final paths =
-        manifest.novenaPaths[languageCode] ??
-        manifest.novenaPaths[AssetPaths.defaultContentLanguage] ??
-        const <String>[];
-
-    // Fast path: filename stem matches. Every bundled novena follows this.
-    for (final path in paths) {
-      if (_novenaIdFromPath(path) == novenaId) {
-        final days = (await _loadMap(path))['days'];
-        return days is List ? days.length : null;
-      }
-    }
-
-    // Fallback: match the JSON `id`, the same way `getNovenaById` does, so the
-    // two never disagree about whether a novena exists.
-    for (final path in paths) {
-      final json = await _loadMap(path);
-      if (json['id'] == novenaId) {
-        final days = json['days'];
-        return days is List ? days.length : null;
-      }
-    }
-
-    return null;
   }
 
   Future<NovenaModel?> _readNovenaById(
@@ -170,7 +127,8 @@ class LocalContentDataSource {
 
     for (final path in paths) {
       if (_novenaIdFromPath(path) == novenaId) {
-        return _readNovenaAt(path);
+        final novena = await _readNovenaAt(path);
+        if (novena.id == novenaId) return novena;
       }
     }
 
@@ -278,8 +236,10 @@ class LocalContentDataSource {
     return novenas;
   }
 
-  Future<NovenaModel> _readNovenaAt(String path) async {
-    return NovenaModel.fromJson(await _loadMap(path));
+  Future<NovenaModel> _readNovenaAt(String path) {
+    return _novenaModelsByPath.putIfAbsent(path, () async {
+      return NovenaModel.fromJson(await _loadMap(path));
+    });
   }
 
   Future<List<RosaryPrayerModel>> _readRosaryPrayers(
