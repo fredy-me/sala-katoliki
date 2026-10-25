@@ -1,6 +1,7 @@
 {
   "id": "holy_spirit_novena",
   "style": "holy_spirit",
+  "day_count": 9,
   "language": "en",
   "title": "Novena to the Holy Spirit",
   "description": "A nine-day novena to the Holy Spirit.",
