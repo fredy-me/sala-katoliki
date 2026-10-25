@@ -133,8 +133,20 @@ void main() {
         throwsFormatException,
       );
     }
-    expect(() => ReadingMarkup.validate('[[panel_gold]]Ignored panel[[/panel_gold]]', mode: 'litany_st_rita'), throwsFormatException);
-    expect(() => ReadingMarkup.validate('[[response]]Ignored response[[/response]]', mode: 'litany'), throwsFormatException);
+    expect(
+      () => ReadingMarkup.validate(
+        '[[panel_gold]]Ignored panel[[/panel_gold]]',
+        mode: 'litany_st_rita',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => ReadingMarkup.validate(
+        '[[response]]Ignored response[[/response]]',
+        mode: 'litany',
+      ),
+      throwsFormatException,
+    );
     ReadingMarkup.validate(
       '[[heading]]A rephrased heading[[/heading]]\n\n[[response]]Any language at all[[/response]]',
       mode: 'prayer',
