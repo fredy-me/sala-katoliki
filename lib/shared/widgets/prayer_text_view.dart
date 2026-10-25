@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../utils/text_split_cache.dart';
+import '../content/reading_markup.dart';
 import 'text_style_rules.dart';
 
 class PrayerTextView extends StatelessWidget {
@@ -85,6 +86,10 @@ class PrayerTextView extends StatelessWidget {
     required TextStyle? responseStyle,
     required TextStyle? sectionStyle,
   }) {
+    final declared = ReadingMarkup.hasMarkers(line)
+        ? ReadingMarkup.block(line)
+        : null;
+    line = declared?.content ?? line;
     final matches = _italicPattern.allMatches(line).toList();
 
     if (matches.isEmpty) {
@@ -93,6 +98,7 @@ class PrayerTextView extends StatelessWidget {
           text: line,
           style: _styleForLine(
             line,
+            declaredKind: declared?.kind,
             baseStyle: baseStyle,
             responseStyle: responseStyle,
             sectionStyle: sectionStyle,
@@ -105,6 +111,7 @@ class PrayerTextView extends StatelessWidget {
     var lastEnd = 0;
     final lineStyle = _styleForLine(
       line,
+      declaredKind: declared?.kind,
       baseStyle: baseStyle,
       responseStyle: responseStyle,
       sectionStyle: sectionStyle,
@@ -137,10 +144,18 @@ class PrayerTextView extends StatelessWidget {
 
   TextStyle? _styleForLine(
     String line, {
+    String? declaredKind,
     required TextStyle? baseStyle,
     required TextStyle? responseStyle,
     required TextStyle? sectionStyle,
   }) {
+    if (declaredKind != null) {
+      return switch (declaredKind) {
+        'response' => responseStyle,
+        'heading' => sectionStyle,
+        _ => baseStyle,
+      };
+    }
     // 4.3: the trimmed form is needed by both checks, so derive it once
     // instead of once per check.
     final trimmed = line.trim();
