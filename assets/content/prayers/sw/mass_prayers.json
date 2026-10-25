@@ -1,12 +1,13 @@
 [
   {
     "id": "apostles_creed",
+    "style": "standard",
     "type": "prayer",
     "category": "mass_prayers",
     "language": "sw",
     "title": "Kanuni ya Imani",
     "description": "Ungamo la imani ya Kikristo.",
-    "body": "Nasadiki kwa Mungu Baba mwenyezi. Muumba wa Mbingu na dunia. Na kwa Yesu Kristo Mwanae wa pekee, Bwana wetu. Aliyetungwa kwa uwezo wa Roho Mtakatifu, akazaliwa na Bikira Maria. Akateswa kwa mamlaka ya Ponsiyo Pilato. Akasulibiwa, akafa, akazikwa, akashukia kuzimu. Siku ya tatu akafufuka katika wafu. Akapaa mbinguni, amekaa kuume kwa Mungu Baba Mwenyezi. Toka huko atakuja tena kuwahukumu wazima na wafu.\n\nNasadiki kwa Roho Mtakatifu, kanisa takatifu katoliki, ushirika wa watakatifu, maondoleo ya dhambi, ufufuko wa miili na uzima wa milele ijayo. Amina.",
+    "body": "[[plain]]Nasadiki kwa Mungu Baba mwenyezi. Muumba wa Mbingu na dunia. Na kwa Yesu Kristo Mwanae wa pekee, Bwana wetu. Aliyetungwa kwa uwezo wa Roho Mtakatifu, akazaliwa na Bikira Maria. Akateswa kwa mamlaka ya Ponsiyo Pilato. Akasulibiwa, akafa, akazikwa, akashukia kuzimu. Siku ya tatu akafufuka katika wafu. Akapaa mbinguni, amekaa kuume kwa Mungu Baba Mwenyezi. Toka huko atakuja tena kuwahukumu wazima na wafu.[[/plain]]\n\n[[plain]]Nasadiki kwa Roho Mtakatifu, kanisa takatifu katoliki, ushirika wa watakatifu, maondoleo ya dhambi, ufufuko wa miili na uzima wa milele ijayo. Amina.[[/plain]]",
     "tags": ["imani", "misa", "kanuni"],
     "source": "Rozary.txt",
     "version": 1,
