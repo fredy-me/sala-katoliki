@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,7 +26,7 @@ class LegalLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = _LegalLinksStrings(languageCode);
+    final strings = AppStrings(languageCode);
 
     return Column(
       crossAxisAlignment: centered
@@ -33,7 +34,7 @@ class LegalLinks extends StatelessWidget {
           : CrossAxisAlignment.start,
       children: [
         Text(
-          strings.note,
+          strings.legalLinksNote,
           textAlign: centered ? TextAlign.center : TextAlign.start,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -44,15 +45,15 @@ class LegalLinks extends StatelessWidget {
           runSpacing: AppSpacing.xs,
           children: [
             _LegalLinkButton(
-              label: strings.privacyPolicy,
+              label: strings.legalLinksPrivacyPolicy,
               uri: privacyPolicyUrl,
             ),
             _LegalLinkButton(
-              label: strings.termsOfService,
+              label: strings.legalLinksTermsOfService,
               uri: termsOfServiceUrl,
             ),
             _LegalLinkButton(
-              label: strings.contentDisclaimer,
+              label: strings.legalLinksContentDisclaimer,
               uri: contentDisclaimerUrl,
             ),
           ],
@@ -95,20 +96,4 @@ class _LegalLinkButton extends StatelessWidget {
       );
     }
   }
-}
-
-class _LegalLinksStrings {
-  const _LegalLinksStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get note => _sw
-      ? 'Kabla ya kuendelea, soma sera na maelezo muhimu kuhusu matumizi na maudhui.'
-      : 'Before continuing, review the important policies for use and content.';
-  String get privacyPolicy => _sw ? 'Sera ya Faragha' : 'Privacy Policy';
-  String get termsOfService => _sw ? 'Masharti ya Huduma' : 'Terms of Service';
-  String get contentDisclaimer =>
-      _sw ? 'Tahadhari ya Maudhui' : 'Content Disclaimer';
 }
