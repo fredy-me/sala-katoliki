@@ -1,6 +1,7 @@
 {
   "id": "all_saints_day_novena",
   "style": "all_saints",
+  "day_count": 9,
   "language": "en",
   "title": "All Saints' Day Novena",
   "description": "A nine-day novena asking the saints in heaven to intercede for us.",
