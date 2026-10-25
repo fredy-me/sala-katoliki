@@ -4,6 +4,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../utils/text_split_cache.dart';
 import 'text_style_rules.dart';
+import '../content/reading_markup.dart';
+import 'marked_novena_paragraph.dart';
 
 /// Renders novena body text.
 ///
@@ -37,7 +39,12 @@ class NovenaTextView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var index = 0; index < paragraphs.length; index += 1) ...[
-          if (allSaintsStyle)
+          if (ReadingMarkup.hasMarkers(paragraphs[index]))
+            MarkedNovenaParagraph(
+              node: ReadingMarkup.block(paragraphs[index]),
+              fontScale: fontScale,
+            )
+          else if (allSaintsStyle)
             _AllSaintsNovenaParagraph(
               text: paragraphs[index],
               fontScale: fontScale,
