@@ -13,9 +13,9 @@ void main() {
     SharedPreferences.setMockInitialValues({'selected_language': 'sw'});
 
     await tester.pumpWidget(const ProviderScope(child: SalaKatolikiApp()));
-    await _pumpUntilFound(tester, find.text('Pray'));
+    await _pumpUntilFound(tester, find.text('Sala'));
 
-    await tester.tap(find.text('Pray'));
+    await tester.tap(find.text('Sala'));
     await _pumpUntilFound(tester, find.text('Sala za Kawaida'));
     await tester.tap(find.text('Sala za Kawaida').first);
     await _pumpUntilFound(tester, find.text('Baba Yetu'));
