@@ -54,7 +54,8 @@ class LocalContentDataSource {
   final Map<String, Future<List<NovenaModel>>> _novenasByLanguage = {};
   final Map<String, Future<NovenaModel?>> _novenaByIdCache = {};
   final Map<String, Future<NovenaModel>> _novenaModelsByPath = {};
-  final Map<String, Future<List<RosaryPrayerModel>>> _rosaryPrayersByLanguage = {};
+  final Map<String, Future<List<RosaryPrayerModel>>> _rosaryPrayersByLanguage =
+      {};
   final Map<String, Future<List<RosaryMysteryModel>>> _mysteriesByLanguage = {};
 
   Future<Map<String, String>> getPrayerIdAliases() {
