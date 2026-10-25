@@ -111,7 +111,13 @@ void main() {
   testWidgets('persists favorite prayers and shows favorites screen', (
     tester,
   ) async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
+        ),
+      ],
+    );
     expect(await container.read(favoritePrayerIdsProvider.future), isEmpty);
     await container
         .read(favoritePrayerIdsProvider.notifier)
@@ -227,7 +233,13 @@ void main() {
     await _pumpUntilFound(tester, find.text('Rosary of Mary'));
     expect(find.text("Today's Mystery"), findsOneWidget);
 
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
+        ),
+      ],
+    );
     await container
         .read(rosaryProgressProvider.notifier)
         .start('joyful_mysteries');
@@ -249,7 +261,16 @@ void main() {
   testWidgets('shows active novena and marks current day complete', (
     tester,
   ) async {
-    final container = ProviderContainer();
+    // 6.2: progress now derives the novena's length from content, so the
+    // container needs the test bundle. A bare container falls back to
+    // `rootBundle`, which never settles under `testWidgets`.
+    final container = ProviderContainer(
+      overrides: [
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
+        ),
+      ],
+    );
     await container
         .read(novenaProgressProvider.notifier)
         .start('divine_mercy_novena');
@@ -278,6 +299,12 @@ void main() {
         overrides: [
           activeLanguageProvider.overrideWithValue('en'),
           novenasProvider.overrideWith((ref) async => const [_testNovena]),
+          // 6.2: the Novenas screen reads progress, which resolves the active
+          // novena's day count from content. Overriding only `novenasProvider`
+          // is not enough — that covers the list, not the length lookup.
+          localContentDataSourceProvider.overrideWithValue(
+            testContentDataSource(),
+          ),
         ],
         child: MaterialApp.router(
           routerConfig: GoRouter(
@@ -439,6 +466,13 @@ void main() {
       overrides: [
         rosaryMysteriesProvider.overrideWith(
           (ref) async => const [_testMystery],
+        ),
+        // 6.2: `todayLocalStateProvider` resolves the active novena's day count
+        // from content to decide which stored days are in range. '12' is only
+        // out of range because the real novena has nine days, so this test has
+        // to read the real file to stay an honest test of sanitization.
+        localContentDataSourceProvider.overrideWithValue(
+          testContentDataSource(),
         ),
       ],
     );
