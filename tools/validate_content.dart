@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../lib/shared/content/reading_markup.dart';
+
 const supportedLanguages = {'en', 'sw'};
 const contentRoot = 'assets/content';
 
@@ -34,6 +36,64 @@ class _ContentValidator {
     }
 
     stdout.writeln('Content validation passed.');
+  }
+
+  void _validateStyle(
+    Map<String, dynamic> content,
+    Set<String> allowed,
+    String context,
+  ) {
+    if (!allowed.contains(content['style'])) {
+      _errors.add(
+        '$context must declare a valid style (${allowed.join(', ')}).',
+      );
+    }
+  }
+
+  void _validateReadingBodies(
+    Map<String, dynamic> content,
+    String context, {
+    required bool prayer,
+  }) {
+    void walk(Object? value, String path, String mode) {
+      if (value is List) {
+        for (var i = 0; i < value.length; i++) {
+          walk(value[i], '$path[$i]', mode);
+        }
+      } else if (value is Map<String, dynamic>) {
+        for (final entry in value.entries) {
+          if (entry.key == 'body' && entry.value is String) {
+            try {
+              ReadingMarkup.validate(entry.value as String, mode: mode);
+            } on FormatException catch (error) {
+              _errors.add('$path body: ${error.message}');
+            }
+          } else {
+            walk(
+              entry.value,
+              '$path.${entry.key}',
+              entry.key == 'closing_prayer'
+                  ? (content['style'] == 'st_rita'
+                        ? 'litany_st_rita'
+                        : 'litany')
+                  : mode,
+            );
+          }
+        }
+      }
+    }
+
+    walk(
+      content,
+      context,
+      prayer
+          ? (content['style'] == 'litany_st_rita'
+                ? 'litany_st_rita'
+                : content['style'] == 'litany'
+                ? 'litany'
+                : 'prayer')
+          : 'novena',
+    );
   }
 
   void _validateCategories() {
@@ -70,6 +130,12 @@ class _ContentValidator {
           final prayerLanguage = _string(prayer, 'language', context);
           _string(prayer, 'title', context);
           _string(prayer, 'body', context);
+          _validateReadingBodies(prayer, context, prayer: true);
+          _validateStyle(prayer, const {
+            'standard',
+            'litany',
+            'litany_st_rita',
+          }, context);
 
           if (id != null) {
             _validateSnakeCase(id, 'prayer id');
@@ -120,6 +186,13 @@ class _ContentValidator {
         }
         final novenaLanguage = _string(novena, 'language', 'novena $id');
         _string(novena, 'title', 'novena $id');
+        _validateReadingBodies(novena, 'novena $id', prayer: false);
+        _validateStyle(novena, const {
+          'standard',
+          'all_saints',
+          'holy_spirit',
+          'st_rita',
+        }, 'novena $id');
         final days = novena['days'];
         if (days is! List) {
           _errors.add('Novena $id must include days array.');
