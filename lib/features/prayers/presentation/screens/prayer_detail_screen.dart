@@ -8,7 +8,6 @@ import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/litany_text_view.dart';
 import '../../../../shared/widgets/prayer_text_view.dart';
-import '../../../../shared/widgets/text_style_rules.dart';
 import '../../domain/entities/prayer_entity.dart';
 import '../providers/prayer_providers.dart';
 
@@ -159,36 +158,31 @@ class _PrayerDetailScreenState extends ConsumerState<PrayerDetailScreen> {
                                 children: [
                                   _TextSizeChip(
                                     label: 'A-',
-                                    selected:
-                                        textScale < _defaultTextScale,
+                                    selected: textScale < _defaultTextScale,
                                     onPressed: _decreaseTextSize,
                                   ),
                                   _TextSizeChip(
                                     label: 'A',
-                                    selected:
-                                        textScale == _defaultTextScale,
+                                    selected: textScale == _defaultTextScale,
                                     onPressed: _resetTextSize,
                                   ),
                                   _TextSizeChip(
                                     label: 'A+',
-                                    selected:
-                                        textScale > _defaultTextScale,
+                                    selected: textScale > _defaultTextScale,
                                     onPressed: _increaseTextSize,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 24),
-                              if (prayer.categoryId == 'litanies')
+                              if (prayer.usesLitanyStyle)
                                 LitanyTextView(
-                                  text: prayer.text(activeLanguageCode),
+                                  text: prayer.readingText,
                                   fontScale: textScale,
-                                  stRitaStyle: usesStRitaLitanyStyling(
-                                    prayer.id,
-                                  ),
+                                  stRitaStyle: prayer.usesStRitaStyle,
                                 )
                               else
                                 PrayerTextView(
-                                  text: prayer.text(activeLanguageCode),
+                                  text: prayer.readingText,
                                   fontScale: textScale,
                                 ),
                             ],
