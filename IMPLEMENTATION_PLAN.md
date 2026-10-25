@@ -96,6 +96,8 @@ The MVP must not depend on authentication, a backend or CMS, cloud sync, payment
 
 ### 5. Quality and release readiness — in progress
 
+- Content-authoring optimization [Part 6](app_optimization.md#part-6--content-authoring-flexibility), items 6.1–6.9, is implemented and host-verified: declared presentation profiles/markers, array-derived progress bounds with required count checks, manifest generation/parity validation, shared aliases, and a single typed UI localization API. The complete host suite passed 215 tests on 2026-10-25; final analysis and content/generator checks passed. This is separate from delivery phase 6 below and does not complete device or store release sign-off.
+
 - Content validation passes.
 - Unit, widget, and integration coverage exists for onboarding, prayer flows, search, favorites, Rosary, novenas, settings, startup, and offline flows.
 - Complete and record manual airplane-mode, lifecycle, accessibility, 320 dp, and two-hour exploratory QA before release.
@@ -154,6 +156,7 @@ Add an entry only after performing the check; do not mark an item complete from 
 | Date | Version/build | Check | Device/environment | Result | Evidence / issue link |
 | --- | --- | --- | --- | --- | --- |
 | 2026-07-14 | 1.0.4+4 | Bundled content validator | Local development checkout | Passed | `dart run tools/validate_content.dart` |
+| 2026-10-25 | 1.0.12+12 | Content-authoring optimization Part 6, all nine implementation items | Host; tests run sequentially at reduced priority | 215/215 tests passed; content/manifest/localization checks passed; final analysis clean | [Detailed Part 6 evidence](app_optimization.md#part-6-final-implementation--2026-10-25); device visual sign-off remains pending |
 
 ## Change-control rule
 
