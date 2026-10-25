@@ -1,3 +1,4 @@
+import 'package:salakatoliki/core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +20,7 @@ class AboutScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final languageCode = ref.watch(activeLanguageProvider);
-    final strings = _AboutStrings(languageCode);
+    final strings = AppStrings(languageCode);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: _systemOverlayStyle(context),
@@ -58,7 +59,7 @@ class AboutScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xs),
 
               Text(
-                strings.version,
+                strings.aboutVersion(AppConstants.appVersion),
                 textAlign: TextAlign.center,
                 style: SettingsTextStyles.body(context),
               ),
@@ -66,7 +67,7 @@ class AboutScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xl),
 
               Text(
-                strings.introduction,
+                strings.aboutIntroduction,
                 textAlign: TextAlign.center,
                 style: SettingsTextStyles.body(context),
               ),
@@ -75,8 +76,8 @@ class AboutScreen extends ConsumerWidget {
 
               _InfoCard(
                 icon: Icons.star_border,
-                title: strings.aboutTitle,
-                body: strings.aboutBody,
+                title: strings.aboutAboutTitle,
+                body: strings.aboutAboutBody,
                 onTap: () => _showAboutDetails(context, strings),
               ),
 
@@ -84,8 +85,8 @@ class AboutScreen extends ConsumerWidget {
 
               _InfoCard(
                 icon: Icons.menu_book_outlined,
-                title: strings.contentSourcesTitle,
-                body: strings.contentSourcesBody,
+                title: strings.aboutContentSourcesTitle,
+                body: strings.aboutContentSourcesBody,
                 onTap: () => _showContentSources(context, strings),
               ),
 
@@ -93,15 +94,15 @@ class AboutScreen extends ConsumerWidget {
 
               _InfoCard(
                 icon: Icons.verified_user_outlined,
-                title: strings.disclaimerTitle,
-                body: strings.disclaimerBody,
+                title: strings.aboutDisclaimerTitle,
+                body: strings.aboutDisclaimerBody,
                 actionIcon: Icons.open_in_new,
                 onTap: () => _openDisclaimer(context, strings),
               ),
 
               const SizedBox(height: AppSpacing.section),
 
-              SettingsSectionLabel(strings.contact),
+              SettingsSectionLabel(strings.aboutContact),
 
               const SizedBox(height: AppSpacing.md),
 
@@ -114,7 +115,7 @@ class AboutScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.xl),
 
               Text(
-                strings.copyright,
+                strings.aboutCopyright,
                 textAlign: TextAlign.center,
                 style: SettingsTextStyles.bodySmall(context),
               ),
@@ -125,19 +126,19 @@ class AboutScreen extends ConsumerWidget {
     );
   }
 
-  void _showAboutDetails(BuildContext context, _AboutStrings strings) {
+  void _showAboutDetails(BuildContext context, AppStrings strings) {
     _showDetailsSheet(
       context,
-      title: strings.aboutDetailsTitle,
-      body: strings.aboutDetailsBody,
+      title: strings.aboutAboutDetailsTitle,
+      body: strings.aboutAboutDetailsBody,
     );
   }
 
-  void _showContentSources(BuildContext context, _AboutStrings strings) {
+  void _showContentSources(BuildContext context, AppStrings strings) {
     _showDetailsSheet(
       context,
-      title: strings.contentSourcesTitle,
-      body: strings.contentSourcesDetailsBody,
+      title: strings.aboutContentSourcesTitle,
+      body: strings.aboutContentSourcesDetailsBody,
     );
   }
 
@@ -178,10 +179,7 @@ class AboutScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _openDisclaimer(
-    BuildContext context,
-    _AboutStrings strings,
-  ) async {
+  Future<void> _openDisclaimer(BuildContext context, AppStrings strings) async {
     try {
       if (await launchUrl(
         LegalLinks.contentDisclaimerUrl,
@@ -196,7 +194,7 @@ class AboutScreen extends ConsumerWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(strings.contactOpenError)));
+      ).showSnackBar(SnackBar(content: Text(strings.aboutContactOpenError)));
     }
   }
 }
@@ -208,21 +206,21 @@ SystemUiOverlayStyle _systemOverlayStyle(BuildContext context) {
 class _AboutHeader extends StatelessWidget {
   const _AboutHeader({required this.strings});
 
-  final _AboutStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         IconButton(
-          tooltip: strings.back,
+          tooltip: strings.aboutBack,
           onPressed: () => context.popOrGo('/settings'),
           icon: Icon(Icons.arrow_back, color: SettingsColors.accent(context)),
         ),
 
         Expanded(
           child: Text(
-            strings.title,
+            strings.aboutAboutTitle,
             textAlign: TextAlign.center,
             style: SettingsTextStyles.heading(context),
           ),
@@ -283,7 +281,7 @@ class _DeveloperCard extends StatelessWidget {
 
   static final _websiteUri = Uri.parse('https://busaradigital.com/');
 
-  final _AboutStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -302,14 +300,14 @@ class _DeveloperCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    strings.developerTitle,
+                    strings.aboutDeveloperTitle,
                     style: SettingsTextStyles.title(context),
                   ),
 
                   const SizedBox(height: AppSpacing.xs),
 
                   Text(
-                    strings.developerBody,
+                    strings.aboutDeveloperBody,
                     style: SettingsTextStyles.bodySmall(context),
                   ),
                 ],
@@ -337,7 +335,7 @@ class _DeveloperCard extends StatelessWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(strings.contactOpenError)));
+      ).showSnackBar(SnackBar(content: Text(strings.aboutContactOpenError)));
     }
   }
 }
@@ -349,7 +347,7 @@ class _ContactCard extends StatelessWidget {
   static const _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.busaradigital.salakatoliki';
 
-  final _AboutStrings strings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -357,17 +355,20 @@ class _ContactCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(strings.contactTitle, style: SettingsTextStyles.title(context)),
+          Text(
+            strings.aboutContactTitle,
+            style: SettingsTextStyles.title(context),
+          ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            strings.contactBody,
+            strings.aboutContactBody,
             style: SettingsTextStyles.bodySmall(context),
           ),
           const SizedBox(height: AppSpacing.lg),
 
           _ContactAction(
             icon: Icons.star_outline,
-            title: strings.rateAppLabel,
+            title: strings.aboutRateAppLabel,
             subtitle: 'Google Play',
             onTap: () => _openPlayStore(context, strings),
           ),
@@ -376,7 +377,7 @@ class _ContactCard extends StatelessWidget {
 
           _ContactAction(
             icon: Icons.email_outlined,
-            title: strings.emailLabel,
+            title: strings.aboutEmailLabel,
             subtitle: _email,
             onTap: () => _openEmail(context, strings),
           ),
@@ -385,20 +386,17 @@ class _ContactCard extends StatelessWidget {
     );
   }
 
-  Future<void> _openPlayStore(
-    BuildContext context,
-    _AboutStrings strings,
-  ) async {
+  Future<void> _openPlayStore(BuildContext context, AppStrings strings) async {
     if (await _tryLaunch(Uri.parse(_playStoreUrl))) {
       return;
     }
 
     if (context.mounted) {
-      _showLaunchError(context, strings.playStoreOpenError);
+      _showLaunchError(context, strings.aboutPlayStoreOpenError);
     }
   }
 
-  Future<void> _openEmail(BuildContext context, _AboutStrings strings) async {
+  Future<void> _openEmail(BuildContext context, AppStrings strings) async {
     final uri = Uri(
       scheme: 'mailto',
       path: _email,
@@ -410,7 +408,7 @@ class _ContactCard extends StatelessWidget {
     }
 
     if (context.mounted) {
-      _showLaunchError(context, strings.contactOpenError);
+      _showLaunchError(context, strings.aboutContactOpenError);
     }
   }
 
@@ -491,86 +489,4 @@ class _AboutPanel extends StatelessWidget {
       child: child,
     );
   }
-}
-
-class _AboutStrings {
-  const _AboutStrings(this.languageCode);
-
-  final String languageCode;
-
-  bool get _sw => languageCode == 'sw';
-
-  String get title => _sw ? 'Kuhusu Programu' : 'About App';
-
-  String get back => _sw ? 'Rudi' : 'Back';
-
-  String get version => _sw
-      ? 'Toleo ${AppConstants.appVersion}'
-      : 'Version ${AppConstants.appVersion}';
-
-  String get introduction => _sw
-      ? 'Sala Katoliki huwasaidia waamini Wakatoliki kusali kila siku kwa Kiswahili na Kiingereza kupitia sala, novena, rozari na ibada, wakati wowote hata bila mtandao.'
-      : 'Sala Katoliki helps Catholic faithful pray daily in Kiswahili and English with prayers, novenas, rosary content and devotions, anytime, anywhere, even offline.';
-
-  String get aboutTitle => _sw ? 'Kuhusu' : 'About';
-
-  String get aboutBody => _sw
-      ? 'Imetengenezwa na Busara Digital kusaidia waamini kukua katika sala.'
-      : 'Developed by Busara Digital to help the faithful grow in prayer.';
-
-  String get aboutDetailsTitle =>
-      _sw ? 'Kuhusu Sala Katoliki' : 'About Sala Katoliki';
-
-  String get aboutDetailsBody => _sw
-      ? 'Sala Katoliki ni programu rahisi ya sala za Kikatoliki iliyoundwa kusaidia watu kusali, kutafakari, na kujenga mazoea ya ibada ya kila siku.\n\nProgramu hii inatoa sala za kawaida za Kikatoliki, sala za Rozari zilizoongozwa, novena, vipendwa, utafutaji, na vikumbusho vya kila siku. Inatumia Kiingereza na Kiswahili, hivyo inarahisisha watu wengi zaidi kusali kwa lugha wanayoielewa vizuri zaidi.\n\nSala Katoliki imeundwa kwa ajili ya kila mtu. Kama wewe ni Mkatoliki, inakusaidia kupata sala na ibada unazozifahamu katika sehemu moja. Kama hujazoea sala za Kikatoliki, programu hii inakupa njia iliyo wazi na rahisi ya kujifunza, kufuata, na kuelewa ibada za kawaida za Kikatoliki.\n\nProgramu hii inafanya kazi nje ya mtandao, hivyo unaweza kuendelea kutumia vipengele vikuu vya sala bila muunganisho wa intaneti. Haihitaji akaunti, malipo, au maandalizi magumu.\n\nSala Katoliki ni kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho. Si mbadala wa Kanisa, Biblia, Katekisimu, au mwongozo wa kichungaji, lakini inaweza kusaidia safari yako ya kila siku ya imani.'
-      : 'Sala Katoliki is a simple Catholic prayer app created to help people pray, reflect, and build a daily habit of devotion.\n\nThe app provides common Catholic prayers, guided Rosary prayers, novenas, favorites, search, and daily reminders. It supports both English and Kiswahili, making it easier for more people to pray in the language they understand best.\n\nSala Katoliki is designed for everyone. If you are Catholic, it helps you access familiar prayers and devotions in one place. If you are not familiar with Catholic prayer, the app gives you a clear and simple way to learn, follow, and understand common Catholic devotions.\n\nThe app works offline, so you can continue using the main prayer features without an internet connection. It does not require an account, payment, or complicated setup.\n\nSala Katoliki is for personal prayer, reflection, and spiritual growth. It is not a replacement for the Church, the Bible, the Catechism, or pastoral guidance, but it can support your daily journey of faith.';
-
-  String get developerTitle =>
-      _sw ? 'Jifunze Kuhusu Busara Digital' : 'Learn About Busara Digital';
-
-  String get developerBody => _sw
-      ? 'Jifunze zaidi kuhusu msanidi wa Sala Katoliki.'
-      : 'Learn more about the developer behind Sala Katoliki.';
-
-  String get contentSourcesTitle =>
-      _sw ? 'Vyanzo vya Maudhui' : 'Content Sources';
-
-  String get contentSourcesBody => _sw
-      ? 'Maudhui yanatokana na sala na ibada za kimapokeo za Kikatoliki zinazotumiwa na waamini.'
-      : 'Content is based on traditional Catholic prayers and devotions used by the faithful.';
-
-  String get contentSourcesDetailsBody => _sw
-      ? 'Maudhui yaliyomo kwenye Sala Katoliki yanatokana na sala za kimapokeo za Kikatoliki, vitabu vya sala, maandiko ya ibada, na rasilimali za Kikatoliki zinazopatikana kwa umma.\n\nNyenzo hizi zinajumuisha sala na ibada zinazotumiwa kwa kawaida katika maisha ya Kikatoliki, kama sala za kila siku, sala za Rozari, litania, na novena. Maudhui huchaguliwa na kupangwa ili kufuata mafundisho ya Kikatoliki, mapokeo, na utaratibu wa ibada.\n\nBaadhi ya maudhui yanaweza kutoka kwenye vitabu vya sala vya kimapokeo na marejeo ya ibada za Kikatoliki. Maudhui mengine yanaweza kurekebishwa kutoka kwenye rasilimali za Kikatoliki za wazi au zinazopatikana kwa umma mtandaoni. Inapohitajika, maudhui hupitiwa na kurekebishwa kwa ajili ya uwazi, lugha, na ulinganifu na imani na mwenendo wa Kikatoliki.\n\nSala Katoliki inalenga kufanya sala za Kikatoliki zipatikane na kueleweka kwa urahisi zaidi kwa Wakatoliki na kwa watu ambao ni wapya katika ibada za Kikatoliki. Programu hii haidai kuchukua nafasi ya nyaraka rasmi za Kanisa, Biblia, Katekisimu, au mwongozo kutoka kwa mapadre na viongozi wa Kanisa.\n\nMaudhui yote hutolewa kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho.'
-      : 'The content in Sala Katoliki is based on traditional Catholic prayers, prayer books, devotional texts, and publicly available Catholic resources.\n\nThese materials include prayers and devotions that are commonly used in Catholic life, such as daily prayers, Rosary prayers, litanies, and novenas. The content is selected and organized to follow Catholic teaching, tradition, and devotional practice.\n\nSome content may come from traditional prayer books and Catholic devotional references. Other content may be adapted from open-source or publicly available online Catholic resources. Where needed, the content is reviewed and adjusted for clarity, language, and consistency with Catholic faith and practice.\n\nSala Katoliki aims to make Catholic prayer easier to access and understand for both Catholics and people who are new to Catholic devotion. The app does not claim to replace official Church documents, the Bible, the Catechism, or guidance from priests and Church leaders.\n\nAll content is provided for personal prayer, reflection, and spiritual growth.';
-
-  String get disclaimerTitle => _sw ? 'Tahadhari' : 'Disclaimer';
-
-  String get disclaimerBody => _sw
-      ? 'Programu hii husaidia ibada binafsi na haibadilishi mafundisho rasmi ya Kanisa au mwongozo wa kichungaji.'
-      : 'This app supports personal devotion and does not replace official Church teaching or pastoral guidance.';
-
-  String get contact => _sw ? 'Mawasiliano' : 'Contact';
-
-  String get contactTitle => _sw ? 'Tupo hapa kusaidia' : 'We are here to help';
-
-  String get contactBody => _sw
-      ? 'Kwa msaada au marekebisho ya maudhui, wasiliana nasi kupitia:'
-      : 'For support or content corrections, reach us via:';
-
-  String get rateAppLabel =>
-      _sw ? 'Tathmini Sala Katoliki' : 'Rate Sala Katoliki';
-
-  String get emailLabel => _sw ? 'Barua pepe' : 'Email';
-
-  String get copyright => _sw
-      ? '© 2026 Busara Digital. Haki zote zimehifadhiwa.'
-      : '© 2026 Busara Digital. All rights reserved.';
-
-  String get contactOpenError => _sw
-      ? 'Imeshindikana kufungua programu ya mawasiliano.'
-      : 'Could not open a contact app.';
-
-  String get playStoreOpenError => _sw
-      ? 'Imeshindikana kufungua Google Play.'
-      : 'Could not open Google Play.';
 }
