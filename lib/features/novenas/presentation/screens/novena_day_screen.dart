@@ -10,7 +10,6 @@ import '../../../../data/models/novena_model.dart';
 import '../../../../shared/widgets/app_error_state.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/novena_text_view.dart';
-import '../../../../shared/widgets/text_style_rules.dart';
 import '../providers/novena_providers.dart';
 
 class NovenaDayScreen extends ConsumerStatefulWidget {
@@ -147,8 +146,7 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                                     ),
                                     _TextSizeChip(
                                       label: 'A',
-                                      selected:
-                                          textScale == _defaultTextScale,
+                                      selected: textScale == _defaultTextScale,
                                       onPressed: _resetTextSize,
                                     ),
                                     _TextSizeChip(
@@ -160,14 +158,11 @@ class _NovenaDayScreenState extends ConsumerState<NovenaDayScreen> {
                                 ),
                                 const SizedBox(height: AppSpacing.lg),
                                 NovenaTextView(
-                                  text: dayContent.body,
+                                  text: dayContent.readingText,
                                   fontScale: textScale,
-                                  allSaintsStyle: usesAllSaintsStyling(
-                                    novena.id,
-                                  ),
-                                  holySpiritStyle:
-                                      novena.id == kHolySpiritNovenaId,
-                                  stRitaStyle: novena.id == kStRitaNovenaId,
+                                  allSaintsStyle: novena.usesAllSaintsStyle,
+                                  holySpiritStyle: novena.usesHolySpiritStyle,
+                                  stRitaStyle: novena.usesStRitaStyle,
                                 ),
                               ],
                             );
