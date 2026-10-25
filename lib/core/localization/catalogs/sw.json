@@ -1,0 +1,347 @@
+{
+  "locale": "sw",
+  "messages": {
+    "about.aboutBody": "Imetengenezwa na Busara Digital kusaidia waamini kukua katika sala.",
+    "about.aboutDetailsBody": "Sala Katoliki ni programu rahisi ya sala za Kikatoliki iliyoundwa kusaidia watu kusali, kutafakari, na kujenga mazoea ya ibada ya kila siku.\n\nProgramu hii inatoa sala za kawaida za Kikatoliki, sala za Rozari zilizoongozwa, novena, vipendwa, utafutaji, na vikumbusho vya kila siku. Inatumia Kiingereza na Kiswahili, hivyo inarahisisha watu wengi zaidi kusali kwa lugha wanayoielewa vizuri zaidi.\n\nSala Katoliki imeundwa kwa ajili ya kila mtu. Kama wewe ni Mkatoliki, inakusaidia kupata sala na ibada unazozifahamu katika sehemu moja. Kama hujazoea sala za Kikatoliki, programu hii inakupa njia iliyo wazi na rahisi ya kujifunza, kufuata, na kuelewa ibada za kawaida za Kikatoliki.\n\nProgramu hii inafanya kazi nje ya mtandao, hivyo unaweza kuendelea kutumia vipengele vikuu vya sala bila muunganisho wa intaneti. Haihitaji akaunti, malipo, au maandalizi magumu.\n\nSala Katoliki ni kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho. Si mbadala wa Kanisa, Biblia, Katekisimu, au mwongozo wa kichungaji, lakini inaweza kusaidia safari yako ya kila siku ya imani.",
+    "about.aboutDetailsTitle": "Kuhusu Sala Katoliki",
+    "about.aboutTitle": "Kuhusu",
+    "about.back": "Rudi",
+    "about.contact": "Mawasiliano",
+    "about.contactBody": "Kwa msaada au marekebisho ya maudhui, wasiliana nasi kupitia:",
+    "about.contactOpenError": "Imeshindikana kufungua programu ya mawasiliano.",
+    "about.contactTitle": "Tupo hapa kusaidia",
+    "about.contentSourcesBody": "Maudhui yanatokana na sala na ibada za kimapokeo za Kikatoliki zinazotumiwa na waamini.",
+    "about.contentSourcesDetailsBody": "Maudhui yaliyomo kwenye Sala Katoliki yanatokana na sala za kimapokeo za Kikatoliki, vitabu vya sala, maandiko ya ibada, na rasilimali za Kikatoliki zinazopatikana kwa umma.\n\nNyenzo hizi zinajumuisha sala na ibada zinazotumiwa kwa kawaida katika maisha ya Kikatoliki, kama sala za kila siku, sala za Rozari, litania, na novena. Maudhui huchaguliwa na kupangwa ili kufuata mafundisho ya Kikatoliki, mapokeo, na utaratibu wa ibada.\n\nBaadhi ya maudhui yanaweza kutoka kwenye vitabu vya sala vya kimapokeo na marejeo ya ibada za Kikatoliki. Maudhui mengine yanaweza kurekebishwa kutoka kwenye rasilimali za Kikatoliki za wazi au zinazopatikana kwa umma mtandaoni. Inapohitajika, maudhui hupitiwa na kurekebishwa kwa ajili ya uwazi, lugha, na ulinganifu na imani na mwenendo wa Kikatoliki.\n\nSala Katoliki inalenga kufanya sala za Kikatoliki zipatikane na kueleweka kwa urahisi zaidi kwa Wakatoliki na kwa watu ambao ni wapya katika ibada za Kikatoliki. Programu hii haidai kuchukua nafasi ya nyaraka rasmi za Kanisa, Biblia, Katekisimu, au mwongozo kutoka kwa mapadre na viongozi wa Kanisa.\n\nMaudhui yote hutolewa kwa ajili ya sala binafsi, tafakari, na ukuaji wa kiroho.",
+    "about.contentSourcesTitle": "Vyanzo vya Maudhui",
+    "about.copyright": "© 2026 Busara Digital. Haki zote zimehifadhiwa.",
+    "about.developerBody": "Jifunze zaidi kuhusu msanidi wa Sala Katoliki.",
+    "about.developerTitle": "Jifunze Kuhusu Busara Digital",
+    "about.disclaimerBody": "Programu hii husaidia ibada binafsi na haibadilishi mafundisho rasmi ya Kanisa au mwongozo wa kichungaji.",
+    "about.disclaimerTitle": "Tahadhari",
+    "about.emailLabel": "Barua pepe",
+    "about.introduction": "Sala Katoliki huwasaidia waamini Wakatoliki kusali kila siku kwa Kiswahili na Kiingereza kupitia sala, novena, rozari na ibada, wakati wowote hata bila mtandao.",
+    "about.playStoreOpenError": "Imeshindikana kufungua Google Play.",
+    "about.rateAppLabel": "Tathmini Sala Katoliki",
+    "about.title": "Kuhusu Programu",
+    "about.version": {
+      "text": "Toleo {version}",
+      "parameters": {
+        "version": "String"
+      }
+    },
+    "bottomNav.exitPrompt": "Bonyeza tena kufunga Sala Katoliki.",
+    "bottomNav.novenas": "Novenas",
+    "bottomNav.pray": "Sala",
+    "bottomNav.settings": "Mipangilio",
+    "bottomNav.today": "Leo",
+    "closingPrayer.back": "Rudi",
+    "closingPrayer.errorMessage": "Kuna tatizo kusoma sala hii.",
+    "closingPrayer.errorTitle": "Sala haijapakia",
+    "closingPrayer.loading": "Inapakia sala...",
+    "closingPrayer.missingMessage": "Sala hii haipo kwenye novena hii.",
+    "closingPrayer.missingTitle": "Sala haikupatikana",
+    "favorites.back": "Rudi",
+    "favorites.emptyMessage": "Gusa alama ya moyo kwenye sala ili kuihifadhi hapa.",
+    "favorites.emptyTitle": "Hakuna vipendwa bado",
+    "favorites.loadErrorMessage": "Kuna tatizo kusoma sala zilizohifadhiwa.",
+    "favorites.loadErrorTitle": "Vipendwa havijapakia",
+    "favorites.loading": "Inapakia vipendwa...",
+    "favorites.noSearchResults": "Hakuna kipendwa kinacholingana na utafutaji huu.",
+    "favorites.searchHint": "Tafuta vipendwa...",
+    "favorites.subtitle": {
+      "text": "{count} vipendwa vilivyohifadhiwa",
+      "parameters": {
+        "count": "int"
+      }
+    },
+    "favorites.title": "Vipendwa",
+    "homeWidget.label": "SALA YA LEO",
+    "legalLinks.contentDisclaimer": "Tahadhari ya Maudhui",
+    "legalLinks.note": "Kabla ya kuendelea, soma sera na maelezo muhimu kuhusu matumizi na maudhui.",
+    "legalLinks.privacyPolicy": "Sera ya Faragha",
+    "legalLinks.termsOfService": "Masharti ya Huduma",
+    "mysterySelection.back": "Rudi",
+    "mysterySelection.errorMessage": "Kuna tatizo kusoma mafumbo ya rozari.",
+    "mysterySelection.errorTitle": "Mafumbo hayajapakia",
+    "mysterySelection.loading": "Inapakia mafumbo...",
+    "mysterySelection.suggested": "Limependekezwa leo",
+    "mysterySelection.title": "Chagua Mafumbo",
+    "novenaDay.back": "Rudi",
+    "novenaDay.changeLanguage": "Badili lugha",
+    "novenaDay.completeDay": {
+      "text": "Nimemaliza Siku {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDay.completed": "Imekamilika",
+    "novenaDay.dayLabel": {
+      "text": "Siku ya {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDay.dayProgress": {
+      "text": "Siku ya {day} kati ya {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenaDay.errorMessage": "Kuna tatizo kusoma siku hii ya novena.",
+    "novenaDay.errorTitle": "Siku haijapakia",
+    "novenaDay.languageChanged": {
+      "parameters": {
+        "nextLanguageCode": "String"
+      },
+      "select": "nextLanguageCode",
+      "cases": {
+        "sw": "Lugha imebadilishwa kwenda Kiswahili.",
+        "other": "Lugha imebadilishwa kwenda Kiingereza."
+      }
+    },
+    "novenaDay.loading": "Inapakia siku...",
+    "novenaDay.missingMessage": "Siku hii haipo kwenye novena hii.",
+    "novenaDay.missingTitle": "Siku haikupatikana",
+    "novenaDay.removeFavorite": "Ondoa kipendwa",
+    "novenaDay.saveFavorite": "Hifadhi",
+    "novenaDay.share": "Shiriki",
+    "novenaDay.shareFailed": "Imeshindikana kushiriki novena hii.",
+    "novenaDay.source": "Chanzo",
+    "novenaDetail.afterNovena": "Baada ya Novena",
+    "novenaDetail.back": "Rudi",
+    "novenaDetail.continueDay": {
+      "text": "Endelea Siku ya {day}",
+      "parameters": {
+        "day": "int"
+      }
+    },
+    "novenaDetail.dayProgress": {
+      "text": "Siku ya {day} kati ya {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenaDetail.errorMessage": "Kuna tatizo kusoma novena hii.",
+    "novenaDetail.errorTitle": "Novena haijapakia",
+    "novenaDetail.loading": "Inapakia novena...",
+    "novenaDetail.missingMessage": "Jaribu kuchagua novena nyingine.",
+    "novenaDetail.missingTitle": "Novena haikupatikana",
+    "novenaDetail.notStarted": "Haijaanza",
+    "novenaDetail.progress": "Maendeleo",
+    "novenaDetail.restart": "Anza Upya",
+    "novenaDetail.start": "Anza Novena",
+    "novenaDetail.startPrompt": "Anza Siku ya 1",
+    "novenaDetail.statusCompleted": "Imekamilika",
+    "novenaDetail.statusCurrent": "Siku ya sasa",
+    "novenaDetail.statusLocked": "Imefungwa",
+    "novenaDetail.statusNotStarted": "Haijaanza",
+    "novenaDetail.statusOpen": "Fungua",
+    "novenas.activeNovena": "Novena Inayoendelea",
+    "novenas.browse": "Vinjari Novenas",
+    "novenas.continueLabel": "Endelea",
+    "novenas.dayProgress": {
+      "text": "Siku ya {day} kati ya {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "novenas.emptyMessage": "Maudhui ya novena hayajapatikana.",
+    "novenas.emptyTitle": "Hakuna novenas",
+    "novenas.errorMessage": "Kuna tatizo kusoma novenas za ndani.",
+    "novenas.errorTitle": "Novenas hazijapakia",
+    "novenas.inProgress": "Inaendelea",
+    "novenas.loading": "Inapakia novenas...",
+    "novenas.retry": "Jaribu tena",
+    "novenas.subtitle": "Ibada za siku tisa zenye maendeleo ya ndani.",
+    "novenas.title": "Novenas",
+    "novenas.view": "Tazama",
+    "onboarding.changeLater": "Unaweza kubadilisha hii baadaye katika Mipangilio.",
+    "onboarding.continueLabel": "Endelea",
+    "onboarding.skip": "Ruka",
+    "onboarding.subtitle": "Chagua lugha unayopendelea kwa sala na maudhui ya programu.",
+    "onboarding.title": "Chagua Lugha Yako ya Sala",
+    "prayerDetail.back": "Rudi",
+    "prayerDetail.changeLanguage": "Badili lugha",
+    "prayerDetail.defaultSource": "Sala ya kimapokeo ya Kikatoliki",
+    "prayerDetail.languageChanged": {
+      "parameters": {
+        "nextLanguageCode": "String"
+      },
+      "select": "nextLanguageCode",
+      "cases": {
+        "sw": "Lugha imebadilishwa kwenda Kiswahili.",
+        "other": "Lugha imebadilishwa kwenda Kiingereza."
+      }
+    },
+    "prayerDetail.loadErrorMessage": "Jaribu kurudi kwenye orodha ya sala.",
+    "prayerDetail.loading": "Inapakia sala...",
+    "prayerDetail.missingMessage": "Jaribu kuchagua sala nyingine.",
+    "prayerDetail.notFoundTitle": "Sala haikupatikana",
+    "prayerDetail.removeFavorite": "Ondoa kipendwa",
+    "prayerDetail.saveFavorite": "Hifadhi",
+    "prayerDetail.share": "Shiriki",
+    "prayerDetail.shareFailed": "Imeshindikana kushiriki sala hii.",
+    "prayerDetail.source": "Chanzo",
+    "prayerLibrary.categoriesErrorMessage": "Kuna tatizo kusoma makundi ya sala.",
+    "prayerLibrary.categoriesErrorTitle": "Makundi hayajapakia",
+    "prayerLibrary.comingSoon": "Inaandaliwa",
+    "prayerLibrary.corePrayers": "Sala Muhimu",
+    "prayerLibrary.countLabel": {
+      "parameters": {
+        "count": "int"
+      },
+      "plural": "count",
+      "one": "Sala 1",
+      "other": "Sala {count}"
+    },
+    "prayerLibrary.devotions": "Ibada Maalum",
+    "prayerLibrary.divineMercyRosary": "Rozari ya Huruma ya Mungu",
+    "prayerLibrary.divineMercyRosaryDescription": "Rozari ya Huruma ya Mungu bila mafumbo.",
+    "prayerLibrary.loadErrorMessage": "Kuna tatizo kusoma maudhui ya ndani.",
+    "prayerLibrary.loadErrorTitle": "Sala hazijapakia",
+    "prayerLibrary.loading": "Inapakia sala...",
+    "prayerLibrary.marianAndRosary": "Bikira Maria na Rozari",
+    "prayerLibrary.noSearchResults": "Hakuna sala inayolingana na utafutaji huu.",
+    "prayerLibrary.retry": "Jaribu tena",
+    "prayerLibrary.rosaryAndMysteries": "Rozari na Mafumbo",
+    "prayerLibrary.rosaryAndMysteriesDescription": "Sali rozari kwa hatua na mafumbo ya siku.",
+    "prayerLibrary.searchHint": "Tafuta sala...",
+    "prayerLibrary.subtitle": "Chagua sala, ibada, novena, na rozari kwa mpangilio.",
+    "prayerLibrary.title": "Sala",
+    "prayerList.back": "Rudi",
+    "prayerList.emptyMessage": "Hakuna sala katika kundi hili bado.",
+    "prayerList.errorMessage": "Kuna tatizo kusoma sala za kundi hili.",
+    "prayerList.errorTitle": "Sala hazijapakia",
+    "prayerList.noSearchResults": "Hakuna sala inayolingana na utafutaji huu.",
+    "prayerList.searchHint": {
+      "text": "Tafuta ndani ya {categoryTitle}...",
+      "parameters": {
+        "categoryTitle": "String"
+      }
+    },
+    "reminderNotification.body": "Chukua muda mfupi kwa ajili ya sala leo.",
+    "reminderNotification.title": "Sala Katoliki",
+    "rosary.allMysteries": "Mafumbo Yote",
+    "rosary.choose": "Chagua",
+    "rosary.continueLabel": "Endelea",
+    "rosary.emptyMessage": "Mafumbo ya rozari hayajapatikana kwenye maudhui ya ndani.",
+    "rosary.emptyTitle": "Hakuna maudhui ya rozari",
+    "rosary.loadErrorMessage": "Kuna tatizo kusoma maudhui ya rozari ya ndani.",
+    "rosary.loadErrorTitle": "Rozari haijapakia",
+    "rosary.loading": "Inapakia rozari...",
+    "rosary.restart": "Anza Upya",
+    "rosary.retry": "Jaribu tena",
+    "rosary.savedProgress": "Maendeleo Yaliyohifadhiwa",
+    "rosary.start": "Anza",
+    "rosary.stepLabel": {
+      "text": "Hatua {current} kati ya {total}",
+      "parameters": {
+        "current": "int",
+        "total": "int"
+      }
+    },
+    "rosary.subtitle": "Fuata matendo, fadhila, na sala kwa mpangilio.",
+    "rosary.suggestedToday": "Limependekezwa leo",
+    "rosary.title": "Rozari ya Bikira Maria",
+    "rosary.todayMystery": "Fumbo la Leo",
+    "rosaryStep.back": "Rudi",
+    "rosaryStep.closing": "Hitimisho",
+    "rosaryStep.errorMessage": "Kuna tatizo kusoma hatua za rozari.",
+    "rosaryStep.errorTitle": "Rozari haijapakia",
+    "rosaryStep.finish": "Maliza",
+    "rosaryStep.litany": "Litania",
+    "rosaryStep.loading": "Inapakia hatua...",
+    "rosaryStep.missingMessage": "Maendeleo ya zamani hayakulingana na maudhui ya sasa.",
+    "rosaryStep.missingTitle": "Maendeleo yameondolewa",
+    "rosaryStep.next": "Inayofuata",
+    "rosaryStep.pause": "Sitisha",
+    "rosaryStep.previous": "Iliyotangulia",
+    "rosaryStep.restart": "Anza Upya",
+    "rosaryStep.stepLabel": {
+      "text": "Hatua {current} kati ya {total}",
+      "parameters": {
+        "current": "int",
+        "total": "int"
+      }
+    },
+    "settings.about": "Kuhusu Programu",
+    "settings.aboutSubtitle": "Toleo, msanidi, na zaidi",
+    "settings.changeTime": "Muda wa Kikumbusho",
+    "settings.dailyReminder": "Kikumbusho cha Kila Siku",
+    "settings.dark": "Giza",
+    "settings.fontSize": "Ukubwa wa Maandishi",
+    "settings.fontSizeSubtitle": "Badili ukubwa wa kusoma",
+    "settings.information": "Taarifa",
+    "settings.language": "Lugha",
+    "settings.languageSubtitle": "Chagua lugha ya programu",
+    "settings.large": "Kubwa",
+    "settings.light": "Mwanga",
+    "settings.loadError": "Kuna tatizo kusoma mipangilio.",
+    "settings.loading": "Inapakia mipangilio...",
+    "settings.medium": "Wastani",
+    "settings.permissionDenied": "Ruhusa ya arifa haijatolewa. Unaweza kuiwasha kwenye mipangilio ya kifaa.",
+    "settings.preferences": "Mapendeleo",
+    "settings.privacySubtitle": "Sera ya Faragha, Masharti na Tahadhari",
+    "settings.privacyTitle": "Faragha na Sera",
+    "settings.reminderDisabled": "Kikumbusho hakijawekwa",
+    "settings.reminderEnabled": {
+      "text": "Kimewekwa saa {time}",
+      "parameters": {
+        "time": "String"
+      }
+    },
+    "settings.reminderSubtitle": "Pokea ukumbusho wa kusali",
+    "settings.reminders": "Vikumbusho",
+    "settings.small": "Ndogo",
+    "settings.supportInfo": "Msaada na Taarifa",
+    "settings.system": "Mfumo",
+    "settings.theme": "Mandhari",
+    "settings.themeSubtitle": "Chagua mwonekano wa programu",
+    "settings.title": "Mipangilio",
+    "thanksgiving.back": "Rudi",
+    "thanksgiving.errorMessage": "Kuna tatizo kusoma sehemu hii.",
+    "thanksgiving.errorTitle": "Shukrani haijapakia",
+    "thanksgiving.loading": "Inapakia shukrani...",
+    "thanksgiving.missingMessage": "Sehemu hii haipo kwenye novena hii.",
+    "thanksgiving.missingTitle": "Sehemu haikupatikana",
+    "today.activeNovenaUnavailable": "Novena haijapatikana",
+    "today.availableOffline": "Inapatikana nje ya mtandao",
+    "today.browse": "Fungua",
+    "today.commonPrayers": "Sala za Kawaida",
+    "today.continueAction": "Endelea",
+    "today.continueNovena": "Endelea Novena",
+    "today.dayProgress": {
+      "text": "Siku ya {day} kati ya {totalDays}",
+      "parameters": {
+        "day": "int",
+        "totalDays": "int"
+      }
+    },
+    "today.edit": "Hariri",
+    "today.eyebrow": "AMANI IWE NAWE",
+    "today.favorites": "Vipendwa",
+    "today.loading": "Inapakia leo...",
+    "today.noActiveNovena": "Hakuna novena inayoendelea kwa sasa.",
+    "today.noDailyPrayerBody": "Fungua maktaba ya sala kuona sala zilizopo.",
+    "today.noDailyPrayerTitle": "Sala haijapatikana",
+    "today.novenas": "Novenas",
+    "today.prayNow": "Sali Sasa",
+    "today.quickActions": "Fikia Haraka",
+    "today.recentlyOpened": "Zilizofunguliwa Karibuni",
+    "today.reminderDisabled": "Kikumbusho hakijawekwa",
+    "today.reminderEnabled": {
+      "text": "Kikumbusho kimewekwa saa {time}",
+      "parameters": {
+        "time": "String"
+      }
+    },
+    "today.rosaryToday": "Rozari Leo",
+    "today.startRosary": "Anza Rozari",
+    "today.suggestedMystery": "Mafumbo ya Leo",
+    "today.todayDay": "Kulingana na siku ya leo",
+    "today.todaysPrayer": "SALA YA LEO"
+  }
+}
