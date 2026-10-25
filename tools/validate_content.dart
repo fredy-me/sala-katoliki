@@ -199,8 +199,8 @@ class _ContentValidator {
           continue;
         }
         if (days.isEmpty) _errors.add('Novena $id must have at least one day.');
-        if (novena.containsKey('day_count') &&
-            novena['day_count'] != days.length) {
+        _requiredInt(novena, 'day_count', 'novena $id');
+        if (novena['day_count'] != days.length) {
           _errors.add('Novena $id day_count must match days array length.');
         }
         // 6.3. Was a hardcoded `id == 'st_rita_novena' ? 12 : 9`, the fourth
