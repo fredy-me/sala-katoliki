@@ -125,7 +125,9 @@ Validation should fail when:
 - A language code is not `en` or `sw`.
 - A duplicate ID exists.
 - A prayer references an unknown category.
-- A novena does not contain exactly 9 valid day objects.
+- A novena has no days, unordered/duplicate/missing day numbers, an incorrect optional `day_count`, or different day counts across languages.
+- A content file is missing from the manifest, a listed file is absent, or a path is duplicated.
+- EN/SW prayer or novena IDs differ without a valid declared prayer alias.
 - Rosary steps reference unknown prayers or mystery IDs.
 
 ## Legal And Attribution
@@ -133,3 +135,39 @@ Validation should fail when:
 Every content source must be reviewed before publishing.
 
 Use of copyrighted Bible translations, Mass readings, or devotional content requires written permission or valid licensing. If a content item has a known source, include it in the `source` field and surface it in Prayer Detail or About where appropriate.
+
+## Generate The Manifest
+
+Add matching English and Kiswahili content under `assets/content/prayers/en/`
+and `sw/`, or `assets/content/novenas/en/` and `sw/`. Prayer files contain arrays;
+each novena file contains one object. Keep IDs stable so saved favorites,
+progress, and links continue to resolve. New novenas can have any positive
+number of days, numbered in array order from 1 through the last day.
+
+Run one command to register new files:
+
+```bash
+dart run tool/generate_content_manifest.dart
+```
+
+The generator preserves existing file order and appends new paths in sorted
+order. It changes membership, not prayer text. Then validate:
+
+```bash
+dart run tools/validate_content.dart
+dart run tool/generate_content_manifest.dart --check
+```
+
+`--check` reads only and fails if the manifest is stale. The validator also
+checks manifest membership against disk. Do not use the manifest generator as
+approval to delete content that existing users have favorited or started.
+
+English and Kiswahili should use identical IDs. The existing Divine Mercy
+exception is declared in `assets/content/metadata/id_aliases.json` as
+`prayer_id_aliases` mapping the Swahili ID to the English ID. Both endpoints
+must exist; this declaration is shared by validation and deep-link resolution.
+It does not rename IDs already stored in favorites or recents.
+
+Presentation remains selected by the existing Dart style rules. New content
+requiring a new visual style still needs that work until optimization items
+6.1 and 6.7 are implemented. Localization consolidation (6.8) is also pending.
