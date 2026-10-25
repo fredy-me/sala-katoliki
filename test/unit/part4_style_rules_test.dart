@@ -13,6 +13,47 @@ import 'package:salakatoliki/shared/widgets/novena_text_view.dart';
 import 'package:salakatoliki/shared/widgets/prayer_text_view.dart';
 import 'package:salakatoliki/shared/widgets/text_style_rules.dart';
 
+/// Litanies rendered with the St Rita response styling.
+const Set<String> kStRitaLitanies = <String>{
+  'st_rita_litany',
+  'bikira_maria_litany',
+  'divine_mercy_litany',
+  'holy_spirit_litany',
+  'sacred_head_of_jesus_litany',
+  'st_aloysius_gonzaga_litany',
+  'st_jude_thaddeus_litany',
+  'st_joseph_litany',
+  'st_anthony_of_padua_litany_v1',
+  'st_anthony_of_padua_litany_v2',
+  'franciscan_st_anthony_litany',
+  'st_anne_litany',
+  'holy_angels_litany',
+  'sacred_heart_of_jesus_litany',
+  'holy_face_of_jesus_litany',
+  'souls_in_purgatory_litany',
+  'seven_sorrows_mary_litany',
+  'litany_of_reparation',
+};
+
+/// Novenas rendered with the All Saints paragraph styling.
+const Set<String> kAllSaintsNovenas = <String>{
+  'all_saints_day_novena',
+  'divine_mercy_novena',
+  'holy_family_novena',
+  'holy_spirit_novena',
+  'litany_of_trust_novena',
+  'sacred_heart_of_jesus_novena',
+  'st_aloysius_gonzaga_novena',
+  'st_jude_novena',
+  'st_rita_novena',
+};
+
+/// The novena whose virtue names are styled as headings.
+const String kHolySpiritNovenaId = 'holy_spirit_novena';
+
+/// The novena rendered with the St Rita response styling.
+const String kStRitaNovenaId = 'st_rita_novena';
+
 /// The pre-4.8 classifiers, copied verbatim from the three text views before
 /// their literals moved into `text_style_rules.dart`. If the data-driven version
 /// disagrees with any of these on any shipped line, 4.8 changed rendering and
@@ -234,7 +275,6 @@ class _Reference {
   }
 }
 
-
 /// Local reimplementations of the two rules that are shape-based rather than
 /// prefix-based, so the reference copy above has something to be compared
 /// against rather than being asserted in a vacuum.
@@ -254,8 +294,7 @@ bool _isSectionHeading(String trimmed) {
 
 bool _isStRitaHeading(String plainLower, String plainText) {
   final lettersOnly = plainText.replaceAll(_Reference.nonLetter, '');
-  return (lettersOnly.isNotEmpty &&
-          lettersOnly == lettersOnly.toUpperCase()) ||
+  return (lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase()) ||
       startsWithAny(plainLower, kLitanyHeadingPrefixes);
 }
 
@@ -272,8 +311,6 @@ bool _isExactHeading(String value, String normalized) {
   final lettersOnly = value.replaceAll(_Reference.nonLetter, '');
   return lettersOnly.isNotEmpty && lettersOnly == lettersOnly.toUpperCase();
 }
-
-
 
 /// The leaf [TextSpan]s rendered by [PrayerTextView], one per source line.
 ///
@@ -307,10 +344,10 @@ Color? _borderColorOf(WidgetTester tester, String value) {
   for (final box in boxes) {
     final border = (box.decoration! as BoxDecoration).border;
     if (border == null) continue;
-    if (find.descendant(
-      of: find.byWidget(box),
-      matching: find.text(value),
-    ).evaluate().isNotEmpty) {
+    if (find
+        .descendant(of: find.byWidget(box), matching: find.text(value))
+        .evaluate()
+        .isNotEmpty) {
       return (border as Border).top.color;
     }
   }
@@ -347,9 +384,7 @@ void main() {
         paragraphs.addAll(p.text().split(RegExp(r'\n\s*\n')));
       }
 
-      final novenas = await NovenaRepository(ds).getNovenas(
-        languageCode: lang,
-      );
+      final novenas = await NovenaRepository(ds).getNovenas(languageCode: lang);
       for (final n in novenas) {
         for (final day in n.days) {
           final body = day.body;
@@ -498,10 +533,7 @@ void main() {
     });
 
     test('heading/body prefixes and patterns stay index-aligned', () {
-      expect(
-        kHeadingWithBodyPrefixes.length,
-        kHeadingWithBodyPatterns.length,
-      );
+      expect(kHeadingWithBodyPrefixes.length, kHeadingWithBodyPatterns.length);
 
       for (var i = 0; i < kHeadingWithBodyPatterns.length; i++) {
         // The pattern's first group holds the heading in its authored case,
@@ -510,8 +542,9 @@ void main() {
         // the lowercase prefix. That is what makes this a real alignment check
         // instead of a restatement of the prefix list.
         final source = kHeadingWithBodyPatterns[i].pattern;
-        final literal = RegExp(r'^\^\(([^)]+)\)\\s\*\(\.\+\)\$')
-            .firstMatch(source);
+        final literal = RegExp(
+          r'^\^\(([^)]+)\)\\s\*\(\.\+\)\$',
+        ).firstMatch(source);
         expect(
           literal,
           isNotNull,
@@ -537,7 +570,6 @@ void main() {
         expect(match!.group(2), 'Body text follows.');
       }
     });
-
   });
 
   group('4.8 id sets', () {
@@ -601,6 +633,18 @@ void main() {
         final prayers = await PrayerRepositoryImpl(
           PrayerLocalDataSource(contentDataSource: ds),
         ).getPrayers(languageCode: lang);
+        for (final prayer in prayers) {
+          expect(
+            prayer.usesLitanyStyle,
+            prayer.categoryId == 'litanies',
+            reason: '$lang:${prayer.id}',
+          );
+          expect(
+            prayer.usesStRitaStyle,
+            kStRitaLitanies.contains(prayer.id),
+            reason: '$lang:${prayer.id}',
+          );
+        }
         ids.addAll(prayers.map((p) => p.id));
       }
       for (final id in kStRitaLitanies) {
@@ -612,13 +656,26 @@ void main() {
       final ds = LocalContentDataSource();
       final ids = <String>{};
       for (final lang in ['en', 'sw']) {
-        final novenas = await NovenaRepository(ds).getNovenas(
-          languageCode: lang,
-        );
+        final novenas = await NovenaRepository(
+          ds,
+        ).getNovenas(languageCode: lang);
+        for (final novena in novenas) {
+          expect(
+            novena.usesAllSaintsStyle,
+            kAllSaintsNovenas.contains(novena.id),
+            reason: '$lang:${novena.id}',
+          );
+          expect(novena.usesHolySpiritStyle, novena.id == kHolySpiritNovenaId);
+          expect(novena.usesStRitaStyle, novena.id == kStRitaNovenaId);
+        }
         ids.addAll(novenas.map((n) => n.id));
       }
       for (final id in kAllSaintsNovenas) {
-        expect(ids, contains(id), reason: 'All Saints id $id is not in content');
+        expect(
+          ids,
+          contains(id),
+          reason: 'All Saints id $id is not in content',
+        );
       }
       expect(kAllSaintsNovenas, contains(kHolySpiritNovenaId));
       expect(kAllSaintsNovenas, contains(kStRitaNovenaId));
@@ -647,8 +704,7 @@ void main() {
           r'''\.(startsWith|endsWith|contains)\(\s*['"]''',
         );
         for (final match in pattern.allMatches(source)) {
-          final line =
-              source.substring(0, match.start).split('\n').length;
+          final line = source.substring(0, match.start).split('\n').length;
           // A single `*` marker check is formatting, not a content prefix.
           final text = source.substring(match.start, match.end + 2);
           if (text.contains("'*'")) {
@@ -713,14 +769,8 @@ void main() {
         kInvocationPrefixes,
         equals(<String>['in the name of the father', 'kwa jina la baba']),
       );
-      expect(
-        kLeaderResponsePrefixes,
-        equals(<String>['k:', 'w:', 'v:', 'r:']),
-      );
-      expect(
-        kStRitaResponsePrefixes,
-        equals(<String>['r:', 'w:']),
-      );
+      expect(kLeaderResponsePrefixes, equals(<String>['k:', 'w:', 'v:', 'r:']));
+      expect(kStRitaResponsePrefixes, equals(<String>['r:', 'w:']));
       expect(
         kRequestPlaceholderFragments,
         equals(<String>['(hapa omba', '(here make']),
@@ -765,7 +815,8 @@ void main() {
           'holy spirit we ask for the grace of [',
           'roho mtakatifu, tunakuomba neema ya [',
         ]),
-        reason: 'the anchored prefixes are what the original startsWith clause used',
+        reason:
+            'the anchored prefixes are what the original startsWith clause used',
       );
       expect(
         kIntentionContainsFragments,
@@ -889,9 +940,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: const Scaffold(
-            body: NovenaTextView(text: complete),
-          ),
+          home: const Scaffold(body: NovenaTextView(text: complete)),
         ),
       );
       // A standalone heading renders highlighted, so it is wrapped in a
@@ -908,9 +957,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: const Scaffold(
-            body: NovenaTextView(text: partial),
-          ),
+          home: const Scaffold(body: NovenaTextView(text: partial)),
         ),
       );
       expect(
@@ -933,9 +980,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: Scaffold(
-            body: NovenaTextView(text: '$opening\n$body'),
-          ),
+          home: Scaffold(body: NovenaTextView(text: '$opening\n$body')),
         ),
       );
 
@@ -953,9 +998,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: Scaffold(
-            body: NovenaTextView(text: '$heading $body'),
-          ),
+          home: Scaffold(body: NovenaTextView(text: '$heading $body')),
         ),
       );
 
@@ -963,7 +1006,10 @@ void main() {
       expect(find.text(heading), findsOneWidget);
       expect(find.text(body), findsOneWidget);
       expect(
-        find.descendant(of: find.byType(DecoratedBox), matching: find.text(heading)),
+        find.descendant(
+          of: find.byType(DecoratedBox),
+          matching: find.text(heading),
+        ),
         findsOneWidget,
         reason: 'the heading half is highlighted, which means the split ran',
       );
@@ -977,9 +1023,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: const Scaffold(
-            body: NovenaTextView(text: plain),
-          ),
+          home: const Scaffold(body: NovenaTextView(text: plain)),
         ),
       );
 
@@ -1042,8 +1086,14 @@ void main() {
         findsOneWidget,
         reason: 'a "the litany of" heading is uppercased by the St Rita branch',
       );
-      expect(_fontWeightOf(tester, 'THE LITANY OF THE HOLY SPIRIT'), FontWeight.w800);
-      expect(_fontStyleOf(tester, 'THE LITANY OF THE HOLY SPIRIT'), isNot(FontStyle.italic));
+      expect(
+        _fontWeightOf(tester, 'THE LITANY OF THE HOLY SPIRIT'),
+        FontWeight.w800,
+      );
+      expect(
+        _fontStyleOf(tester, 'THE LITANY OF THE HOLY SPIRIT'),
+        isNot(FontStyle.italic),
+      );
       expect(
         _fontWeightOf(tester, ordinary),
         FontWeight.w400,
@@ -1118,7 +1168,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light,
-          home: const Scaffold(body: LitanyTextView(text: '$lamb\n\n$ordinary')),
+          home: const Scaffold(
+            body: LitanyTextView(text: '$lamb\n\n$ordinary'),
+          ),
         ),
       );
 
@@ -1368,7 +1420,8 @@ void main() {
         expect(
           await isItalicked(tester, line),
           isFalse,
-          reason: '"$line" merely mentions a marker mid-sentence, so the '
+          reason:
+              '"$line" merely mentions a marker mid-sentence, so the '
               'refactored rule must not treat it as an intention',
         );
       }
@@ -1401,7 +1454,8 @@ void main() {
           theme: AppTheme.light,
           home: const Scaffold(
             body: LitanyTextView(
-              text: 'LITANY OF THE HOLY SPIRIT\n'
+              text:
+                  'LITANY OF THE HOLY SPIRIT\n'
                   'R: Let us pray.\n'
                   'V: O Lamb of God.\n'
                   'All: have mercy on us.',
@@ -1431,7 +1485,9 @@ void main() {
         ),
       );
       expect(
-        find.text('Kwa jina la Baba, na ya Mwana, na ya Roho Mtakatifu. Amini.'),
+        find.text(
+          'Kwa jina la Baba, na ya Mwana, na ya Roho Mtakatifu. Amini.',
+        ),
         findsOneWidget,
       );
       expect(
