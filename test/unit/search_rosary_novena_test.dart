@@ -9,6 +9,8 @@ import 'package:salakatoliki/features/prayers/presentation/providers/prayer_prov
 import 'package:salakatoliki/features/rosary/presentation/providers/rosary_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/test_asset_bundle.dart';
+
 void main() {
   test('offline prayer search matches title, body, tags, and category', () {
     const prayer = PrayerEntity(
@@ -176,7 +178,9 @@ void main() {
 
   test('novena progress is preserved when switching between novenas', () async {
     SharedPreferences.setMockInitialValues({});
-    final container = ProviderContainer();
+    final container = ProviderContainer(overrides: [
+      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
+    ]);
 
     await container
         .read(novenaProgressProvider.notifier)
@@ -259,7 +263,9 @@ void main() {
     'completing the final day clears local progress for that novena',
     () async {
       SharedPreferences.setMockInitialValues({});
-      final container = ProviderContainer();
+      final container = ProviderContainer(overrides: [
+      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
+    ]);
 
       await container
           .read(novenaProgressProvider.notifier)
@@ -284,7 +290,9 @@ void main() {
 
   test('Holy Family final day clears its local progress', () async {
     SharedPreferences.setMockInitialValues({});
-    final container = ProviderContainer();
+    final container = ProviderContainer(overrides: [
+      localContentDataSourceProvider.overrideWithValue(testContentDataSource()),
+    ]);
 
     await container
         .read(novenaProgressProvider.notifier)
