@@ -243,10 +243,24 @@ class LocalContentDataSource {
     });
   }
 
+  Future<String> _rosaryPath(String languageCode, String filename) async {
+    final manifest = await getManifest();
+    final paths =
+        manifest.rosaryPaths[languageCode] ??
+        manifest.rosaryPaths[AssetPaths.defaultContentLanguage] ??
+        const <String>[];
+    for (final path in paths) {
+      if (path.endsWith('/$filename')) return path;
+    }
+    throw FormatException(
+      'Content manifest does not declare $filename for $languageCode',
+    );
+  }
+
   Future<List<RosaryPrayerModel>> _readRosaryPrayers(
     String languageCode,
   ) async {
-    final path = 'assets/content/rosary/$languageCode/rosary_prayers.json';
+    final path = await _rosaryPath(languageCode, 'rosary_prayers.json');
     final json = await _loadList(path);
     return json
         .cast<Map<String, dynamic>>()
@@ -257,7 +271,7 @@ class LocalContentDataSource {
   Future<List<RosaryMysteryModel>> _readRosaryMysteries(
     String languageCode,
   ) async {
-    final path = 'assets/content/rosary/$languageCode/mysteries.json';
+    final path = await _rosaryPath(languageCode, 'mysteries.json');
     final json = await _loadList(path);
     return json
         .cast<Map<String, dynamic>>()
