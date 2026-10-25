@@ -220,47 +220,6 @@ final List<RegExp> kHeadingWithBodyPatterns = <RegExp>[
 // Content ids that select a styling profile
 // ---------------------------------------------------------------------------
 
-/// Litanies rendered with the St Rita response styling.
-const Set<String> kStRitaLitanies = <String>{
-  'st_rita_litany',
-  'bikira_maria_litany',
-  'divine_mercy_litany',
-  'holy_spirit_litany',
-  'sacred_head_of_jesus_litany',
-  'st_aloysius_gonzaga_litany',
-  'st_jude_thaddeus_litany',
-  'st_joseph_litany',
-  'st_anthony_of_padua_litany_v1',
-  'st_anthony_of_padua_litany_v2',
-  'franciscan_st_anthony_litany',
-  'st_anne_litany',
-  'holy_angels_litany',
-  'sacred_heart_of_jesus_litany',
-  'holy_face_of_jesus_litany',
-  'souls_in_purgatory_litany',
-  'seven_sorrows_mary_litany',
-  'litany_of_reparation',
-};
-
-/// Novenas rendered with the All Saints paragraph styling.
-const Set<String> kAllSaintsNovenas = <String>{
-  'all_saints_day_novena',
-  'divine_mercy_novena',
-  'holy_family_novena',
-  'holy_spirit_novena',
-  'litany_of_trust_novena',
-  'sacred_heart_of_jesus_novena',
-  'st_aloysius_gonzaga_novena',
-  'st_jude_novena',
-  'st_rita_novena',
-};
-
-/// The novena whose virtue names are styled as headings.
-const String kHolySpiritNovenaId = 'holy_spirit_novena';
-
-/// The novena rendered with the St Rita response styling.
-const String kStRitaNovenaId = 'st_rita_novena';
-
 /// Categories that the library screen folds into the "common prayers" grouping.
 const Set<String> kCommonPrayerCategoryIds = <String>{
   'common_prayers',
@@ -337,12 +296,6 @@ bool containsAllOfAnyTriple(String normalized, List<List<String>> triples) {
   }
   return false;
 }
-
-/// Whether [prayerId] selects the St Rita litany styling.
-bool usesStRitaLitanyStyling(String prayerId) => kStRitaLitanies.contains(prayerId);
-
-/// Whether [novenaId] selects the All Saints paragraph styling.
-bool usesAllSaintsStyling(String novenaId) => kAllSaintsNovenas.contains(novenaId);
 
 /// Whether [categoryId] is folded into the "common prayers" library grouping.
 bool isCommonPrayerCategory(String categoryId) =>
